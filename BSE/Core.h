@@ -14,4 +14,9 @@
 // basic includes
 #include <stdio.h>
 
+// basic functions
+namespace BSE {
+	BSE_API void print_hello(); 
+}
+
 #endif
