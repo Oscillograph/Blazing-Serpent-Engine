@@ -15,7 +15,7 @@
 #define BIT(x) (1 << x)
 
 // basic includes
-#include <stdio.h>
+#include "./common.h"
 
 // basic functions
 namespace BSE {
