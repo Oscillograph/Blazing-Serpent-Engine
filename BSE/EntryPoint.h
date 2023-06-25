@@ -10,8 +10,9 @@ int main(int argc, char** args) {
 	
 	BSE::Log::Init();
 	BSE_CORE_WARN("Log System Initialized!");
-	int a = 5;
-	BSE_INFO("Log System Initialized! Var={0}", a);
+	//int a = 5;
+	//BSE_INFO("Log System Initialized! Var={0}", a);
+	BSE_INFO("Log System Initialized!", a);
 	
 	auto app = BSE::CreateApplication();
 	app->Run();

@@ -11,6 +11,9 @@
 	#error BSE currently only supports Windows.
 #endif
 
+// useful macros
+#define BIT(x) (1 << x)
+
 // basic includes
 #include <stdio.h>
 
