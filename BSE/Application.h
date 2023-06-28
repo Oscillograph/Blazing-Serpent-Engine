@@ -2,7 +2,7 @@
 #define BSE_APPLICATION_H
 
 #include "./Core.h"
-//#include "./systems/events/Event.h"
+#include "./systems/events/AppEvent.h"
 #include "./Window.h"
 
 #ifdef BSE_PLATFORM_WINDOWS
@@ -15,8 +15,12 @@ namespace BSE {
 		Application();
 		virtual ~Application();
 		
+		void OnEvent(Event& e);
+		
 		void Run();
 	private:
+		bool OnWindowClose(WindowCloseEvent& e);
+		
 		Window* m_Window;
 		bool m_Running = true;
 	};
