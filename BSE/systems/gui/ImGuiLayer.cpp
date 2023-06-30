@@ -23,6 +23,8 @@ namespace BSE {
 		ImGui::CreateContext();
 		ImGui::StyleColorsDark();
 		ImGuiIO& ioFlags = ImGui::GetIO();
+		
+		// key bindings
 		ioFlags.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
 		ioFlags.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 		
@@ -108,19 +110,22 @@ namespace BSE {
 		
 		static bool show = true;
 		static float f = 0.0f;
-		static char* buf = { u8"One Два !@#" };
+		static char* buf = u8"One Два !@#";
+		static char* text =	u8"На самом деле не так-то и сложно писать на русском в Dear ImGui, \n\
+		если суметь правильно настроить работу со шрифтом.";
+		
 		//ImGui::ShowDemoWindow(&show);
-		ImGui::Text("Hello, world %d", 123);
-		ImGui::Button("Save");
-		ImGui::InputText("string", buf, IM_ARRAYSIZE(buf));
-		ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+		ImGui::Text("Привет, мир!!!%d", 111);
+		ImGui::Text(text);
+		ImGui::Button(u8"Сохранить");
+		ImGui::InputText(u8"Введите текст", buf, IM_ARRAYSIZE(buf));
+		ImGui::SliderFloat(u8"Какая-то дробь", &f, 0.0f, 1.0f);
 		
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
 	
 	void ImGuiLayer::OnEvent(Event& event){
-		
+		BSE_CORE_TRACE("ImGui Layer: {0}", event);
 	}
-	
 }
