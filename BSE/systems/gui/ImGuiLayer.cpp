@@ -8,11 +8,11 @@
 
 
 namespace BSE {
-	ImGuiLayer::ImGuiLayer(Application* app)
+	ImGuiLayer::ImGuiLayer()
 		: Layer("ImGuiLayer")
 	{
 		m_Time = 0.0f;
-		m_App = app;
+		m_App = Application::Get();
 	}
 	
 	ImGuiLayer::~ImGuiLayer(){
@@ -22,7 +22,7 @@ namespace BSE {
 	void ImGuiLayer::OnAttach(){
 		ImGui::CreateContext();
 		ImGui::StyleColorsDark();
-		ImGuiIO ioFlags = ImGui::GetIO();
+		ImGuiIO& ioFlags = ImGui::GetIO();
 		ioFlags.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
 		ioFlags.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 		
@@ -68,6 +68,21 @@ namespace BSE {
 		ioFlags.KeyMap[ImGuiKey_Y] = GLFW_KEY_Y;
 		ioFlags.KeyMap[ImGuiKey_Z] = GLFW_KEY_Z;
 		
+		// cyrillic support
+		ImFontConfig font_config;
+		font_config.OversampleH = 1; //or 2 is the same
+		font_config.OversampleV = 1;
+		font_config.PixelSnapH = 1;
+		
+		static const ImWchar ranges[] = {
+			0x0020, 0x00FF, // Basic Latin + Latin Supplement
+			0x0400, 0x044F, // Cyrillic
+			0,
+		};
+		
+		ioFlags.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Tahoma.ttf", 14.0f, &font_config, ranges);
+		
+		// ImGui OpenGL init
 		ImGui_ImplOpenGL3_Init("#version 410");
 	}
 	
@@ -77,6 +92,7 @@ namespace BSE {
 	
 	void ImGuiLayer::OnUpdate(){
 		ImGuiIO& io = ImGui::GetIO();
+		//Application* app = Application::Get();
 		Window* window = m_App->GetWindow();
 		float width = (float)(window->GetWidth());
 		float height = (float)(window->GetHeight());
@@ -92,9 +108,8 @@ namespace BSE {
 		
 		static bool show = true;
 		static float f = 0.0f;
-		static char* buf = "One Два !@#";
+		static char* buf = { u8"One Два !@#" };
 		//ImGui::ShowDemoWindow(&show);
-		//ImGui::ShowDemoWindow();
 		ImGui::Text("Hello, world %d", 123);
 		ImGui::Button("Save");
 		ImGui::InputText("string", buf, IM_ARRAYSIZE(buf));
