@@ -25,14 +25,31 @@ namespace BSE{
 		
 	}
 	
+	void Application::PushLayer(Layer* layer){
+		m_LayerStack.PushLayer(layer);
+	}
+	
+	void Application::PushOverlay(Layer* overlay){
+		m_LayerStack.PushOverlay(overlay);
+	}
+	
 	void Application::OnEvent(Event& e){
 		EventDispatcher dispatcher(e);
 		
 		dispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent& event){
+			// TODO: Stack events using a special method
+			// stacked events are to be processed in the game loop by a special routine which calls OnWindowClose, etc.
 			return OnWindowClose(event);
 		});
 		
 		BSE_INFO("{0}", e);
+		
+		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); ){
+			(*--it)->OnEvent(e);
+			if (e.IsHandled()){
+				break;
+			}
+		}
 	}
 	
 	void Application::Run(){
@@ -43,6 +60,11 @@ namespace BSE{
 			//BSE_TRACE("glClear");
 			glClear(GL_COLOR_BUFFER_BIT);
 			//BSE_TRACE("mWindow->OnUpdate");
+			
+			for (Layer* layer : m_LayerStack){
+				layer->OnUpdate();
+			}
+			
 			m_Window->OnUpdate();
 		}
 	}
