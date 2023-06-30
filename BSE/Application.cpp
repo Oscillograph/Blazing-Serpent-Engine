@@ -9,7 +9,12 @@ namespace BSE{
 	// #define BIND_EVENT_FUNCTION(x) std::bind(Application::x, this, std::placeholders::_1)
 	// No need for this macros anymore
 	
+	Application* Application::s_Instance = nullptr;
+	
 	Application::Application(){
+		BSE_CORE_ASSERT(s_Instance, "Application already exists.");
+		s_Instance = this;
+		
 		BSE_TRACE("Trying to create an app window");
 		m_Window = Window::Create(*(new WindowProperties()));
 		BSE_TRACE("Window created and stored in m_Window");
@@ -31,10 +36,12 @@ namespace BSE{
 	
 	void Application::PushLayer(Layer* layer){
 		m_LayerStack.PushLayer(layer);
+		layer->OnAttach();
 	}
 	
 	void Application::PushOverlay(Layer* overlay){
 		m_LayerStack.PushOverlay(overlay);
+		overlay->OnAttach();
 	}
 	
 	void Application::OnEvent(Event& e){
