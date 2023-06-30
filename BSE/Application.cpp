@@ -18,6 +18,10 @@ namespace BSE{
 			OnEvent(event);
 		});
 		
+		// test purposes
+		// unsigned int id;
+		// glGenVertexArrays(1, &id);
+		
 		BSE_TRACE("OnEvent callback bind successful");
 	}
 	
