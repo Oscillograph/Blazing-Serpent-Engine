@@ -4,7 +4,10 @@
 
 #include "./vendor/imgui/imgui.h"
 #include "./platforms/opengl/ImGuiRenderer.h"
+
+// Temporary
 #include <glfw/glfw3.h>
+#include <Glad/include/glad/glad.h>
 
 
 namespace BSE {
@@ -114,18 +117,143 @@ namespace BSE {
 		static char* text =	u8"На самом деле не так-то и сложно писать на русском в Dear ImGui, \n\
 		если суметь правильно настроить работу со шрифтом.";
 		
-		//ImGui::ShowDemoWindow(&show);
-		ImGui::Text("Привет, мир!!!%d", 111);
-		ImGui::Text(text);
-		ImGui::Button(u8"Сохранить");
-		ImGui::InputText(u8"Введите текст", buf, IM_ARRAYSIZE(buf));
-		ImGui::SliderFloat(u8"Какая-то дробь", &f, 0.0f, 1.0f);
+		ImGui::ShowDemoWindow(&show);
+		//ImGui::Text("Привет, мир!!!%d", 111);
+		//ImGui::Text(text);
+		//ImGui::Button(u8"Сохранить");
+		//ImGui::InputText(u8"Введите текст", buf, IM_ARRAYSIZE(buf));
+		//ImGui::SliderFloat(u8"Какая-то дробь", &f, 0.0f, 1.0f);
 		
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
 	
 	void ImGuiLayer::OnEvent(Event& event){
+		
+		EventDispatcher dispatcher(event);
+		
+		dispatcher.Dispatch<MouseButtonPressed>([this](MouseButtonPressed& event){
+			return ImGuiLayer::OnMouseButtonPressed(event);
+		});
+		
+		dispatcher.Dispatch<MouseButtonReleased>([this](MouseButtonReleased& event){
+			return ImGuiLayer::OnMouseButtonReleased(event);
+		});
+		
+		dispatcher.Dispatch<MouseMovedEvent>([this](MouseMovedEvent& event){
+			return ImGuiLayer::OnMouseMoved(event);
+		});
+		
+		dispatcher.Dispatch<MouseScrolledEvent>([this](MouseScrolledEvent& event){
+			return ImGuiLayer::OnMouseScrolled(event);
+		});
+		
+		dispatcher.Dispatch<KeyPressedEvent>([this](KeyPressedEvent& event){
+			return ImGuiLayer::OnKeyPressed(event);
+		});
+		
+		dispatcher.Dispatch<KeyReleasedEvent>([this](KeyReleasedEvent& event){
+			return ImGuiLayer::OnKeyReleased(event);
+		});
+		
+		dispatcher.Dispatch<KeyTypedEvent>([this](KeyTypedEvent& event){
+			return ImGuiLayer::OnKeyTyped(event);
+		});
+		
+		dispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent& event){
+			return ImGuiLayer::OnWindowResized(event);
+		});
+	}
+	
+	// events
+	bool ImGuiLayer::OnMouseButtonPressed(MouseButtonPressed& event){
+		//int MouseButton = event.GetMouseButtonCode();
+		
+		ImGuiIO& io = ImGui::GetIO();
+		io.MouseDown[event.GetMouseButtonCode()] = true;
+
+		//ImVec2 mouseXY = ImGui::GetCursorPos();
+		
 		BSE_CORE_TRACE("ImGui Layer: {0}", event);
+		//BSE_CORE_TRACE("Mouse button: {0}", MouseButton);
+		//BSE_CORE_TRACE("Mouse position: {0}, {1}", mouseXY.x, mouseXY.y);
+		
+		return false;
+	}
+	
+	bool ImGuiLayer::OnMouseButtonReleased(MouseButtonReleased& event){
+		BSE_CORE_TRACE("ImGui Layer: {0}", event);
+		
+		ImGuiIO& io = ImGui::GetIO();
+		io.MouseDown[event.GetMouseButtonCode()] = false;
+		
+		return false;
+	}
+	
+	bool ImGuiLayer::OnMouseMoved(MouseMovedEvent& event){
+		BSE_CORE_TRACE("ImGui Layer: {0}", event);
+		
+		ImGuiIO& io = ImGui::GetIO();
+		io.MousePos = ImVec2(event.GetX(), event.GetY());
+		
+		return false;
+	}
+	
+	bool ImGuiLayer::OnMouseScrolled(MouseScrolledEvent& event){
+		BSE_CORE_TRACE("ImGui Layer: {0}", event);
+		
+		ImGuiIO& io = ImGui::GetIO();
+		io.MouseWheelH += event.GetXOffset();
+		io.MouseWheel  += event.GetYOffset();
+		
+		return false;
+	}
+	
+	bool ImGuiLayer::OnKeyPressed(KeyPressedEvent& event){
+		BSE_CORE_TRACE("ImGui Layer: {0}", event);
+		
+		ImGuiIO& io = ImGui::GetIO();
+		io.KeysDown[event.GetKeyCode()] = true;
+		
+		io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
+		io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
+		io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
+		io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_RIGHT_SUPER];
+		
+		return false;
+	}
+	
+	bool ImGuiLayer::OnKeyTyped(KeyTypedEvent& event) {
+		BSE_CORE_TRACE("ImGui Layer: {0}", event);
+		
+		ImGuiIO& io = ImGui::GetIO();
+		int c = event.GetKeyCode();
+		
+		if ((c > 0) && (c < 0x10000)){
+			io.AddInputCharacter((unsigned short)c);
+		}
+		
+		return false;
+	}
+	
+	bool ImGuiLayer::OnKeyReleased(KeyReleasedEvent& event){
+		BSE_CORE_TRACE("ImGui Layer: {0}", event);
+		
+		ImGuiIO& io = ImGui::GetIO();
+		io.KeysDown[event.GetKeyCode()] = false;
+		
+		return false;
+	}
+	
+	bool ImGuiLayer::OnWindowResized(WindowResizeEvent& event){
+		BSE_CORE_TRACE("ImGui Layer: {0}", event);
+		
+		ImGuiIO& io = ImGui::GetIO();
+		Window* window = m_App->GetWindow();
+		io.DisplaySize = ImVec2((float)(window->GetWidth()), (float)(window->GetHeight()));
+		io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
+		glViewport(0, 0, event.GetWidth(), event.GetHeight());
+		
+		return false;
 	}
 }
