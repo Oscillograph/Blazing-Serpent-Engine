@@ -38,4 +38,16 @@ namespace BSE {
 	void Layer::Disable(){
 		m_Enabled = false;
 	}
+	
+	void Layer::Begin(){
+		
+	}
+	
+	void Layer::OnImGuiRender(){
+		
+	}
+	
+	void Layer::End(){
+		
+	}
 }

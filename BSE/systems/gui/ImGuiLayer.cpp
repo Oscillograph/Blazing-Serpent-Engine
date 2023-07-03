@@ -2,20 +2,15 @@
 #include <Layer.h>
 #include "./ImGuiLayer.h"
 
-#include "./vendor/imgui/imgui.h"
-#include "./platforms/opengl/ImGuiRenderer.h"
-
-// Temporary
-#include <glfw/glfw3.h>
-#include <Glad/include/glad/glad.h>
-
+#include <vendor/imgui/imgui.h>
+#include <systems/gui/ImGuiBuild.h>
 
 namespace BSE {
 	ImGuiLayer::ImGuiLayer()
 		: Layer("ImGuiLayer")
 	{
 		m_Time = 0.0f;
-		m_App = Application::Get();
+		// m_App = Application::Get();
 	}
 	
 	ImGuiLayer::~ImGuiLayer(){
@@ -24,55 +19,29 @@ namespace BSE {
 	
 	void ImGuiLayer::OnAttach(){
 		ImGui::CreateContext();
-		ImGui::StyleColorsDark();
 		
 		m_io = &(ImGui::GetIO());
+		
+		m_io->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // enable keyboard conrols
+		m_io->ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // enable gamepad controls
+		m_io->ConfigFlags |= ImGuiConfigFlags_DockingEnable; // enable docking
+		m_io->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // enable viewports; TODO: learn about them
+		
+		// setup ImGui style
+		ImGui::StyleColorsDark();
+		// ImGui::StyleColorsLight();
+		// ImGui::StyleColorsClassic();
+		
+		ImGuiStyle& style = ImGui::GetStyle();
+		style.WindowRounding = 0.0f;
+		style.Colors[ImGuiCol_NavWindowingDimBg].w = 1.0f;
+		
+		Application* m_App = Application::Get();
+		GLFWwindow* window = static_cast<GLFWwindow*>(m_App->GetWindow()->GetNativeWindow());
 		
 		// key bindings
 		m_io->BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
 		m_io->BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
-		
-		m_io->KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB;
-		m_io->KeyMap[ImGuiKey_LeftArrow] = GLFW_KEY_LEFT;
-		m_io->KeyMap[ImGuiKey_RightArrow] = GLFW_KEY_RIGHT;
-		m_io->KeyMap[ImGuiKey_UpArrow] = GLFW_KEY_UP;
-		m_io->KeyMap[ImGuiKey_DownArrow] = GLFW_KEY_DOWN;
-		m_io->KeyMap[ImGuiKey_PageUp] = GLFW_KEY_PAGE_UP;
-		m_io->KeyMap[ImGuiKey_PageDown] = GLFW_KEY_PAGE_DOWN;
-		m_io->KeyMap[ImGuiKey_Home] = GLFW_KEY_HOME;
-		m_io->KeyMap[ImGuiKey_End] = GLFW_KEY_END;
-		m_io->KeyMap[ImGuiKey_Insert] = GLFW_KEY_INSERT;
-		m_io->KeyMap[ImGuiKey_Delete] = GLFW_KEY_DELETE;
-		m_io->KeyMap[ImGuiKey_Backspace] = GLFW_KEY_BACKSPACE;
-		m_io->KeyMap[ImGuiKey_Space] = GLFW_KEY_SPACE;
-		m_io->KeyMap[ImGuiKey_Enter] = GLFW_KEY_ENTER;
-		m_io->KeyMap[ImGuiKey_Escape] = GLFW_KEY_ESCAPE;
-		m_io->KeyMap[ImGuiKey_A] = GLFW_KEY_A;
-		m_io->KeyMap[ImGuiKey_B] = GLFW_KEY_B;
-		m_io->KeyMap[ImGuiKey_C] = GLFW_KEY_C;
-		m_io->KeyMap[ImGuiKey_D] = GLFW_KEY_D;
-		m_io->KeyMap[ImGuiKey_E] = GLFW_KEY_E;
-		m_io->KeyMap[ImGuiKey_F] = GLFW_KEY_F;
-		m_io->KeyMap[ImGuiKey_G] = GLFW_KEY_G;
-		m_io->KeyMap[ImGuiKey_H] = GLFW_KEY_H;
-		m_io->KeyMap[ImGuiKey_I] = GLFW_KEY_I;
-		m_io->KeyMap[ImGuiKey_J] = GLFW_KEY_J;
-		m_io->KeyMap[ImGuiKey_K] = GLFW_KEY_K;
-		m_io->KeyMap[ImGuiKey_L] = GLFW_KEY_L;
-		m_io->KeyMap[ImGuiKey_M] = GLFW_KEY_M;
-		m_io->KeyMap[ImGuiKey_N] = GLFW_KEY_N;
-		m_io->KeyMap[ImGuiKey_O] = GLFW_KEY_O;
-		m_io->KeyMap[ImGuiKey_P] = GLFW_KEY_P;
-		m_io->KeyMap[ImGuiKey_Q] = GLFW_KEY_Q;
-		m_io->KeyMap[ImGuiKey_R] = GLFW_KEY_R;
-		m_io->KeyMap[ImGuiKey_S] = GLFW_KEY_S;
-		m_io->KeyMap[ImGuiKey_T] = GLFW_KEY_T;
-		m_io->KeyMap[ImGuiKey_U] = GLFW_KEY_U;
-		m_io->KeyMap[ImGuiKey_V] = GLFW_KEY_V;
-		m_io->KeyMap[ImGuiKey_W] = GLFW_KEY_W;
-		m_io->KeyMap[ImGuiKey_X] = GLFW_KEY_X;
-		m_io->KeyMap[ImGuiKey_Y] = GLFW_KEY_Y;
-		m_io->KeyMap[ImGuiKey_Z] = GLFW_KEY_Z;
 		
 		// cyrillic support
 		ImFontConfig font_config;
@@ -92,45 +61,53 @@ namespace BSE {
 		
 		// ImGui OpenGL init
 		ImGui_ImplOpenGL3_Init("#version 410");
+		ImGui_ImplGlfw_InitForOpenGL(window, true);
 	}
 	
 	void ImGuiLayer::OnDetach(){
-		
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
 	}
 	
-	void ImGuiLayer::OnUpdate(){
+	void ImGuiLayer::Begin(){
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+	}
+	
+	void ImGuiLayer::End(){
 		if (m_io != nullptr){
+			Application* m_App = Application::Get();
 			Window* window = m_App->GetWindow();
 			float width = (float)(window->GetWidth());
 			float height = (float)(window->GetHeight());
 			//BSE_CORE_INFO("App's window size: {0}, {1}", width, height);
 			m_io->DisplaySize = ImVec2(width, height);
-			
-			float time = (float)glfwGetTime();
-			m_io->DeltaTime = m_Time > 0.0 ? (time - m_Time) : (1.0f / 60.0f );
-			m_Time = time;
-			
-			ImGui_ImplOpenGL3_NewFrame();
-			ImGui::NewFrame();
-			
-			static bool show = true;
-			//static float f = 0.0f;
-			//static char* buf = u8"One Два !@#";
-			//static char* text =	u8"На самом деле не так-то и сложно писать на русском в Dear ImGui, \n\
-			если суметь правильно настроить работу со шрифтом.";
-			
-			ImGui::ShowDemoWindow(&show);
-			//ImGui::Text("Привет, мир!!!%d", 111);
-			//ImGui::Text(text);
-			//ImGui::Button(u8"Сохранить");
-			//ImGui::InputText(u8"Введите текст", buf, IM_ARRAYSIZE(buf));
-			//ImGui::SliderFloat(u8"Какая-то дробь", &f, 0.0f, 1.0f);
-			
+		
 			ImGui::Render();
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+			
+			if (m_io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable){
+				GLFWwindow* window_backup_context = glfwGetCurrentContext();
+				ImGui::UpdatePlatformWindows();
+				ImGui::RenderPlatformWindowsDefault();
+				glfwMakeContextCurrent(window_backup_context);
+			}
 		}
 	}
 	
+	void ImGuiLayer::OnImGuiRender(){
+		float time = (float)glfwGetTime();
+		m_io->DeltaTime = m_Time > 0.0 ? (time - m_Time) : (1.0f / 60.0f );
+		m_Time = time;
+		
+		static bool show = true;	
+		ImGui::ShowDemoWindow(&show);
+	}
+	
+	
+	/*
 	void ImGuiLayer::OnEvent(Event& event){
 		if (m_io != nullptr){
 			EventDispatcher dispatcher(event);
@@ -209,10 +186,10 @@ namespace BSE {
 		
 		m_io->KeysDown[event.GetKeyCode()] = true;
 		
-		m_io->KeyCtrl = m_io->KeysDown[GLFW_KEY_LEFT_CONTROL] || m_io->KeysDown[GLFW_KEY_RIGHT_CONTROL];
-		m_io->KeyShift = m_io->KeysDown[GLFW_KEY_LEFT_SHIFT] || m_io->KeysDown[GLFW_KEY_RIGHT_SHIFT];
-		m_io->KeyAlt = m_io->KeysDown[GLFW_KEY_LEFT_ALT] || m_io->KeysDown[GLFW_KEY_RIGHT_ALT];
-		m_io->KeySuper = m_io->KeysDown[GLFW_KEY_LEFT_SUPER] || m_io->KeysDown[GLFW_KEY_RIGHT_SUPER];
+		m_io->KeyCtrl = m_io->KeysDown[BSE_KEY_LEFT_CONTROL] || m_io->KeysDown[BSE_KEY_RIGHT_CONTROL];
+		m_io->KeyShift = m_io->KeysDown[BSE_KEY_LEFT_SHIFT] || m_io->KeysDown[BSE_KEY_RIGHT_SHIFT];
+		m_io->KeyAlt = m_io->KeysDown[BSE_KEY_LEFT_ALT] || m_io->KeysDown[BSE_KEY_RIGHT_ALT];
+		m_io->KeySuper = m_io->KeysDown[BSE_KEY_LEFT_SUPER] || m_io->KeysDown[BSE_KEY_RIGHT_SUPER];
 		
 		return false;
 	}
@@ -247,4 +224,5 @@ namespace BSE {
 		
 		return false;
 	}
+	*/
 }

@@ -5,8 +5,11 @@
 #include "./Window.h"
 #include "./Input.h"
 #include "./KeyCodes.h"
-#include "./systems/events/AppEvent.h"
+#include <systems/events/AppEvent.h>
+#include <systems/events/KeyEvent.h>
+#include <systems/events/MouseEvent.h>
 #include "./LayerStack.h"
+#include "./systems/gui/ImGuiLayer.h"
 
 #ifdef BSE_PLATFORM_WINDOWS
 	#include "./platforms/windows/WindowsWindow.h"
@@ -31,10 +34,13 @@ namespace BSE {
 		
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
+		bool OnKeyPressed(KeyPressedEvent& e);
 		
 		Window* m_Window;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
+		Layer* m_ImGuiLayer;
+		bool m_ImGuiLayerEnabled = true;
 		
 		static Application* s_Instance;
 	};

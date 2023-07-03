@@ -28,6 +28,8 @@ namespace BSE{
 		// glGenVertexArrays(1, &id);
 		
 		BSE_TRACE("OnEvent callback bind successful");
+		
+		m_ImGuiLayerEnabled = true;
 	}
 	
 	Application::~Application(){
@@ -53,6 +55,10 @@ namespace BSE{
 			return OnWindowClose(event);
 		});
 		
+		dispatcher.Dispatch<KeyPressedEvent>([this](KeyPressedEvent& event){
+			return OnKeyPressed(event);
+		});
+		
 		// BSE_INFO("{0}", e);
 		
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); ){
@@ -65,6 +71,12 @@ namespace BSE{
 	
 	void Application::Run(){
 		BSE_TRACE("Enter Application Run routine");
+		
+		m_ImGuiLayer = new ImGuiLayer(); 
+		PushOverlay(m_ImGuiLayer);
+		
+		BSE_TRACE("ImGui layer pushed into m_LayerStack");
+		
 		while(m_Running){
 			//BSE_TRACE("glClearColor");
 			glClearColor(0.3, 0.3, 0.5, 1);
@@ -74,6 +86,14 @@ namespace BSE{
 			
 			for (Layer* layer : m_LayerStack){
 				layer->OnUpdate();
+			}
+			
+			if (m_ImGuiLayerEnabled){
+				m_ImGuiLayer->Begin();
+				for (Layer* layer : m_LayerStack){
+					layer->OnImGuiRender();
+				}
+				m_ImGuiLayer->End();
 			}
 			
 			//auto[x,y] = Input::GetMousePosition();
@@ -88,6 +108,14 @@ namespace BSE{
 	
 	bool Application::OnWindowClose(WindowCloseEvent& e){
 		m_Running = false;
+		return true;
+	}
+	
+	bool Application::OnKeyPressed(KeyPressedEvent& e){
+		// toggle ImGuiLayer on/off
+		if (e.GetKeyCode() == BSE_KEY_F2){
+			m_ImGuiLayerEnabled = !m_ImGuiLayerEnabled;
+		}
 		return true;
 	}
 }
