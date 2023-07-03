@@ -3,11 +3,14 @@
 
 #include "./Core.h"
 #include "./Window.h"
+#include "./Input.h"
+#include "./KeyCodes.h"
 #include "./systems/events/AppEvent.h"
 #include "./LayerStack.h"
 
 #ifdef BSE_PLATFORM_WINDOWS
 	#include "./platforms/windows/WindowsWindow.h"
+	#include "./platforms/windows/WindowsInput.h"
 #endif
 
 namespace BSE {

@@ -23,6 +23,7 @@ namespace BSE {
 	}
 	
 	WindowsWindow::~WindowsWindow(){
+		BSE_CORE_TRACE("Window shutdown.");
 		Shutdown();
 	}
 	

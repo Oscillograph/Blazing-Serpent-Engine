@@ -86,6 +86,7 @@ namespace BSE {
 			0,
 		};
 		
+		// TODO: fix ё
 		m_io->Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Tahoma.ttf", 14.0f, &font_config, ranges);
 		// m_io->Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Arial.ttf", 14.0f, &font_config, ranges);
 		
@@ -113,9 +114,9 @@ namespace BSE {
 			ImGui::NewFrame();
 			
 			static bool show = true;
-			static float f = 0.0f;
-			static char* buf = u8"One Два !@#";
-			static char* text =	u8"На самом деле не так-то и сложно писать на русском в Dear ImGui, \n\
+			//static float f = 0.0f;
+			//static char* buf = u8"One Два !@#";
+			//static char* text =	u8"На самом деле не так-то и сложно писать на русском в Dear ImGui, \n\
 			если суметь правильно настроить работу со шрифтом.";
 			
 			ImGui::ShowDemoWindow(&show);
@@ -173,13 +174,13 @@ namespace BSE {
 	bool ImGuiLayer::OnMouseButtonPressed(MouseButtonPressed& event){
 		m_io->MouseDown[event.GetMouseButtonCode()] = true;
 		
-		BSE_CORE_TRACE("ImGui Layer: {0}", event);
+		//BSE_CORE_TRACE("ImGui Layer: {0}", event);
 		
 		return false;
 	}
 	
 	bool ImGuiLayer::OnMouseButtonReleased(MouseButtonReleased& event){
-		BSE_CORE_TRACE("ImGui Layer: {0}", event);
+		//BSE_CORE_TRACE("ImGui Layer: {0}", event);
 		
 		m_io->MouseDown[event.GetMouseButtonCode()] = false;
 		
@@ -187,7 +188,7 @@ namespace BSE {
 	}
 	
 	bool ImGuiLayer::OnMouseMoved(MouseMovedEvent& event){
-		BSE_CORE_TRACE("ImGui Layer: {0}", event);
+		//BSE_CORE_TRACE("ImGui Layer: {0}", event);
 		
 		m_io->MousePos = ImVec2(event.GetX(), event.GetY());
 		
@@ -195,7 +196,7 @@ namespace BSE {
 	}
 	
 	bool ImGuiLayer::OnMouseScrolled(MouseScrolledEvent& event){
-		BSE_CORE_TRACE("ImGui Layer: {0}", event);
+		//BSE_CORE_TRACE("ImGui Layer: {0}", event);
 		
 		m_io->MouseWheelH += event.GetXOffset();
 		m_io->MouseWheel  += event.GetYOffset();
@@ -204,7 +205,7 @@ namespace BSE {
 	}
 	
 	bool ImGuiLayer::OnKeyPressed(KeyPressedEvent& event){
-		BSE_CORE_TRACE("ImGui Layer: {0}", event);
+		//BSE_CORE_TRACE("ImGui Layer: {0}", event);
 		
 		m_io->KeysDown[event.GetKeyCode()] = true;
 		
@@ -217,7 +218,7 @@ namespace BSE {
 	}
 	
 	bool ImGuiLayer::OnKeyTyped(KeyTypedEvent& event) {
-		BSE_CORE_TRACE("ImGui Layer: {0}", event);
+		//BSE_CORE_TRACE("ImGui Layer: {0}", event);
 		
 		int keycode = event.GetKeyCode();
 		
@@ -229,7 +230,7 @@ namespace BSE {
 	}
 	
 	bool ImGuiLayer::OnKeyReleased(KeyReleasedEvent& event){
-		BSE_CORE_TRACE("ImGui Layer: {0}", event);
+		//BSE_CORE_TRACE("ImGui Layer: {0}", event);
 		
 		m_io->KeysDown[event.GetKeyCode()] = false;
 		
@@ -237,7 +238,7 @@ namespace BSE {
 	}
 	
 	bool ImGuiLayer::OnWindowResized(WindowResizeEvent& event){
-		BSE_CORE_TRACE("ImGui Layer: {0}", event);
+		//BSE_CORE_TRACE("ImGui Layer: {0}", event);
 		
 		Window* window = m_App->GetWindow();
 		m_io->DisplaySize = ImVec2((float)(window->GetWidth()), (float)(window->GetHeight()));
