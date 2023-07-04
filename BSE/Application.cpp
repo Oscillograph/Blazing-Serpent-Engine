@@ -33,7 +33,11 @@ namespace BSE{
 	}
 	
 	Application::~Application(){
-		
+		if (m_ImGuiLayerEnabled && (m_ImGuiLayer != nullptr)){
+			PopOverlay(m_ImGuiLayer);
+			delete m_ImGuiLayer;
+			m_ImGuiLayer = nullptr;
+		}
 	}
 	
 	void Application::PushLayer(Layer* layer){
@@ -41,9 +45,19 @@ namespace BSE{
 		layer->OnAttach();
 	}
 	
+	void Application::PopLayer(Layer* layer){
+		m_LayerStack.PopLayer(layer);
+		layer->OnDetach();
+	}
+	
 	void Application::PushOverlay(Layer* overlay){
 		m_LayerStack.PushOverlay(overlay);
 		overlay->OnAttach();
+	}
+	
+	void Application::PopOverlay(Layer* overlay){
+		m_LayerStack.PopOverlay(overlay);
+		overlay->OnDetach();
 	}
 	
 	void Application::OnEvent(Event& e){
@@ -72,10 +86,11 @@ namespace BSE{
 	void Application::Run(){
 		BSE_TRACE("Enter Application Run routine");
 		
-		m_ImGuiLayer = new ImGuiLayer(); 
-		PushOverlay(m_ImGuiLayer);
-		
-		BSE_TRACE("ImGui layer pushed into m_LayerStack");
+		if (m_ImGuiLayer == nullptr){
+			m_ImGuiLayer = new ImGuiLayer(); 
+			PushOverlay(m_ImGuiLayer);
+			BSE_TRACE("ImGui layer pushed into m_LayerStack");
+		}
 		
 		while(m_Running){
 			//BSE_TRACE("glClearColor");
@@ -88,7 +103,7 @@ namespace BSE{
 				layer->OnUpdate();
 			}
 			
-			if (m_ImGuiLayerEnabled){
+			if (m_ImGuiLayerEnabled && (m_ImGuiLayer != nullptr)){
 				m_ImGuiLayer->Begin();
 				for (Layer* layer : m_LayerStack){
 					layer->OnImGuiRender();

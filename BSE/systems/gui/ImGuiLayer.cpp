@@ -10,6 +10,7 @@ namespace BSE {
 		: Layer("ImGuiLayer")
 	{
 		m_Time = 0.0f;
+		m_io = nullptr;
 		// m_App = Application::Get();
 	}
 	
@@ -18,7 +19,7 @@ namespace BSE {
 	}
 	
 	void ImGuiLayer::OnAttach(){
-		ImGui::CreateContext();
+		m_ImGuiContext = ImGui::CreateContext();
 		
 		m_io = &(ImGui::GetIO());
 		
@@ -56,18 +57,21 @@ namespace BSE {
 		};
 		
 		// TODO: fix ё
-		m_io->Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Tahoma.ttf", 14.0f, &font_config, ranges);
+		m_io->Fonts->AddFontFromFileTTF("./assets/fonts/tahoma.ttf", 14.0f, &font_config, ranges);
+		// m_io->Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Tahoma.ttf", 14.0f, &font_config, ranges);
 		// m_io->Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Arial.ttf", 14.0f, &font_config, ranges);
 		
 		// ImGui OpenGL init
 		ImGui_ImplOpenGL3_Init("#version 410");
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
+		BSE_TRACE("ImGuiLayer attached, and Dear ImGui OpenGl/Glfw Implementation initialized.");
 	}
 	
 	void ImGuiLayer::OnDetach(){
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
+		BSE_TRACE("ImGuiLayer detached, and Dear ImGui OpenGl/Glfw Implementation shut down.");
 	}
 	
 	void ImGuiLayer::Begin(){

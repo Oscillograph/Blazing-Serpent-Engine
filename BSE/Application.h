@@ -28,18 +28,22 @@ namespace BSE {
 		
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* overlay);
+		void PopLayer(Layer* layer);
+		void PopOverlay(Layer* overlay);
 		
 		inline Window* GetWindow() { return m_Window; }
 		inline static Application* Get() { return s_Instance; }
+		inline void SetImGuiLayer(Layer* layer){ m_ImGuiLayer = layer; }
+		inline Layer* GetImGuiLayer(){ return m_ImGuiLayer; }
 		
-	private:
+	protected:
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnKeyPressed(KeyPressedEvent& e);
 		
 		Window* m_Window;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
-		Layer* m_ImGuiLayer;
+		Layer* m_ImGuiLayer = nullptr;
 		bool m_ImGuiLayerEnabled = true;
 		
 		static Application* s_Instance;
