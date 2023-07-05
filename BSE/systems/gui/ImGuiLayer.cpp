@@ -20,6 +20,10 @@ namespace BSE {
 	
 	void ImGuiLayer::OnAttach(){
 		m_ImGuiContext = ImGui::CreateContext();
+		BSE_TRACE("Dear ImGui Context created");
+		ImGui::GetAllocatorFunctions(&m_ImGuiMemAllocFunc, &m_ImGuiMemFreeFunc, &m_ImGuiUserData);
+		BSE_TRACE("Dear ImGui memory alloc/free functions stored");
+		// ImGui::SetAllocatorFunctions(m_ImGuiMemAllocFunc, m_ImGuiMemFreeFunc, NULL);
 		
 		m_io = &(ImGui::GetIO());
 		
@@ -80,6 +84,11 @@ namespace BSE {
 		ImGui::NewFrame();
 	}
 	
+	void ImGuiLayer::ImGuiContent(){
+		static bool show = true;	
+		ImGui::ShowDemoWindow(&show);
+	}
+	
 	void ImGuiLayer::End(){
 		if (m_io != nullptr){
 			Application* m_App = Application::Get();
@@ -105,11 +114,9 @@ namespace BSE {
 		float time = (float)glfwGetTime();
 		m_io->DeltaTime = m_Time > 0.0 ? (time - m_Time) : (1.0f / 60.0f );
 		m_Time = time;
-		
-		static bool show = true;	
-		ImGui::ShowDemoWindow(&show);
+
+		ImGuiContent();
 	}
-	
 	
 	/*
 	void ImGuiLayer::OnEvent(Event& event){

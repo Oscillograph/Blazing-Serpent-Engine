@@ -86,9 +86,9 @@ namespace BSE{
 	void Application::Run(){
 		BSE_TRACE("Enter Application Run routine");
 		
-		if (m_ImGuiLayer == nullptr){
-			m_ImGuiLayer = new ImGuiLayer(); 
-			PushOverlay(m_ImGuiLayer);
+		if (GetImGuiLayer() == nullptr){
+			SetImGuiLayer(new ImGuiLayer()); 
+			PushOverlay(GetImGuiLayer());
 			BSE_TRACE("ImGui layer pushed into m_LayerStack");
 		}
 		
