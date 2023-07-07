@@ -30,6 +30,63 @@ namespace BSE{
 		BSE_TRACE("OnEvent callback bind successful");
 		
 		m_ImGuiLayerEnabled = true;
+		
+		// ------------------------------------------------
+		// OpenGL drawing a simple triangle
+		
+		// Vertex array
+		glGenVertexArrays(1, &m_VertexArray);
+		glBindVertexArray(m_VertexArray);
+		
+		// Vertex buffer
+		glGenBuffers(1, &m_VertexBuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
+		
+		// some data to draw
+		float vertices[3 * 3] = {
+			-0.5f, -0.5f, 0.0f, // one vercie, three-component vector X,Y,Z clipping -1...1
+			0.5f, -0.5f, 0.0f,
+			0.25f, 0.25f, 0.0f
+		};
+
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), nullptr);
+		
+		// Index buffer
+		glGenBuffers(1, &m_IndexBuffer);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
+		
+		unsigned int indices[3] = {
+			0,
+			1,
+			2
+		};
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+		
+		// Shader
+		// to be done next lesson
+		std::string vertexShaderSource = R"(
+			#version 330 core
+			layout(location = 0) in vec3 a_Position;
+			out vec3 v_Position;
+			void main(){
+				v_Position = a_Position;
+				gl_Position = vec4(a_Position, 1.0);
+			}
+		)";
+		std::string fragmentShaderSource = R"(
+			#version 330 core
+			layout(location = 0) out vec4 color;
+			in vec3 v_Position;
+			void main(){
+				// color = vec4(0.8, 0.3, 0.3, 1.0);
+				color = vec4(0.5*(1 - v_Position), 1.0);
+			}
+		)";
+
+		m_Shader = new ShaderExample(vertexShaderSource, fragmentShaderSource);
 	}
 	
 	Application::~Application(){
@@ -93,11 +150,15 @@ namespace BSE{
 		}
 		
 		while(m_Running){
-			//BSE_TRACE("glClearColor");
+			// --------------------------------------------------
+			// RENDER
 			glClearColor(0.2f, 0.2f, 0.4f, 1);
-			//BSE_TRACE("glClear");
 			glClear(GL_COLOR_BUFFER_BIT);
-			//BSE_TRACE("mWindow->OnUpdate");
+			
+			// OpenGL raw draw section
+			m_Shader->Bind();
+			glBindVertexArray(m_VertexArray);
+			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
 			
 			for (Layer* layer : m_LayerStack){
 				layer->OnUpdate();
@@ -114,6 +175,8 @@ namespace BSE{
 			//auto[x,y] = Input::GetMousePosition();
 			//BSE_TRACE("{0}, {1}", x, y);
 			
+			// --------------------------------------------------
+			// UPDATE
 			m_Window->OnUpdate();
 		}
 	}

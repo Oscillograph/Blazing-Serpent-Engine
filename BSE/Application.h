@@ -16,6 +16,8 @@
 	#include "./platforms/windows/WindowsInput.h"
 #endif
 
+#include <renderer/ShaderExample.h>
+
 namespace BSE {
 	class BSE_API Application {
 	public:
@@ -47,6 +49,9 @@ namespace BSE {
 		bool m_ImGuiLayerEnabled = true;
 		
 		static Application* s_Instance;
+		
+		unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+		ShaderExample* m_Shader;
 	};
 	
 	// to be defined in client app
