@@ -2,10 +2,14 @@
 #define BSE_CORE_H
 
 #ifdef BSE_PLATFORM_WINDOWS
-	#ifdef BSE_BUILD_DLL
-		#define BSE_API __declspec(dllexport)
+	#ifdef BSE_DLL
+		#ifdef BSE_BUILD_DLL
+			#define BSE_API __declspec(dllexport)
+		#else
+			#define BSE_API __declspec(dllimport)
+		#endif
 	#else
-		#define BSE_API __declspec(dllimport)
+		#define BSE_API
 	#endif
 #else
 	#error BSE currently only supports Windows.

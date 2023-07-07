@@ -50,24 +50,14 @@ namespace BSE {
 			nullptr, 
 			nullptr);
 		
-		BSE_CORE_INFO("GLFW window created.");
+		m_GraphicsContext = new OpenGLContext(m_Window);
 		
-		glfwMakeContextCurrent(m_Window);
-		
-		BSE_CORE_INFO("GLFW window context set.");
-		
-		// int version = gladLoadGL((GLADloadproc)glfwGetProcAddress);
-		int version = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		BSE_CORE_ASSERT(version, "Failed to initialize Glad");
-		//BSE_CORE_INFO("Glad initialized: {0}.{1}", GLFW_VERSION_MAJOR(version), GLFW_VERSION_MINOR(version));
-		BSE_CORE_INFO("Glad initialized: {0}", version);
+		m_GraphicsContext->Init();
 		
 		glfwSetWindowUserPointer(m_Window, &m_Data);
-		
 		BSE_CORE_INFO("GLFW user pointer attached to the window.");
 		
 		SetVSync(true);
-		
 		BSE_CORE_INFO("VSync set");
 		
 		// set GLFW callbacks
@@ -151,7 +141,7 @@ namespace BSE {
 	
 	void WindowsWindow::OnUpdate() const {
 		glfwPollEvents();
-		glfwSwapBuffers(m_Window);
+		m_GraphicsContext->SwapBuffers();
 	}
 	
 	void WindowsWindow::SetVSync(bool enabled){

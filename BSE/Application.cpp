@@ -94,7 +94,7 @@ namespace BSE{
 		
 		while(m_Running){
 			//BSE_TRACE("glClearColor");
-			glClearColor(0.3, 0.3, 0.5, 1);
+			glClearColor(0.2f, 0.2f, 0.4f, 1);
 			//BSE_TRACE("glClear");
 			glClear(GL_COLOR_BUFFER_BIT);
 			//BSE_TRACE("mWindow->OnUpdate");

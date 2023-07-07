@@ -82,6 +82,10 @@ namespace BSE {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		
+		float time = (float)glfwGetTime();
+		m_io->DeltaTime = m_Time > 0.0 ? (time - m_Time) : (1.0f / 60.0f );
+		m_Time = time;
 	}
 	
 	void ImGuiLayer::ImGuiContent(){
@@ -111,11 +115,25 @@ namespace BSE {
 	}
 	
 	void ImGuiLayer::OnImGuiRender(){
-		float time = (float)glfwGetTime();
-		m_io->DeltaTime = m_Time > 0.0 ? (time - m_Time) : (1.0f / 60.0f );
-		m_Time = time;
-
 		ImGuiContent();
+	}
+	
+	void ImGuiLayer::FixImGuiContext(){
+		if (m_ImGuiContext != nullptr){
+			if (m_ImGuiContext != ImGui::GetCurrentContext()){
+				// from imgui.h & imgui.cpp comments: 
+				// if using Dear ImGui as a shared library, it is necessary to use
+				// SetCurrentContext() and SetAllocatorFunctions() to restore normal behaviour
+				BSE_TRACE("Current Context is different!");
+				ImGui::SetCurrentContext(m_ImGuiContext);
+				BSE_TRACE("Current Context is set again!");
+				//ImGui::GetAllocatorFunctions(ImGuiMemAllocFunc* m_ImGuiMemAllocFunc, 
+				//	ImGuiMemFreeFunc* m_ImGuiMemFreeFunc, 
+				//	void** m_ImGuiUserData);
+				//ImGui::SetAllocatorFunctions(m_ImGuiMemAllocFunc, m_ImGuiMemFreeFunc, NULL);
+				//BSE_TRACE("SandboxGui: Memory alloc/free functions set again!");
+			}
+		}
 	}
 	
 	/*
