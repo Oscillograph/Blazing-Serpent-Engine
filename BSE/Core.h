@@ -28,8 +28,10 @@
 #define BIT(x) (1 << x)
 
 // basic includes
-#include <BSE/common.h>
-#include <BSE/log.h>
+// #include <BSE/common.h>
+#include "common.h"
+//#include <BSE/log.h>
+#include "log.h"
 
 // basic functions
 namespace BSE {

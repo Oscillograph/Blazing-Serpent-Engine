@@ -3,6 +3,8 @@
 
 #ifdef BSE_PLATFORM_WINDOWS
 
+#include <BSE/Core.h>
+
 extern BSE::Application* BSE::CreateApplication(); 
 
 int main(int argc, char** args) {

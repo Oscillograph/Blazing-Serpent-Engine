@@ -5,9 +5,9 @@
 #include "./Window.h"
 #include "./Input.h"
 #include "./KeyCodes.h"
-#include <systems/events/AppEvent.h>
-#include <systems/events/KeyEvent.h>
-#include <systems/events/MouseEvent.h>
+#include <BSE/systems/events/AppEvent.h>
+#include <BSE/systems/events/KeyEvent.h>
+#include <BSE/systems/events/MouseEvent.h>
 #include "./LayerStack.h"
 #include "./systems/gui/ImGuiLayer.h"
 
@@ -16,7 +16,8 @@
 	#include "./platforms/windows/WindowsInput.h"
 #endif
 
-#include <renderer/ShaderExample.h>
+#include <BSE/renderer/ShaderExample.h>
+#include <BSE/renderer/Buffer.h>
 
 namespace BSE {
 	class BSE_API Application {
@@ -50,7 +51,9 @@ namespace BSE {
 		
 		static Application* s_Instance;
 		
-		unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+		unsigned int m_VertexArray;
+		VertexBuffer* m_VertexBuffer;
+		IndexBuffer* m_IndexBuffer;
 		ShaderExample* m_Shader;
 	};
 	
