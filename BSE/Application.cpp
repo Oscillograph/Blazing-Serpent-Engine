@@ -160,10 +160,12 @@ namespace BSE{
 			glBindVertexArray(m_VertexArray);
 			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
 			
+			// Layers
 			for (Layer* layer : m_LayerStack){
 				layer->OnUpdate();
 			}
 			
+			// Overlays
 			if (m_ImGuiLayerEnabled && (m_ImGuiLayer != nullptr)){
 				m_ImGuiLayer->Begin();
 				for (Layer* layer : m_LayerStack){
@@ -171,9 +173,6 @@ namespace BSE{
 				}
 				m_ImGuiLayer->End();
 			}
-			
-			//auto[x,y] = Input::GetMousePosition();
-			//BSE_TRACE("{0}, {1}", x, y);
 			
 			// --------------------------------------------------
 			// UPDATE
