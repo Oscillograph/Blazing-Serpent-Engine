@@ -1,19 +1,26 @@
-#include "./Application.h"
+#include <Application.h>
 
 //#include "./systems/events/AppEvent.h"
 //#include "./log.h"
 
 namespace BSE{
-
-	// DONE: figure out how to do it with lambda functions
-	// #define BIND_EVENT_FUNCTION(x) std::bind(Application::x, this, std::placeholders::_1)
-	// No need for this macros anymore
-	
+	// TODO: Figure out how to allow this instance through static library
+	// Current answer: no-how.
+	// The static library has its own memory zone where it stores its objects,
+	// so it's a bad idea to rely on its global variables or static pointers.
 	Application* Application::s_Instance = nullptr;
 	
 	Application::Application(){
-		BSE_CORE_ASSERT(s_Instance, "Application already exists.");
+		// This experiment has shown that the adresses with a DLL are the same, 
+		// but also different if with a static .a-library
+		
+		// BSE_CORE_TRACE("Core Singleton address: {0}", (void*)&s_Instance);
 		s_Instance = this;
+		// BSE_TRACE("Singleton address: {0}", (void*)&s_Instance);
+		
+		BSE_CORE_ASSERT((s_Instance == nullptr), "Application already exists.");
+		
+		//BSE_CORE_ASSERT((s_Instance == nullptr), "Application already exists.");
 		
 		BSE_TRACE("Trying to create an app window");
 		m_Window = Window::Create(*(new WindowProperties()));
@@ -37,6 +44,7 @@ namespace BSE{
 		// Vertex array
 		glGenVertexArrays(1, &m_VertexArray);
 		glBindVertexArray(m_VertexArray);
+		BSE_TRACE("Vertex array generated and bound");
 		
 		// some data to draw
 		float vertices[3 * 3] = {
@@ -44,8 +52,9 @@ namespace BSE{
 			0.5f, -0.5f, 0.0f,
 			0.25f, 0.25f, 0.0f
 		};
+		BSE_TRACE("Vertices defined");
 		
-		// TODO: find out why this crashes the app
+		// The app crashed here when i used glCreateBuffers (OpenGL 4.5+) instead of glGenBuffers (can work on my videocard)
 		m_VertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
 		// m_VertexBuffer->Bind();
 		BSE_TRACE("Vertex buffer bind successful");

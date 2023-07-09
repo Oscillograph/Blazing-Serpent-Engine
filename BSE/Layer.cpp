@@ -1,5 +1,5 @@
 #include <Core.h>
-#include "./Layer.h"
+#include <Layer.h>
 
 namespace BSE {
 	Layer::Layer(const std::string& name){

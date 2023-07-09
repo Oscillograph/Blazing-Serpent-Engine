@@ -1,9 +1,9 @@
 //#include <Window.h>
-#include "./WindowsWindow.h"
+#include <platforms/windows/WindowsWindow.h>
 
-#include "./systems/events/AppEvent.h"
-#include "./systems/events/KeyEvent.h"
-#include "./systems/events/MouseEvent.h"
+#include <systems/events/AppEvent.h>
+#include <systems/events/KeyEvent.h>
+#include <systems/events/MouseEvent.h>
 
 namespace BSE {
 	// a global variable in BSE namespace
@@ -38,6 +38,10 @@ namespace BSE {
 		
 		if (!s_GLFWInitialized){
 			int success = glfwInit();
+			if (!success){
+				BSE_CORE_ERROR("Could not initialize GLFW!");
+				exit(0);
+			}
 			BSE_CORE_ASSERT(success, "Could not initialize GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallback);
 			s_GLFWInitialized = true;

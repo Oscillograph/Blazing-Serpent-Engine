@@ -1,5 +1,5 @@
 #include <Core.h>
-#include "./LayerStack.h"
+#include <LayerStack.h>
 
 namespace BSE {
 	// layers are meant to live as long as the app runs

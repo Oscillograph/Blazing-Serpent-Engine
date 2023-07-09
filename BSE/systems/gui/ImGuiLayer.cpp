@@ -1,8 +1,6 @@
 #include <Core.h>
 #include <Layer.h>
-#include "./ImGuiLayer.h"
-
-#include <vendor/imgui/imgui.h>
+#include <systems/gui/ImGuiLayer.h>
 #include <systems/gui/ImGuiBuild.h>
 
 namespace BSE {
@@ -15,6 +13,9 @@ namespace BSE {
 	}
 	
 	ImGuiLayer::~ImGuiLayer(){
+		if (font_config != nullptr){
+			delete font_config;
+		}
 		BSE_TRACE("Destroy ImGuiLayer");
 	}
 	
@@ -26,44 +27,60 @@ namespace BSE {
 		// ImGui::SetAllocatorFunctions(m_ImGuiMemAllocFunc, m_ImGuiMemFreeFunc, NULL);
 		
 		m_io = &(ImGui::GetIO());
+		BSE_TRACE("Dear ImGui Context stored");
 		
 		m_io->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // enable keyboard conrols
 		m_io->ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // enable gamepad controls
 		m_io->ConfigFlags |= ImGuiConfigFlags_DockingEnable; // enable docking
 		m_io->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // enable viewports; TODO: learn about them
+		BSE_TRACE("ImGui configuration set");
 		
 		// setup ImGui style
 		ImGui::StyleColorsDark();
 		// ImGui::StyleColorsLight();
 		// ImGui::StyleColorsClassic();
 		
-		ImGuiStyle& style = ImGui::GetStyle();
-		style.WindowRounding = 0.0f;
-		style.Colors[ImGuiCol_NavWindowingDimBg].w = 1.0f;
+		ImGuiStyle* style = &(ImGui::GetStyle());
+		BSE_TRACE("ImGui style get");
+		style->WindowRounding = 0.0f;
+		style->Colors[ImGuiCol_NavWindowingDimBg].w = 1.0f;
 		
 		Application* m_App = Application::Get();
-		GLFWwindow* window = static_cast<GLFWwindow*>(m_App->GetWindow()->GetNativeWindow());
+		BSE_TRACE("ImGui style set up: get App's s_Instance and save in m_App");
+		Window* m_Window = m_App->GetWindow();
+		BSE_TRACE("ImGui style set up: get App's window and save in m_Window");
+		GLFWwindow* window = static_cast<GLFWwindow*>(m_Window->GetNativeWindow());
+		BSE_TRACE("ImGui style set up: static_cast from Window* to GLFWwindow*");
+		BSE_TRACE("ImGui style set");
 		
 		// key bindings
 		m_io->BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
 		m_io->BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
+		BSE_TRACE("ImGui controls set");
 		
 		// cyrillic support
-		ImFontConfig font_config;
-		font_config.OversampleH = 1; //or 2 is the same
-		font_config.OversampleV = 1;
-		font_config.PixelSnapH = 1;
+		if (font_config == nullptr){
+			BSE_TRACE("ImGui cyrillic support starts from font config declaration...");
+			font_config = new ImFontConfig();
+			BSE_TRACE("...and initialization");
+		}
+		font_config->OversampleH = 1; //or 2 is the same
+		font_config->OversampleV = 1;
+		font_config->PixelSnapH = 1;
+		BSE_TRACE("ImGui cyrillic support continues to start from font config set");
 		
 		static const ImWchar ranges[] = {
 			0x0020, 0x00FF, // Basic Latin + Latin Supplement
 			0x0400, 0x044F, // Cyrillic
 			0,
 		};
+		BSE_TRACE("ImGui cyrillic support continues with character ranges set");
 		
 		// TODO: fix ё
-		m_io->Fonts->AddFontFromFileTTF("./assets/fonts/tahoma.ttf", 14.0f, &font_config, ranges);
+		m_io->Fonts->AddFontFromFileTTF("./assets/fonts/tahoma.ttf", 14.0f, font_config, ranges);
 		// m_io->Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Tahoma.ttf", 14.0f, &font_config, ranges);
 		// m_io->Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Arial.ttf", 14.0f, &font_config, ranges);
+		BSE_TRACE("...set!");
 		
 		// ImGui OpenGL init
 		ImGui_ImplOpenGL3_Init("#version 410");
@@ -72,6 +89,9 @@ namespace BSE {
 	}
 	
 	void ImGuiLayer::OnDetach(){
+		if (font_config != nullptr){
+			delete font_config;
+		}
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();

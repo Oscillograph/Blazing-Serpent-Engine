@@ -1,23 +1,23 @@
 #ifndef BSE_APPLICATION_H
 #define BSE_APPLICATION_H
 
-#include "./Core.h"
-#include "./Window.h"
-#include "./Input.h"
-#include "./KeyCodes.h"
-#include <BSE/systems/events/AppEvent.h>
-#include <BSE/systems/events/KeyEvent.h>
-#include <BSE/systems/events/MouseEvent.h>
-#include "./LayerStack.h"
-#include "./systems/gui/ImGuiLayer.h"
+#include <Core.h>
+#include <Window.h>
+#include <Input.h>
+#include <KeyCodes.h>
+#include <systems/events/AppEvent.h>
+#include <systems/events/KeyEvent.h>
+#include <systems/events/MouseEvent.h>
+#include <LayerStack.h>
+#include <systems/gui/ImGuiLayer.h>
 
 #ifdef BSE_PLATFORM_WINDOWS
-	#include "./platforms/windows/WindowsWindow.h"
-	#include "./platforms/windows/WindowsInput.h"
+	#include <platforms/windows/WindowsWindow.h>
+	#include <platforms/windows/WindowsInput.h>
 #endif
 
-#include <BSE/renderer/ShaderExample.h>
-#include <BSE/renderer/Buffer.h>
+#include <renderer/ShaderExample.h>
+#include <renderer/Buffer.h>
 
 namespace BSE {
 	class BSE_API Application {
@@ -36,6 +36,7 @@ namespace BSE {
 		
 		inline Window* GetWindow() { return m_Window; }
 		inline static Application* Get() { return s_Instance; }
+		inline static void Set(Application* App) { delete s_Instance; s_Instance = App; }
 		inline void SetImGuiLayer(Layer* layer){ m_ImGuiLayer = layer; }
 		inline Layer* GetImGuiLayer(){ return m_ImGuiLayer; }
 		
