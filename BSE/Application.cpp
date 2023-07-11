@@ -13,8 +13,11 @@ namespace BSE{
 	Application::Application(){
 		s_Instance = this;
 		
+		// TODO: figure out how to fix crash if s_Instance != nullptr
+		// (happens when -D BSE_ENABLE_ASSERTS)
 		BSE_CORE_ASSERT((s_Instance == nullptr), "Application already exists.");
 		
+		// Create an App window and set callbacks
 		BSE_TRACE("Trying to create an app window");
 		m_Window = Window::Create(*(new WindowProperties()));
 		BSE_TRACE("Window created and stored in m_Window");
@@ -25,10 +28,16 @@ namespace BSE{
 		
 		BSE_TRACE("OnEvent callback bind successful");
 		
+		// ImGui Overlay Enable/Disable
 		m_ImGuiLayerEnabled = true;
+		
+		// Set Renderer API
+		// Set in RenderAPI.cpp to OpenGL by default
+		// Renderer::SetAPI(RendererAPI::API::OpenGL);
 		
 		// ------------------------------------------------
 		// OpenGL drawing a simple triangle
+		// TODO: move this all to Sandbox as data shouldn't be in engine modules
 		
 		// Vertex array
 		m_VertexArray = VertexArray::Create();
@@ -45,7 +54,7 @@ namespace BSE{
 		
 		BSE_TRACE("Vertices defined");
 		
-		m_VertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
+		VertexBuffer* m_VertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
 		BufferLayout layout = {
 			{ShaderDataType::Float3, "a_Position"},
 			{ShaderDataType::Float4, "a_Color"}
@@ -62,8 +71,7 @@ namespace BSE{
 			2
 		};
 		
-		m_IndexBuffer = IndexBuffer::Create(indices, (sizeof(indices) / sizeof(uint32_t)));
-		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
+		m_VertexArray->SetIndexBuffer(IndexBuffer::Create(indices, (sizeof(indices) / sizeof(uint32_t))));
 		BSE_TRACE("Index buffer bind successful");
 		
 		// ------------
@@ -78,21 +86,21 @@ namespace BSE{
 			 0.5f,  0.5f,  0.0f,
 			-0.5f,  0.5f,  0.0f,
 		};
-		BSE_TRACE("Vertices defined");
-		m_SquareVB = VertexBuffer::Create(squareVertices, sizeof(squareVertices));	
+		BSE_TRACE("Square Vertices defined");
+		
+		VertexBuffer* m_SquareVB = VertexBuffer::Create(squareVertices, sizeof(squareVertices));	
 		
 		m_SquareVB->SetLayout({
 			{ShaderDataType::Float3, "a_Position"},
 		});
 		m_SquareVA->AddVertexBuffer(m_SquareVB);
-		BSE_TRACE("Vertex buffer layout construction successful");
+		BSE_TRACE("Square Vertex buffer layout construction successful");
 		
 		// Index buffer
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
 		
-		m_SquareIB = IndexBuffer::Create(squareIndices, (sizeof(squareIndices) / sizeof(uint32_t)));
-		m_SquareVA->SetIndexBuffer(m_SquareIB);
-		BSE_TRACE("Index buffer bind successful");
+		m_SquareVA->SetIndexBuffer(IndexBuffer::Create(squareIndices, (sizeof(squareIndices) / sizeof(uint32_t))));
+		BSE_TRACE("Square Index buffer bind successful");
 		// ============
 		
 		// Shader
@@ -207,23 +215,28 @@ namespace BSE{
 			BSE_TRACE("ImGui layer pushed into m_LayerStack");
 		}
 		
-		// TODO: find out why's the crash after Buffer Layers were implemented
 		while(m_Running){
 			// --------------------------------------------------
 			// RENDER
-			glClearColor(0.2f, 0.2f, 0.4f, 1);
-			glClear(GL_COLOR_BUFFER_BIT);
+			//RenderCommand::SetClearColor(glm::vec4(0.2f, 0.2f, 0.4f, 1));
+			RenderCommand::SetClearColor({0.2f, 0.2f, 0.4f, 1});
+			RenderCommand::Clear();
+			// Renderer::BeginScene(camera, lights, environment);
+			Renderer::BeginScene();
 			
-			// OpenGL raw draw section
 			m_BlueShader->Bind();
-			m_SquareVA->Bind();
-			glDrawElements(GL_TRIANGLES, m_SquareVA->GetIndexBuffer()->GetSize(), GL_UNSIGNED_INT, nullptr);
+			Renderer::Submit(m_SquareVA);
 			
 			m_Shader->Bind();
-			m_VertexArray->Bind();
-			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetSize(), GL_UNSIGNED_INT, nullptr);
+			Renderer::Submit(m_VertexArray);
 			
-			//BSE_TRACE("Bind and draw vertices with corresponding index buffers");
+			Renderer::EndScene();
+			// Renderer::Flush();
+			
+			// OpenGL raw draw section
+			// TODO:: shader inside material, material inside mesh, mesh is submitted to Renderer
+			RenderCommand::DrawIndexed(m_SquareVA);
+			RenderCommand::DrawIndexed(m_VertexArray);
 			
 			// Layers
 			for (Layer* layer : m_LayerStack){
