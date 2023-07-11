@@ -18,6 +18,7 @@
 
 #include <renderer/ShaderExample.h>
 #include <renderer/Buffer.h>
+#include <renderer/VertexArray.h>
 
 namespace BSE {
 	class BSE_API Application {
@@ -52,10 +53,17 @@ namespace BSE {
 		
 		static Application* s_Instance;
 		
-		unsigned int m_VertexArray;
+		// triangle things
+		VertexArray* m_VertexArray;
 		VertexBuffer* m_VertexBuffer;
 		IndexBuffer* m_IndexBuffer;
 		ShaderExample* m_Shader;
+		
+		// square things
+		VertexArray* m_SquareVA;
+		VertexBuffer* m_SquareVB;
+		IndexBuffer* m_SquareIB;
+		ShaderExample* m_BlueShader;
 	};
 	
 	// to be defined in client app

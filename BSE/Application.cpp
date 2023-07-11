@@ -10,24 +10,6 @@ namespace BSE{
 	// so it's a bad idea to rely on its global variables or static pointers.
 	Application* Application::s_Instance = nullptr;
 	
-	static const GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type) {
-		switch (type) {
-			case ShaderDataType::Float: 	return GL_FLOAT; break;
-			case ShaderDataType::Float2: 	return GL_FLOAT; break;
-			case ShaderDataType::Float3: 	return GL_FLOAT; break;
-			case ShaderDataType::Float4: 	return GL_FLOAT; break;
-			case ShaderDataType::Int: 		return GL_INT; break;
-			case ShaderDataType::Int2: 		return GL_INT; break;
-			case ShaderDataType::Int3: 		return GL_INT; break;
-			case ShaderDataType::Int4: 		return GL_INT; break;
-			case ShaderDataType::Mat3: 		return GL_FLOAT_MAT3; break;
-			case ShaderDataType::Mat4: 		return GL_FLOAT_MAT4; break;
-			case ShaderDataType::Bool: 		return GL_BOOL; break;
-		}
-		BSE_CORE_ASSERT(false, "Unknown ShaderDataType");
-		return GL_NONE;
-	}
-	
 	Application::Application(){
 		s_Instance = this;
 		
@@ -49,9 +31,7 @@ namespace BSE{
 		// OpenGL drawing a simple triangle
 		
 		// Vertex array
-		glGenVertexArrays(1, &m_VertexArray);
-		glBindVertexArray(m_VertexArray);
-		BSE_TRACE("Vertex array generated and bound");
+		m_VertexArray = VertexArray::Create();
 		
 		// some data to draw
 		
@@ -63,55 +43,16 @@ namespace BSE{
 			 0.25f, 0.25f, 0.0f,  0.8f, 0.8f, 0.2f, 1.0f
 		};
 		
-		/*
-		float vertices[3 * 3] = {
-			// one vertice, three-component vector X,Y,Z clipping -1...1
-			// and, also, 4 numbers for color ov vertices
-			-0.5f, -0.5f,  0.0f,  
-			0.5f, -0.5f,  0.0f,
-			0.25f, 0.25f, 0.0f,
-		};
-		*/
 		BSE_TRACE("Vertices defined");
 		
 		m_VertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
-		
-		{ // just a scope to make layout destroyed after it's set in m_VertexBuffer
-			BufferLayout layout = {
-				{ShaderDataType::Float3, "a_Position"},
-				{ShaderDataType::Float4, "a_Color"}
-			};
+		BufferLayout layout = {
+			{ShaderDataType::Float3, "a_Position"},
+			{ShaderDataType::Float4, "a_Color"}
+		};	
 			
-			m_VertexBuffer->SetLayout(layout);
-		}
-		
-		
-		uint32_t index = 0;
-		auto layout = m_VertexBuffer->GetLayout();
-		for (auto element : layout) {
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(index, 
-				element.GetComponentCount(), 
-				ShaderDataTypeToOpenGLBaseType(element.Type), 
-				element.Normalized ? GL_TRUE : GL_FALSE, 
-				layout.GetStride(), 
-				(const void*)element.Offset);
-			
-			BSE_TRACE("{1} - Element component count: {0}", element.GetComponentCount(), index);
-			BSE_TRACE("{1} - Element normalized: {0}", element.Normalized ? GL_TRUE : GL_FALSE, index);
-			BSE_TRACE("{1} - Element offset: {0}", element.Offset, index);
-			BSE_TRACE("{1} - Layout m_Stride: {0}", layout.GetStride(), index);
-			index++;
-		}
-		/*
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 
-			3, 
-			GL_FLOAT, 
-			GL_FALSE, 
-			3*sizeof(float), 
-			nullptr);
-		*/
+		m_VertexBuffer->SetLayout(layout);
+		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 		BSE_TRACE("Vertex buffer layout construction successful");
 		
 		// Index buffer
@@ -122,11 +63,40 @@ namespace BSE{
 		};
 		
 		m_IndexBuffer = IndexBuffer::Create(indices, (sizeof(indices) / sizeof(uint32_t)));
-		// m_IndexBuffer->Bind();
+		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
 		BSE_TRACE("Index buffer bind successful");
 		
+		// ------------
+		// Square Vertex Array for test purposes
+		// ------------
+		m_SquareVA = VertexArray::Create();
+		float squareVertices[3 * 4] = {
+			// one vertice, three-component vector X,Y,Z clipping -1...1
+			// and, also, 4 numbers for color ov vertices
+			-0.5f, -0.5f,  0.0f,  
+			 0.5f, -0.5f,  0.0f,
+			 0.5f,  0.5f,  0.0f,
+			-0.5f,  0.5f,  0.0f,
+		};
+		BSE_TRACE("Vertices defined");
+		m_SquareVB = VertexBuffer::Create(squareVertices, sizeof(squareVertices));	
+		
+		m_SquareVB->SetLayout({
+			{ShaderDataType::Float3, "a_Position"},
+		});
+		m_SquareVA->AddVertexBuffer(m_SquareVB);
+		BSE_TRACE("Vertex buffer layout construction successful");
+		
+		// Index buffer
+		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
+		
+		m_SquareIB = IndexBuffer::Create(squareIndices, (sizeof(squareIndices) / sizeof(uint32_t)));
+		m_SquareVA->SetIndexBuffer(m_SquareIB);
+		BSE_TRACE("Index buffer bind successful");
+		// ============
+		
 		// Shader
-		// to be done next lesson
+		// TODO: make shaders in a module and/or load from a text file as they are raw strings
 		std::string vertexShaderSource = R"(
 			#version 330 core
 			layout(location = 0) in vec3 a_Position;
@@ -152,7 +122,29 @@ namespace BSE{
 			}
 		)";
 
+		// Square test purposes only
+		std::string BlueShaderVertexShaderSource = R"(
+			#version 330 core
+			layout(location = 0) in vec3 a_Position;
+			out vec3 v_Position;
+			
+			void main(){
+				v_Position = a_Position;
+				gl_Position = vec4(a_Position, 1.0);
+			}
+		)";
+		std::string BlueShaderFragmentShaderSource = R"(
+			#version 330 core
+			layout(location = 0) out vec4 color;
+			in vec3 v_Position;
+			void main(){
+				// color = vec4(0.8, 0.3, 0.3, 1.0);
+				color = vec4(0.2f, 0.3f, 0.7f, 1.0);
+			}
+		)";
+
 		m_Shader = new ShaderExample(vertexShaderSource, fragmentShaderSource);
+		m_BlueShader = new ShaderExample(BlueShaderVertexShaderSource, BlueShaderFragmentShaderSource);
 	}
 	
 	Application::~Application(){
@@ -222,14 +214,13 @@ namespace BSE{
 			glClearColor(0.2f, 0.2f, 0.4f, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 			
-			//BSE_TRACE("Refresh screen");
-			
 			// OpenGL raw draw section
+			m_BlueShader->Bind();
+			m_SquareVA->Bind();
+			glDrawElements(GL_TRIANGLES, m_SquareVA->GetIndexBuffer()->GetSize(), GL_UNSIGNED_INT, nullptr);
+			
 			m_Shader->Bind();
-			
-			//BSE_TRACE("Bind Shaders");
-			
-			glBindVertexArray(m_VertexArray);
+			m_VertexArray->Bind();
 			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetSize(), GL_UNSIGNED_INT, nullptr);
 			
 			//BSE_TRACE("Bind and draw vertices with corresponding index buffers");
@@ -266,6 +257,19 @@ namespace BSE{
 		// toggle ImGuiLayer on/off
 		if (e.GetKeyCode() == BSE_KEY_F2){
 			m_ImGuiLayerEnabled = !m_ImGuiLayerEnabled;
+			/*
+			// !!! Problem !!!
+			// after OnDetach the ImGui Context is destroyed which means
+			// that it should be restored in main program after OnAttach AGAIN!
+			if (m_ImGuiLayerEnabled && (m_ImGuiLayer != nullptr)) { // turn imgui on
+				m_LayerStack.PushOverlay(m_ImGuiLayer);
+				m_ImGuiLayer->OnAttach();
+			}
+			if (!m_ImGuiLayerEnabled && (m_ImGuiLayer != nullptr)) { // turn imgui off
+				m_LayerStack.PopOverlay(m_ImGuiLayer);
+				m_ImGuiLayer->OnDetach();
+			}
+			*/
 		}
 		return true;
 	}
