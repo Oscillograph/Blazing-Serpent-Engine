@@ -21,6 +21,8 @@
 #include <renderer/VertexArray.h>
 #include <renderer/Renderer.h>
 
+#include <utils/FileIO.h>
+
 namespace BSE {
 	class BSE_API Application {
 	public:
