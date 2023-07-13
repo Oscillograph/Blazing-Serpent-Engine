@@ -34,6 +34,7 @@ namespace BSE{
 		// Set Renderer API
 		// Set in RenderAPI.cpp to OpenGL by default
 		// Renderer::SetAPI(RendererAPI::API::OpenGL);
+		RenderCommand::SetAPI(RendererAPI::API::OpenGL);
 		
 		// ------------------------------------------------
 		// OpenGL drawing a simple triangle
