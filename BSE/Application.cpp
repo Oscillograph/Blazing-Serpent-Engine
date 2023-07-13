@@ -26,15 +26,14 @@ namespace BSE{
 			OnEvent(event);
 		});
 		
-		BSE_TRACE("OnEvent callback bind successful");
+		BSE_TRACE("OnEvent callback bind successfully");
 		
 		// ImGui Overlay Enable/Disable
 		m_ImGuiLayerEnabled = true;
 		
 		// Set Renderer API
-		// Set in RenderAPI.cpp to OpenGL by default
-		// Renderer::SetAPI(RendererAPI::API::OpenGL);
 		RenderCommand::SetAPI(RendererAPI::API::OpenGL);
+		BSE_CORE_TRACE("Render API set successfully");
 		
 		// ------------------------------------------------
 		// OpenGL drawing a simple triangle
@@ -219,25 +218,29 @@ namespace BSE{
 		while(m_Running){
 			// --------------------------------------------------
 			// RENDER
-			//RenderCommand::SetClearColor(glm::vec4(0.2f, 0.2f, 0.4f, 1));
-			RenderCommand::SetClearColor({0.2f, 0.2f, 0.4f, 1});
-			RenderCommand::Clear();
-			// Renderer::BeginScene(camera, lights, environment);
-			Renderer::BeginScene();
-			
-			m_BlueShader->Bind();
-			Renderer::Submit(m_SquareVA);
-			
-			m_Shader->Bind();
-			Renderer::Submit(m_VertexArray);
-			
-			Renderer::EndScene();
-			// Renderer::Flush();
-			
-			// OpenGL raw draw section
-			// TODO:: shader inside material, material inside mesh, mesh is submitted to Renderer
-			RenderCommand::DrawIndexed(m_SquareVA);
-			RenderCommand::DrawIndexed(m_VertexArray);
+			if (RenderCommand::GetAPI() != nullptr){
+				//RenderCommand::SetClearColor(glm::vec4(0.2f, 0.2f, 0.4f, 1));
+				RenderCommand::SetClearColor({0.2f, 0.2f, 0.4f, 1});
+				RenderCommand::Clear();
+				// Renderer::BeginScene(camera, lights, environment);
+				Renderer::BeginScene();
+				
+				m_BlueShader->Bind();
+				Renderer::Submit(m_SquareVA);
+				
+				m_Shader->Bind();
+				Renderer::Submit(m_VertexArray);
+				
+				Renderer::EndScene();
+				// Renderer::Flush();
+				
+				// OpenGL raw draw section
+				// TODO:: shader inside material, material inside mesh, mesh is submitted to Renderer
+				RenderCommand::DrawIndexed(m_SquareVA);
+				RenderCommand::DrawIndexed(m_VertexArray);
+			} else {
+				BSE_ERROR("No Render API set");
+			}
 			
 			// Layers
 			for (Layer* layer : m_LayerStack){
