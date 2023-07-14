@@ -20,8 +20,8 @@
 #include <renderer/Buffer.h>
 #include <renderer/VertexArray.h>
 #include <renderer/Renderer.h>
-
-#include <utils/FileIO.h>
+#include <renderer/OrthographicCamera.h>
+#include <glm/glm.hpp>
 
 namespace BSE {
 	class BSE_API Application {
@@ -63,6 +63,8 @@ namespace BSE {
 		// square things
 		VertexArray* m_SquareVA;
 		ShaderExample* m_BlueShader;
+		
+		OrthographicCamera* m_Camera;
 	};
 	
 	// to be defined in client app

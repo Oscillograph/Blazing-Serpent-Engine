@@ -4,6 +4,7 @@
 #include <ProtoCore.h>
 #include <log.h>
 #include <Misc.h>
+#include <utils/FileIO.h>
 
 // basic functions
 namespace BSE {

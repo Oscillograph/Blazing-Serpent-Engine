@@ -7,7 +7,7 @@ namespace BSE{
 	// so it's a bad idea to rely on its global variables or static pointers.
 	Application* Application::s_Instance = nullptr;
 	
-	Application::Application(){
+	Application::Application() {
 		s_Instance = this;
 		
 		// TODO: figure out how to fix crash if s_Instance != nullptr
@@ -34,6 +34,13 @@ namespace BSE{
 		
 		// ------------------------------------------------
 		// OpenGL drawing a simple triangle
+		unsigned int w = m_Window->GetWidth();
+		unsigned int h = m_Window->GetHeight();
+		float uw = 2*(float)w/(float)h;
+		float uh = 2*(float)h/(float)h;
+		// m_Camera = new OrthographicCamera(-2.0f, 2.0f, 2.0f, -2.0f);
+		m_Camera = new OrthographicCamera(-uw, uw, uh, -uh);
+		
 		// TODO: move this all to Sandbox, for data shouldn't be in engine modules
 		
 		// Triangle Vertex array
@@ -84,14 +91,13 @@ namespace BSE{
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
 		m_SquareVA->SetIndexBuffer(IndexBuffer::Create(squareIndices, (sizeof(squareIndices) / sizeof(uint32_t))));
 		BSE_TRACE("Square Index buffer bind successful");
-		// ============
 		
-		// Shader
-		// TODO: make shaders in a module and/or load from a text file as they are raw strings
+		// ============
+		// Shader 1
 		std::string vertexShaderSource = FileIO::GetRawText("./shaders/Vertex1.txt");
 		std::string fragmentShaderSource = FileIO::GetRawText("./shaders/Fragment1.txt");
 
-		// Square test purposes only
+		// Shader 2
 		std::string BlueShaderVertexShaderSource = FileIO::GetRawText("./shaders/Vertex2.txt");
 		std::string BlueShaderFragmentShaderSource = FileIO::GetRawText("./shaders/Fragment2.txt");
 
@@ -105,6 +111,27 @@ namespace BSE{
 			delete m_ImGuiLayer;
 			m_ImGuiLayer = nullptr;
 		}
+		if (m_Camera != nullptr){
+			delete m_Camera;
+			m_Camera = nullptr;
+		}
+		if (m_VertexArray != nullptr){
+			delete m_VertexArray;
+			m_VertexArray = nullptr;
+		}
+		if (m_SquareVA != nullptr){
+			delete m_SquareVA;
+			m_SquareVA = nullptr;
+		}
+		if (m_Shader != nullptr){
+			delete m_Shader;
+			m_Shader = nullptr;
+		}
+		if (m_BlueShader != nullptr){
+			delete m_BlueShader;
+			m_BlueShader = nullptr;
+		}
+		BSE_CORE_INFO("Main App destroyed");
 	}
 	
 	void Application::PushLayer(Layer* layer){
@@ -166,14 +193,15 @@ namespace BSE{
 				//RenderCommand::SetClearColor(glm::vec4(0.2f, 0.2f, 0.4f, 1));
 				RenderCommand::SetClearColor({0.2f, 0.2f, 0.4f, 1});
 				RenderCommand::Clear();
+				
+				// m_Camera->SetPosition({0.5f, 0.5f, 0.3f});
+				// m_Camera->SetRotation(30);
 				// Renderer::BeginScene(camera, lights, environment);
-				Renderer::BeginScene();
+				Renderer::BeginScene(m_Camera);
 				
-				m_BlueShader->Bind();
-				Renderer::Submit(m_SquareVA);
+				Renderer::Submit(m_BlueShader, m_SquareVA);
 				
-				m_Shader->Bind();
-				Renderer::Submit(m_VertexArray);
+				Renderer::Submit(m_Shader, m_VertexArray);
 				
 				Renderer::EndScene();
 				// Renderer::Flush();
@@ -231,6 +259,54 @@ namespace BSE{
 				m_ImGuiLayer->OnDetach();
 			}
 			*/
+		}
+		
+		if (e.GetKeyCode() == BSE_KEY_W){
+			glm::vec3 pos = m_Camera->GetPosition();
+			pos.y += 0.1f;
+			m_Camera->SetPosition(pos);
+		}
+		
+		if (e.GetKeyCode() == BSE_KEY_A){
+			glm::vec3 pos = m_Camera->GetPosition();
+			pos.x -= 0.1f;
+			m_Camera->SetPosition(pos);
+		}
+		
+		if (e.GetKeyCode() == BSE_KEY_S){
+			glm::vec3 pos = m_Camera->GetPosition();
+			pos.y -= 0.1f;
+			m_Camera->SetPosition(pos);
+		}
+		
+		if (e.GetKeyCode() == BSE_KEY_D){
+			glm::vec3 pos = m_Camera->GetPosition();
+			pos.x += 0.1f;
+			m_Camera->SetPosition(pos);
+		}
+		
+		if (e.GetKeyCode() == BSE_KEY_UP){
+			glm::vec3 pos = m_Camera->GetPosition();
+			pos.z += 0.1f;
+			m_Camera->SetPosition(pos);
+		}
+		
+		if (e.GetKeyCode() == BSE_KEY_DOWN){
+			glm::vec3 pos = m_Camera->GetPosition();
+			pos.z -= 0.1f;
+			m_Camera->SetPosition(pos);
+		}
+		
+		if (e.GetKeyCode() == BSE_KEY_LEFT){
+			float rot = m_Camera->GetRotation();
+			rot -= 5;
+			m_Camera->SetRotation(rot);
+		}
+		
+		if (e.GetKeyCode() == BSE_KEY_RIGHT){
+			float rot = m_Camera->GetRotation();
+			rot -= 5;
+			m_Camera->SetRotation(rot);
 		}
 		return true;
 	}
