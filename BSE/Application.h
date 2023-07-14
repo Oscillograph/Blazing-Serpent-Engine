@@ -55,16 +55,6 @@ namespace BSE {
 		bool m_ImGuiLayerEnabled = true;
 		
 		static Application* s_Instance;
-		
-		// triangle things
-		VertexArray* m_VertexArray;
-		ShaderExample* m_Shader;
-		
-		// square things
-		VertexArray* m_SquareVA;
-		ShaderExample* m_BlueShader;
-		
-		OrthographicCamera* m_Camera;
 	};
 	
 	// to be defined in client app

@@ -4,7 +4,7 @@
 #include <Core.h>
 
 namespace BSE {
-	class FileIO {
+	class BSE_API FileIO {
 	public:
 		static std::string GetRawText(std::string filename);
 		//static void ConstructFileSystem();
