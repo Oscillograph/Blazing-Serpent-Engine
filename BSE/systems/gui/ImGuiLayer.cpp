@@ -134,7 +134,7 @@ namespace BSE {
 		}
 	}
 	
-	void ImGuiLayer::OnImGuiRender(){
+	void ImGuiLayer::OnImGuiRender(float time){
 		ImGuiContent();
 	}
 	

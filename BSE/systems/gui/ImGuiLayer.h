@@ -31,7 +31,7 @@ namespace BSE {
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 		// void OnUpdate() override;
-		virtual void OnImGuiRender() override;
+		virtual void OnImGuiRender(float time) override;
 		
 		virtual void Begin() override;
 		void ImGuiContent();

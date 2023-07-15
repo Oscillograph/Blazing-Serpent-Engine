@@ -19,7 +19,7 @@ namespace BSE {
 		
 	}
 	
-	void Layer::OnUpdate(){
+	void Layer::OnUpdate(float time){
 		
 	}
 	
@@ -43,7 +43,7 @@ namespace BSE {
 		
 	}
 	
-	void Layer::OnImGuiRender(){
+	void Layer::OnImGuiRender(float time){
 		
 	}
 	

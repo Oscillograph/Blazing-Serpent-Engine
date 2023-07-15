@@ -35,6 +35,10 @@ namespace BSE {
 		
 		virtual void* GetNativeWindow() const = 0;
 		
+		virtual float GetTime() const = 0;
+		virtual std::string GetTitle() const = 0;
+		virtual void SetTitle(std::string newTitle) = 0;
+		
 		static Window* Create(WindowProperties& properties);
 	};
 }

@@ -12,14 +12,14 @@ namespace BSE {
 		
 		virtual void OnAttach();
 		virtual void OnDetach();
-		virtual void OnUpdate();
+		virtual void OnUpdate(float time);
 		virtual void OnEvent(Event& event);
 		bool IsEnabled();
 		void Enable();
 		void Disable();
 		
 		virtual void Begin();
-		virtual void OnImGuiRender(); // for imgui rendering only
+		virtual void OnImGuiRender(float time); // for imgui rendering only
 		virtual void End();
 		
 		inline const std::string GetName() const { return m_Name; }

@@ -53,7 +53,9 @@ namespace BSE {
 		LayerStack m_LayerStack;
 		Layer* m_ImGuiLayer = nullptr;
 		bool m_ImGuiLayerEnabled = true;
+		float m_LastFrameTime = 0.0f;
 		
+	private:
 		static Application* s_Instance;
 	};
 	

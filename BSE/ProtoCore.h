@@ -32,6 +32,11 @@
 // useful macros
 #define BIT(x) (1 << x)
 
+#define BSE_FPS120	0.0083f
+#define BSE_FPS90	0.0111f
+#define BSE_FPS60	0.0167f
+#define BSE_FPS30	0.0333f
+
 // defines before anything Vendor-ish is included
 // #define GLM_FORCE_CTOR_INIT // to force GLM initialize vectors and matrices 
 

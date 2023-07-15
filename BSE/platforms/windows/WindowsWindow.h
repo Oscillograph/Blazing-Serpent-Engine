@@ -28,6 +28,13 @@ namespace BSE {
 		
 		inline void* GetNativeWindow() const override { return m_Window; }
 		
+		inline float GetTime() const override { return (float)glfwGetTime(); }
+		
+		inline std::string GetTitle() const override { return m_Data.Title; };
+		inline void SetTitle(std::string newTitle) override { 
+			m_Data.Title = newTitle;
+			glfwSetWindowTitle((GLFWwindow*)GetNativeWindow(), newTitle.c_str());
+		};
 	private:
 		void Init(const WindowProperties& properties);
 		void Shutdown();

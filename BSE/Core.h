@@ -5,6 +5,7 @@
 #include <log.h>
 #include <Misc.h>
 #include <utils/FileIO.h>
+#include <utils/Time.h>
 
 // basic functions
 namespace BSE {

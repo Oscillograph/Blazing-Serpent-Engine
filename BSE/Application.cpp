@@ -88,6 +88,9 @@ namespace BSE{
 	void Application::Run(){
 		BSE_TRACE("Enter Application Run routine");
 		
+		float deltaTime = m_Window->GetTime() - m_LastFrameTime;
+		m_LastFrameTime = time;
+		
 		if (GetImGuiLayer() == nullptr){
 			SetImGuiLayer(new ImGuiLayer()); 
 			PushOverlay(GetImGuiLayer());
@@ -97,14 +100,14 @@ namespace BSE{
 		while(m_Running){
 			// Layers
 			for (Layer* layer : m_LayerStack){
-				layer->OnUpdate();
+				layer->OnUpdate(deltaTime);
 			}
 			
 			// Overlays
 			if (m_ImGuiLayerEnabled && (m_ImGuiLayer != nullptr)){
 				m_ImGuiLayer->Begin();
 				for (Layer* layer : m_LayerStack){
-					layer->OnImGuiRender();
+					layer->OnImGuiRender(deltaTime);
 				}
 				m_ImGuiLayer->End();
 			}
