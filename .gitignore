@@ -1,0 +1,17 @@
+.git
+Blazing_Serpent_Engine_private.h
+libBlazing_Serpent_Engine.a
+libBlazing_Serpent_Engine.def
+libBlazing_Serpent_Engine.dll
+*.o
+*.exe
+*.dev
+*.layout
+*.bookmarks
+*.debug
+*.rc
+*.res
+*.win
+*.bak
+*.gch
+*.txt
