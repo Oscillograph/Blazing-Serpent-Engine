@@ -94,12 +94,23 @@ namespace BSE{
 			BSE_TRACE("ImGui layer pushed into m_LayerStack");
 		}
 		
+		// This is an implementation of GAME CYCLE pattern.
+		// EVENTS are processed via handlers implemented through the use of 
+		// an event dispatcher and lambdas to corresponding layer/window methods.
+		// USER INPUT is processed through events.
+		// The task of a cycle is to organize calls to update state of a layer/window and renderer.
+		// RENDERING is configured individually for a layer inside its .cpp-file of the game app.
 		while(m_Running){
-			// Time
+			// --------------------------------------------------
+			// 						TIME
+			// --------------------------------------------------
 			float currentTime = m_Window->GetTime();
 			float deltaTime = currentTime - m_LastFrameTime;
 			m_LastFrameTime = currentTime;
 			
+			// --------------------------------------------------
+			// 					   UPDATE
+			// --------------------------------------------------
 			// Layers
 			for (Layer* layer : m_LayerStack){
 				layer->OnUpdate(deltaTime);
@@ -114,8 +125,7 @@ namespace BSE{
 				m_ImGuiLayer->End();
 			}
 			
-			// --------------------------------------------------
-			// UPDATE
+			// Window
 			m_Window->OnUpdate();
 		}
 	}

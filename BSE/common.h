@@ -13,7 +13,8 @@
 #include <initializer_list> // to convert initializer lists to vectors to avoid problems with pointers to vectors
 #include <chrono> // time management
 #include <math.h> // simple math for graphics, sound and other tasks
-#include <vendor/glm/glm.hpp> // complex math for graphics 
+#include <glm/glm.hpp> // complex math for graphics
+#include <glm/gtc/matrix_transform.hpp> // matrix transform and translate libraries
 
 // types
 #include <string> // text operations, obviously

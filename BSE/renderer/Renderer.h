@@ -19,7 +19,7 @@ namespace BSE {
 		
 		//<template typename T>
 		//static void Submit(T thing);
-		static void Submit(ShaderExample* shader, VertexArray* vertexArray);
+		static void Submit(ShaderExample* shader, VertexArray* vertexArray, const glm::mat4& transform = glm::mat4(1.0f));
 		
 		// static void Flush();
 	
