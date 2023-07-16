@@ -27,4 +27,16 @@ namespace BSE {
 	void OpenGLContext::SwapBuffers(){
 		glfwSwapBuffers(m_Window);
 	}
+	
+	void OpenGLContext::CopyBuffers(){
+		/*
+		glReadBuffer(GL_BACK);
+		glDrawBuffer(GL_FRONT);
+		int w, h;
+		glfwGetWindowSize(m_Window, &w, &h);
+		glBlitFramebuffer(	0, 0, w, h,
+							0, 0, w, h, 
+							GL_COLOR_BUFFER_BIT, GL_NEAREST);
+		*/
+	}
 }

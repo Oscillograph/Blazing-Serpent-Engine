@@ -100,6 +100,7 @@ namespace BSE{
 		// USER INPUT is processed through events.
 		// The task of a cycle is to organize calls to update state of a layer/window and renderer.
 		// RENDERING is configured individually for a layer inside its .cpp-file of the game app.
+		int updatesCounter = 0;
 		while(m_Running){
 			// --------------------------------------------------
 			// 						TIME
@@ -111,9 +112,11 @@ namespace BSE{
 			// --------------------------------------------------
 			// 					   UPDATE
 			// --------------------------------------------------
+			updatesCounter = 0;
+			
 			// Layers
 			for (Layer* layer : m_LayerStack){
-				layer->OnUpdate(deltaTime);
+				updatesCounter += layer->OnUpdate(deltaTime);
 			}
 			
 			// Overlays
@@ -126,7 +129,8 @@ namespace BSE{
 			}
 			
 			// Window
-			m_Window->OnUpdate();
+			// BSE_INFO("Changes since last frame: {0}", updatesCounter);
+			m_Window->OnUpdate(updatesCounter);
 		}
 	}
 	

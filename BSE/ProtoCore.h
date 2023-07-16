@@ -32,10 +32,19 @@
 // useful macros
 #define BIT(x) (1 << x)
 
-#define BSE_FPS120	0.0083f
-#define BSE_FPS90	0.0111f
-#define BSE_FPS60	0.0167f
-#define BSE_FPS30	0.0333f
+// FPS						ms between frames 
+#define BSE_FPSNOLIMIT		0.0f
+#define BSE_FPS120			0.0083f
+#define BSE_FPS90			0.0111f
+#define BSE_FPS60			0.0167f
+#define BSE_FPS30			0.0333f
+#define BSE_FPS15			0.0667f
+#define BSE_FPS10			0.1f
+#define BSE_FPS5			0.2f
+#define BSE_FPS4			0.25f
+#define BSE_FPS3			0.3333f
+#define BSE_FPS2			0.5f
+#define BSE_FPS1			1.0f
 
 // defines before anything Vendor-ish is included
 // #define GLM_FORCE_CTOR_INIT // to force GLM initialize vectors and matrices 

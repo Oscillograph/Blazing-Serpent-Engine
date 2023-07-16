@@ -143,9 +143,13 @@ namespace BSE {
 		//gladLoaderUnloadGL();
 	}
 	
-	void WindowsWindow::OnUpdate() const {
+	void WindowsWindow::OnUpdate(int code) const {
 		glfwPollEvents();
-		m_GraphicsContext->SwapBuffers();
+		if (code == 0){
+			m_GraphicsContext->CopyBuffers();
+		} else {
+			m_GraphicsContext->SwapBuffers();
+		}
 	}
 	
 	void WindowsWindow::SetVSync(bool enabled){

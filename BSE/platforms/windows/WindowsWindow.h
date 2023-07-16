@@ -17,7 +17,7 @@ namespace BSE {
 		WindowsWindow(const WindowProperties& properties);
 		~WindowsWindow();
 		
-		void OnUpdate() const override;
+		void OnUpdate(int code = 0) const override;
 		
 		inline unsigned int GetWidth() const override { return m_Data.Width; }
 		inline unsigned int GetHeight() const override { return m_Data.Height; }

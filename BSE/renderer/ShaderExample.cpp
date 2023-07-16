@@ -133,4 +133,9 @@ namespace BSE {
 		GLint location = glGetUniformLocation(m_RendererId, name.c_str());
 		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
+	
+	void ShaderExample::UploadUniformVec4(std::string name, const glm::vec4& vector){
+		GLint location = glGetUniformLocation(m_RendererId, name.c_str());
+		glUniform4fv (location, 4, glm::value_ptr(vector));
+	}
 }

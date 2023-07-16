@@ -25,7 +25,7 @@ namespace BSE {
 		using EventCallbackFn = std::function<void(Event&)>;
 		
 		virtual ~Window() {}
-		virtual void OnUpdate() const = 0;
+		virtual void OnUpdate(int code = 0) const = 0;
 		virtual unsigned int GetWidth() const = 0;
 		virtual unsigned int GetHeight() const = 0;
 		

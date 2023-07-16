@@ -19,8 +19,8 @@ namespace BSE {
 		
 	}
 	
-	void Layer::OnUpdate(float time){
-		
+	int Layer::OnUpdate(float time){
+		return 0;
 	}
 	
 	void Layer::OnEvent(Event& event){

@@ -15,6 +15,7 @@ namespace BSE {
 		void Unbind() const;
 		
 		void UploadUniformMat4(std::string name, const glm::mat4& matrix);
+		void UploadUniformVec4(std::string name, const glm::vec4& vector);
 	protected:
 		uint32_t m_RendererId;
 	};

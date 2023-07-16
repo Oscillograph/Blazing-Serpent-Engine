@@ -12,7 +12,7 @@ namespace BSE {
 		
 		virtual void OnAttach();
 		virtual void OnDetach();
-		virtual void OnUpdate(float time);
+		virtual int OnUpdate(float time);
 		virtual void OnEvent(Event& event);
 		bool IsEnabled();
 		void Enable();

@@ -14,6 +14,7 @@ namespace BSE {
 		OpenGLContext(GLFWwindow* window);
 		virtual void Init() override;
 		virtual void SwapBuffers() override;
+		virtual void CopyBuffers() override;
 	protected:
 		GLFWwindow* m_Window;
 	};
