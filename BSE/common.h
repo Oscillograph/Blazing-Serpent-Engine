@@ -13,8 +13,6 @@
 #include <initializer_list> // to convert initializer lists to vectors to avoid problems with pointers to vectors
 #include <chrono> // time management
 #include <math.h> // simple math for graphics, sound and other tasks
-#include <glm/glm.hpp> // complex math for graphics
-#include <glm/gtc/matrix_transform.hpp> // matrix transform and translate libraries
 
 // types
 #include <string> // text operations, obviously
@@ -28,6 +26,8 @@
 #endif
 
 // vendor libs
+#include <glm/glm.hpp> // complex math for graphics
+#include <glm/gtc/matrix_transform.hpp> // matrix transform and translate libraries
 #include <vendor/imgui/imgui.h> // in systems/gui/ImGuiLayer.h
 // #include "./vendor/utf8.h" // to make it easier to work with utf8, utf32
 #include <vendor/utf8.h>

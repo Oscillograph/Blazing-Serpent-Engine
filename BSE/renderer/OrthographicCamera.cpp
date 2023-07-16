@@ -1,7 +1,5 @@
 #include <renderer/OrthographicCamera.h>
 
-#include <glm/gtc/matrix_transform.hpp>
-
 namespace BSE {
 	OrthographicCamera::OrthographicCamera(){
 		m_ProjectionMatrix = glm::ortho(-1.0f, 1.0f, 1.0f, -1.0f);
