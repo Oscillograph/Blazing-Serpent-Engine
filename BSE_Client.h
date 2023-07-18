@@ -32,7 +32,7 @@
 #include <renderer/RenderCommand.h>
 
 #include <renderer/Buffer.h>
-#include <renderer/ShaderExample.h>
+#include <renderer/Shader.h>
 
 #include <renderer/VertexArray.h>
 #include <renderer/OrthographicCamera.h>

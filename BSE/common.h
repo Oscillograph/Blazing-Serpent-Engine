@@ -28,6 +28,7 @@
 // vendor libs
 #include <glm/glm.hpp> // complex math for graphics
 #include <glm/gtc/matrix_transform.hpp> // matrix transform and translate libraries
+#include <glm/gtc/type_ptr.hpp> // for value_ptr function
 #include <vendor/imgui/imgui.h> // in systems/gui/ImGuiLayer.h
 // #include "./vendor/utf8.h" // to make it easier to work with utf8, utf32
 #include <vendor/utf8.h>

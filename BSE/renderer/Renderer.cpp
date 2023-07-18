@@ -15,8 +15,10 @@ namespace BSE {
 	//<template typename T>
 	//void Submit(T thing);
 	
-	void Renderer::Submit(ShaderExample* shader, VertexArray* vertexArray, const glm::mat4& transform){
+	void Renderer::Submit(Shader* shader, VertexArray* vertexArray, const glm::mat4& transform){
 		shader->Bind();
+		//UploadUniformBuffer(shader, "u_ViewProjection", m_Camera->GetViewProjectionMatrix());
+		//UploadUniformBuffer(shader, "u_Transform", transform);
 		shader->UploadUniformMat4("u_ViewProjection", m_Camera->GetViewProjectionMatrix());
 		shader->UploadUniformMat4("u_Transform", transform);
 		

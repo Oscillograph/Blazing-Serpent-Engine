@@ -16,7 +16,7 @@
 	#include <platforms/windows/WindowsInput.h>
 #endif
 
-#include <renderer/ShaderExample.h>
+#include <renderer/Shader.h>
 #include <renderer/Buffer.h>
 #include <renderer/VertexArray.h>
 #include <renderer/Renderer.h>

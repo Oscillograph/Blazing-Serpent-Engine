@@ -5,7 +5,7 @@
 #include <renderer/RendererAPI.h>
 #include <renderer/RenderCommand.h>
 #include <renderer/VertexArray.h>
-#include <renderer/ShaderExample.h>
+#include <renderer/Shader.h>
 #include <renderer/OrthographicCamera.h>
 
 namespace BSE {
@@ -19,7 +19,7 @@ namespace BSE {
 		
 		//<template typename T>
 		//static void Submit(T thing);
-		static void Submit(ShaderExample* shader, VertexArray* vertexArray, const glm::mat4& transform = glm::mat4(1.0f));
+		static void Submit(Shader* shader, VertexArray* vertexArray, const glm::mat4& transform = glm::mat4(1.0f));
 		
 		// static void Flush();
 	
