@@ -37,6 +37,8 @@
 #include <renderer/VertexArray.h>
 #include <renderer/OrthographicCamera.h>
 
+#include <renderer/Material.h>
+
 // entry point
 #include <EntryPoint.h>
 
