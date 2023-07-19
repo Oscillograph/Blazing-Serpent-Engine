@@ -35,6 +35,7 @@
 #include <renderer/Shader.h>
 
 #include <renderer/VertexArray.h>
+#include <renderer/Texture.h>
 #include <renderer/OrthographicCamera.h>
 
 #include <renderer/Material.h>

@@ -5,6 +5,7 @@
 #include <renderer/RendererAPI.h>
 #include <renderer/RenderCommand.h>
 #include <renderer/VertexArray.h>
+#include <renderer/Texture.h>
 #include <renderer/Shader.h>
 #include <renderer/OrthographicCamera.h>
 

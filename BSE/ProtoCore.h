@@ -3,7 +3,7 @@
 
 // -------------------------------------------------------------------------------
 //     The point of this "Proto" is to fix the multiple definition error that
-// occurs through log.cpp file which includes Core.h while Core.h includes log.h
+// occurs through log.cpp file, which includes Core.h while Core.h includes log.h
 // -------------------------------------------------------------------------------
 
 #ifdef BSE_PLATFORM_WINDOWS
@@ -50,7 +50,21 @@
 // #define GLM_FORCE_CTOR_INIT // to force GLM initialize vectors and matrices 
 
 // basic includes
-// #include <BSE/common.h>
 #include <common.h>
+
+namespace BSE {
+	// Still no idea why do I need this typedef-kind-of stuff.
+	// The Cherno adds it, but I don't get the point.
+	template <typename T>
+	using Scope = std::unique_ptr<T>;
+	
+	template <typename T>
+	using Ref = std::shared_ptr<T>;
+	// Thing is, shared pointers make use of a reference counter which is in	cremented through
+	// operator "=" and std::make_shared<T>(value) function.
+	// Unique pointers are created with constructor std::unique_ptr<T> m(new T(value)).
+	// They have no reference count, and they get destroyed when they are out of scope.
+	// So, usefulness of these aliases is doubtful at best. 
+}
 
 #endif

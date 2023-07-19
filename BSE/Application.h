@@ -19,6 +19,7 @@
 #include <renderer/Shader.h>
 #include <renderer/Buffer.h>
 #include <renderer/VertexArray.h>
+#include <renderer/Texture.h>
 #include <renderer/Renderer.h>
 #include <renderer/OrthographicCamera.h>
 #include <glm/glm.hpp>
