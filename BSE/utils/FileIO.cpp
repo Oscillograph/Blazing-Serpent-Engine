@@ -14,6 +14,8 @@ namespace BSE {
 				while (std::getline(iFile, lineRead, delimLine)){
 					output += (lineRead + "\n");
 				}
+			} else {
+				BSE_CORE_ERROR("Couldn't open file: {0}", filename);
 			}
 		}
 		
