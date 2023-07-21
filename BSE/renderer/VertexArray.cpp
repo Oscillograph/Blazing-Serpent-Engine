@@ -10,7 +10,7 @@ namespace BSE {
 			return nullptr;
 			break;
 		case RendererAPI::API::OpenGL:
-			BSE_CORE_TRACE("OpenGL Vertex Array is being created");
+			// BSE_CORE_TRACE("OpenGL Vertex Array is being created");
 			return new OpenGLVertexArray();
 			break;
 		}

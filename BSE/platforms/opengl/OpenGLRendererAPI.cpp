@@ -10,6 +10,13 @@ namespace BSE {
 		
 	}
 	
+	void OpenGLRendererAPI::Init(){
+		glEnable(GL_BLEND);
+		//BSE_CORE_TRACE("OpenGL: Enabled Blend");
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//BSE_CORE_TRACE("OpenGL: Set Blend function to (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)");
+	}
+	
 	void OpenGLRendererAPI::SetClearColor(const glm::vec4 color){
 		glClearColor(color.x, color.y, color.z, color.w);
 	}

@@ -31,6 +31,8 @@ namespace BSE{
 		// Set Renderer API
 		RenderCommand::SetAPI(RendererAPI::API::OpenGL);
 		BSE_CORE_TRACE("Render API set to OpenGL");
+		
+		Renderer::Init();
 	}
 	
 	Application::~Application(){

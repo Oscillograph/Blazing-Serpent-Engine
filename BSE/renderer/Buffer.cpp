@@ -12,7 +12,7 @@ namespace BSE {
 			return nullptr;
 			break;
 		case RendererAPI::API::OpenGL:
-			BSE_CORE_TRACE("OpenGL Vertex Buffer is being created");
+			// BSE_CORE_TRACE("OpenGL Vertex Buffer is being created");
 			return new OpenGLVertexBuffer(vertices, size);
 			break;
 		}

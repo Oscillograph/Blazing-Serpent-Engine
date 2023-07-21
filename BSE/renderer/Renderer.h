@@ -15,6 +15,8 @@ namespace BSE {
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 		//inline static void SetAPI(RendererAPI::API API) { RenderCommand::SetAPI(API);}
 		
+		static void Init();
+		
 		static void BeginScene(OrthographicCamera* camera); // TODO: take in parameters like camera, lights, environment, etc.
 		static void EndScene(); // 
 		

@@ -4,6 +4,10 @@
 namespace BSE {
 	OrthographicCamera* Renderer::m_Camera = nullptr;
 	
+	void Renderer::Init(){
+		RenderCommand::Init();
+	}
+	
 	void Renderer::BeginScene(OrthographicCamera* camera){
 		m_Camera = camera;
 	}
