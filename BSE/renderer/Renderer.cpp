@@ -3,13 +3,21 @@
 
 namespace BSE {
 	OrthographicCamera* Renderer::m_Camera = nullptr;
+	ShaderLibrary* Renderer::m_ShaderLibrary = nullptr;
+	
+	ShaderLibrary* Renderer::GetShaderLibrary() {
+		if (m_ShaderLibrary == nullptr){
+			m_ShaderLibrary = new ShaderLibrary;
+		}
+		return m_ShaderLibrary; 
+	}
 	
 	void Renderer::Init(){
 		RenderCommand::Init();
 	}
 	
 	void Renderer::BeginScene(OrthographicCamera* camera){
-		m_Camera = camera;
+		Renderer::m_Camera = camera;
 	}
 	
 	void Renderer::EndScene(){

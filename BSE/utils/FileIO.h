@@ -8,6 +8,7 @@ namespace BSE {
 	public:
 		static std::string GetRawText(std::string filename);
 		//static void ConstructFileSystem();
+		static std::string GetName(std::string filepath);
 	};
 }
 

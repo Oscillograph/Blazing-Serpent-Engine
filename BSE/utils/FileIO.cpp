@@ -21,4 +21,13 @@ namespace BSE {
 		
 		return output;
 	}
+	
+	std::string FileIO::GetName(std::string filepath){
+		auto lastSlash = filepath.find_last_of("/\\");
+		lastSlash = (lastSlash == std::string::npos) ? (0) : (lastSlash+1);
+		
+		auto lastDot = filepath.find_last_of(".");
+		auto symbols = (lastDot == std::string::npos) ? (filepath.size() - lastSlash) : (lastDot - lastSlash);
+		return filepath.substr(lastSlash, symbols);
+	}
 }

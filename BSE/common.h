@@ -17,7 +17,8 @@
 // types
 #include <string> // text operations, obviously
 #include <sstream> // for easier work with strings
-#include <vector>
+#include <vector> // to allocate dynamically
+#include <array> // to allocate statically
 #include <unordered_map>
 #include <unordered_set>
 
@@ -29,7 +30,7 @@
 #include <glm/glm.hpp> // complex math for graphics
 #include <glm/gtc/matrix_transform.hpp> // matrix transform and translate libraries
 #include <glm/gtc/type_ptr.hpp> // for value_ptr function
-#include <vendor/imgui/imgui.h> // in systems/gui/ImGuiLayer.h
+#include <imgui/imgui.h> // in systems/gui/ImGuiLayer.h
 #include <vendor/utf8.h> // to make it easier to work with utf8, utf32
 
 #endif

@@ -14,6 +14,7 @@ namespace BSE {
 	public:
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 		//inline static void SetAPI(RendererAPI::API API) { RenderCommand::SetAPI(API);}
+		static ShaderLibrary* GetShaderLibrary();
 		
 		static void Init();
 		
@@ -28,6 +29,7 @@ namespace BSE {
 	
 	private:
 		static OrthographicCamera* m_Camera;
+		static ShaderLibrary* m_ShaderLibrary;
 	};
 	
 }
