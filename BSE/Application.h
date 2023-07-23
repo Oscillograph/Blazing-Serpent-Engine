@@ -22,6 +22,7 @@
 #include <renderer/Texture.h>
 #include <renderer/Renderer.h>
 #include <renderer/OrthographicCamera.h>
+#include <systems/OrthographicCameraController.h>
 #include <glm/glm.hpp>
 
 namespace BSE {

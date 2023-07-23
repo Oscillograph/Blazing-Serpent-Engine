@@ -11,6 +11,8 @@ namespace BSE {
 		OrthographicCamera(float left, float right, float top, float bottom);
 		~OrthographicCamera();
 		
+		void SetProjection(float left, float right, float top, float bottom);
+		
 		inline void SetPosition(const glm::vec3 position) { m_Position = position; RecalculateViewMatrix(); }
 		inline void SetRotation(float rotation) { m_Rotation.z = rotation; RecalculateViewMatrix(); }
 		inline void SetRotation(const glm::vec3 rotation) { m_Rotation = rotation; RecalculateViewMatrix(); }

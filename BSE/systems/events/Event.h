@@ -70,6 +70,16 @@ namespace BSE {
 		bool m_Handled = false;
 	};
 	
+	
+	// --------------------------------------------------------------------
+	// 						Event dispatcher usage example:
+	// --------------------------------------------------------------------
+	// EventDispatcher dispatcher(e);
+	// e.Dispatch<MouseScrolledEvent>([this](MouseScrolledEvent& event){
+	//	return OnMouseScrolled(event);
+	// });
+	// --------------------------------------------------------------------
+	
 	class EventDispatcher{
 		template<typename T>
 		using EventFn = std::function<bool(T&)>;
