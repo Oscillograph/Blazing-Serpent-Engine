@@ -1,5 +1,5 @@
-#ifndef BSE_RENDERER_H
-#define BSE_RENDERER_H
+#ifndef BSE_RENDERER2D_H
+#define BSE_RENDERER2D_H
 
 #include <Core.h>
 #include <renderer/RendererAPI.h>
@@ -10,25 +10,22 @@
 #include <renderer/OrthographicCamera.h>
 
 namespace BSE {
-	class BSE_API Renderer {
+	class BSE_API Renderer2D {
 	public:
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
-		//inline static void SetAPI(RendererAPI::API API) { RenderCommand::SetAPI(API);}
+
 		static ShaderLibrary* GetShaderLibrary();
 		
 		static void Init();
-		
 		static void OnWindowResize(uint32_t width, uint32_t height);
 		
 		static void BeginScene(OrthographicCamera* camera); // TODO: take in parameters like camera, lights, environment, etc.
 		static void EndScene(); // 
 		
-		//<template typename T>
-		//static void Submit(T thing);
 		static void Submit(Shader* shader, VertexArray* vertexArray, const glm::mat4& transform = glm::mat4(1.0f));
 		
 		// static void Flush();
-	
+		
 	private:
 		static OrthographicCamera* m_Camera;
 		static ShaderLibrary* m_ShaderLibrary;

@@ -74,6 +74,12 @@ namespace BSE {
 			data.EventCallback(event);
 		});
 		
+		glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* window, int width, int height){
+			WindowData& data = *(WindowData*) glfwGetWindowUserPointer(window);
+			glViewport(0, 0, width, height);
+			// BSE_CORE_INFO("Framebuffer resized to: {0}, {1}", width, height);
+		});
+		
 		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window){
 			WindowData& data = *(WindowData*) glfwGetWindowUserPointer(window);
 			WindowCloseEvent event;

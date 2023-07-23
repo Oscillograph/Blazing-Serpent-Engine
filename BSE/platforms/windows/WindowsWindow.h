@@ -46,8 +46,10 @@ namespace BSE {
 			EventCallbackFn EventCallback;
 			
 			WindowData(const std::string& title = "Blazing Serpent Engine",
-			unsigned int width = 1280,
-			unsigned int height = 720,
+			//unsigned int width = 1280,
+			//unsigned int height = 720,
+			unsigned int width = 640,
+			unsigned int height = 360,
 			bool vsync = true,
 			EventCallbackFn eventCallback = Callback_dummy)
 				: Title(title), Width(width), Height(height), VSync(vsync), EventCallback(eventCallback)

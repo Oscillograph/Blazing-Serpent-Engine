@@ -48,10 +48,12 @@ namespace BSE {
 		
 	protected:
 		bool OnWindowClose(WindowCloseEvent& e);
+		bool OnWindowResize(WindowResizeEvent& e);
 		bool OnKeyPressed(KeyPressedEvent& e);
 		
 		Window* m_Window;
 		bool m_Running = true;
+		bool m_Minimized = false;
 		LayerStack m_LayerStack;
 		Layer* m_ImGuiLayer = nullptr;
 		bool m_ImGuiLayerEnabled = true;

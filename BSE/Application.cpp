@@ -1,4 +1,5 @@
 #include <Application.h>
+// #include <renderer/Renderer.h>
 
 namespace BSE{
 	// DONE: Figure out how to allow this instance through static library
@@ -116,18 +117,20 @@ namespace BSE{
 			// --------------------------------------------------
 			updatesCounter = 0;
 			
-			// Layers
-			for (Layer* layer : m_LayerStack){
-				updatesCounter += layer->OnUpdate(deltaTime);
-			}
-			
-			// Overlays
-			if (m_ImGuiLayerEnabled && (m_ImGuiLayer != nullptr)){
-				m_ImGuiLayer->Begin();
+			if (!m_Minimized){
+				// Layers
 				for (Layer* layer : m_LayerStack){
-					layer->OnImGuiRender(deltaTime);
+					updatesCounter += layer->OnUpdate(deltaTime);
 				}
-				m_ImGuiLayer->End();
+				
+				// Overlays
+				if (m_ImGuiLayerEnabled && (m_ImGuiLayer != nullptr)){
+					m_ImGuiLayer->Begin();
+					for (Layer* layer : m_LayerStack){
+						layer->OnImGuiRender(deltaTime);
+					}
+					m_ImGuiLayer->End();
+				}
 			}
 			
 			// Window
@@ -142,6 +145,21 @@ namespace BSE{
 	bool Application::OnWindowClose(WindowCloseEvent& e){
 		m_Running = false;
 		return true;
+	}
+	
+	bool Application::OnWindowResize(WindowResizeEvent& e){
+		uint32_t width = e.GetWidth();
+		uint32_t height = e.GetHeight();
+		if ((width == 0) || (height == 0)){
+			m_Minimized = true;
+			return false;
+		}
+		
+		m_Minimized = false;
+		
+		// 1. Tell RendererAPI that the window has been resized
+		Renderer::OnWindowResize(width, height);
+		return false;
 	}
 	
 	bool Application::OnKeyPressed(KeyPressedEvent& e){

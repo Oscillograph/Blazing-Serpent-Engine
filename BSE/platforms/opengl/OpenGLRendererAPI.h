@@ -11,6 +11,7 @@ namespace BSE {
 		~OpenGLRendererAPI();
 		
 		virtual void Init() override;
+		virtual void SetViewPort(uint32_t x, uint32_t y, uint32_t w, uint32_t h) override;
 		virtual void SetClearColor(const glm::vec4 color) override;
 		virtual void Clear() override;
 		
