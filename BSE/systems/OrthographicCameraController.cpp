@@ -2,7 +2,9 @@
 
 namespace BSE {
 	OrthographicCameraController::OrthographicCameraController(float aspectRatio, float zoomLevel, bool rotation){
+		//BSE_CORE_TRACE("Calling Camera Controller constructor");
 		m_AspectRatio = aspectRatio;
+		m_AspectRatioPrev = m_AspectRatio;
 		m_ZoomLevel = zoomLevel;
 		m_Rotation = rotation;
 		
@@ -14,6 +16,10 @@ namespace BSE {
 			);
 		
 		m_CameraPosition = m_Camera->GetPosition();
+		
+		// m_WidthPrev = Application::Get()->GetWindow()->GetWidth();
+		// m_HeightPrev = Application::Get()->GetWindow()->GetHeight();
+		//BSE_CORE_TRACE("Camera Controller constructor out");
 	} 
 	
 	OrthographicCameraController::~OrthographicCameraController(){
@@ -77,10 +83,25 @@ namespace BSE {
 	}
 	
 	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e){
-		m_AspectRatio = (float)(e.GetWidth()) / (float)(e.GetHeight());
-		//BSE_CORE_INFO("Aspect Ratio: {0}", m_AspectRatio);
-		SetAspectRatio(m_AspectRatio);
-		// SetProjectionDefault();
+		float widthNew = (float)(e.GetWidth());
+		float heightNew = (float)(e.GetHeight());
+		
+		/*
+		if ((m_HeightPrev > 0.0f) || (m_WidthPrev > 0.0f)){
+			float zoomAdjust = (widthNew * heightNew) / (m_HeightPrev * m_WidthPrev);
+			m_ZoomLevel *= zoomAdjust;
+		}
+		*/
+		
+		m_AspectRatio = widthNew / heightNew;
+		m_ZoomLevel = m_ZoomLevel * m_AspectRatio / m_AspectRatioPrev;
+		
+		m_AspectRatioPrev = m_AspectRatio;
+		m_HeightPrev = widthNew;
+		m_WidthPrev = heightNew;
+		
+		// SetAspectRatio(m_AspectRatio);
+		SetProjectionDefault();
 		return false;
 	}
 }

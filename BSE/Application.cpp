@@ -78,6 +78,10 @@ namespace BSE{
 			return OnKeyPressed(event);
 		});
 		
+		dispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent& event){
+			return OnWindowResize(event);
+		});
+		
 		// BSE_INFO("{0}", e);
 		
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); ){

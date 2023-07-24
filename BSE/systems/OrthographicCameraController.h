@@ -52,7 +52,11 @@ namespace BSE {
 		bool OnMouseScrolled(MouseScrolledEvent& e);
 		bool OnWindowResized(WindowResizeEvent& e);
 		
-		float m_AspectRatio;
+		float m_AspectRatio = 1.0f;
+		float m_AspectRatioPrev = 1.0f;
+		float m_WidthPrev = 0.0f;
+		float m_HeightPrev = 0.0f;
+		
 		float m_ZoomLevel = 1.0f;
 		float m_ZoomMin = -2.0f;
 		float m_ZoomMax = 2.0f;
