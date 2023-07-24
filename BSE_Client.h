@@ -28,6 +28,7 @@
 
 // - Renderer
 #include <renderer/Renderer.h>
+#include <renderer/Renderer2D.h>
 #include <renderer/RendererAPI.h>
 #include <renderer/RenderCommand.h>
 

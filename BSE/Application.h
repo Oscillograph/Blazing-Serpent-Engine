@@ -21,6 +21,7 @@
 #include <renderer/VertexArray.h>
 #include <renderer/Texture.h>
 #include <renderer/Renderer.h>
+#include <renderer/Renderer2D.h>
 #include <renderer/OrthographicCamera.h>
 #include <systems/OrthographicCameraController.h>
 #include <glm/glm.hpp>
