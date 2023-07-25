@@ -9,6 +9,9 @@
 #include <renderer/Shader.h>
 #include <renderer/OrthographicCamera.h>
 
+// sub-modules
+#include <renderer/Renderer2D.h>
+
 namespace BSE {
 	class BSE_API Renderer {
 	public:
@@ -17,6 +20,7 @@ namespace BSE {
 		static ShaderLibrary* GetShaderLibrary();
 		
 		static void Init();
+		static void Shutdown();
 		
 		static void OnWindowResize(uint32_t width, uint32_t height);
 		

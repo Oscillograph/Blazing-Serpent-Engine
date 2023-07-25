@@ -37,6 +37,9 @@ namespace BSE{
 	}
 	
 	Application::~Application(){
+		// Renderer2D::Shutdown();
+		Renderer::Shutdown();
+		
 		if (m_ImGuiLayerEnabled && (m_ImGuiLayer != nullptr)){
 			PopOverlay(m_ImGuiLayer);
 			delete m_ImGuiLayer;

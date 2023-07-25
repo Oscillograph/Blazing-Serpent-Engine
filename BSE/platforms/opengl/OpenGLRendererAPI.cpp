@@ -18,6 +18,10 @@ namespace BSE {
 		//BSE_CORE_TRACE("OpenGL: Set Blend function to (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)");
 	}
 	
+	void OpenGLRendererAPI::Shutdown(){
+		
+	}
+	
 	void OpenGLRendererAPI::SetViewPort(uint32_t x, uint32_t y, uint32_t w, uint32_t h){
 		glViewport(x, y, w, h);
 		//if (glIsEnabled(GL_SCISSOR_TEST)){

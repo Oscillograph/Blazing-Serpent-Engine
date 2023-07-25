@@ -12,6 +12,10 @@ namespace BSE {
 			m_RendererAPI->Init();
 		}
 		
+		inline static void Shutdown(){
+			m_RendererAPI->Shutdown();
+		}
+		
 		inline static void SetViewPort(uint32_t x, uint32_t y, uint32_t w, uint32_t h){
 			m_RendererAPI->SetViewPort(x, y, w, h);
 		}

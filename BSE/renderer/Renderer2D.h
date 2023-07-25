@@ -17,20 +17,23 @@ namespace BSE {
 		static ShaderLibrary* GetShaderLibrary();
 		
 		static void Init();
+		static void Shutdown();
+		
 		static void OnWindowResize(uint32_t width, uint32_t height);
 		
 		static void BeginScene(OrthographicCamera* camera); // TODO: take in parameters like camera, lights, environment, etc.
 		static void EndScene(); // 
 		
 		static void Submit(Shader* shader, VertexArray* vertexArray, const glm::mat4& transform = glm::mat4(1.0f));
-		
 		// static void Flush();
 		
-	private:
-		static OrthographicCamera* m_Camera;
-		static ShaderLibrary* m_ShaderLibrary;
+		// ----------------------------------------------------------------
+		//				2D Specific stuff
+		// ----------------------------------------------------------------
+		static void DrawRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
+		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
+		static void FillRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
 	};
-	
 }
 
 #endif
