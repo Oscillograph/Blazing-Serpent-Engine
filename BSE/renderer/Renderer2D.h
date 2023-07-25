@@ -30,9 +30,11 @@ namespace BSE {
 		// ----------------------------------------------------------------
 		//				2D Specific stuff
 		// ----------------------------------------------------------------
+		static void DrawFilledRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
+		static void DrawFilledQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
+		static void DrawTextureRect(const glm::vec2& position, const glm::vec2& size, Texture2D* texture);
+		static void DrawTextureQuad(const glm::vec3& position, const glm::vec2& size, Texture2D* texture);
 		static void DrawRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
-		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
-		static void FillRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
 	};
 }
 

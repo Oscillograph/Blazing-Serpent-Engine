@@ -1,4 +1,5 @@
 #include <Core.h>
+#include <Application.h>
 #include <Layer.h>
 #include <systems/gui/ImGuiLayer.h>
 #include <systems/gui/ImGuiBuild.h>

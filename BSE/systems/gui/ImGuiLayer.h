@@ -2,7 +2,7 @@
 #define BSE_IMGUILAYER_H
 
 #include <Core.h>
-#include <Application.h>
+// #include <Application.h>
 #include <Layer.h>
 #include <systems/events/Event.h>
 #include <systems/events/AppEvent.h>
