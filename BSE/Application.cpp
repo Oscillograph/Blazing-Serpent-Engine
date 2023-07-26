@@ -126,7 +126,6 @@ namespace BSE{
 			updatesCounter = 0;
 			
 			if (!m_Minimized){
-				BSE_CORE_PROFILER("Layers update cycle");
 				// Layers
 				for (Layer* layer : m_LayerStack){
 					updatesCounter += layer->OnUpdate(deltaTime);
@@ -144,7 +143,6 @@ namespace BSE{
 			
 			// Window
 			// BSE_INFO("Changes since last frame: {0}", updatesCounter);
-			BSE_CORE_PROFILER("Window OnUpdate");
 			m_Window->OnUpdate(updatesCounter);
 		}
 	}
