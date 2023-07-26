@@ -18,14 +18,27 @@
 //
 // You will probably want to macro-fy this, to switch on/off easily and use things like __FUNCSIG__ for the profile name.
 
-// profiling to files in json format
-#define BSE_PROFILER_SESSION_START(name, filepath) 	Profiler::BeginSession(name, filepath); {
-#define BSE_PROFILER_SCOPE(name)						ProfilerTimer timer##__LINE__(name);
-#define BSE_PROFILER_SESSION_END() 					} Profiler::EndSession();
-
-// a simpler version: moment profiling
-#define BSE_CORE_PROFILER(name)	Timer timer##__LINE__(name, [&](BSE::TimerResult result){ BSE::Profiler::Push(result); });
-#define BSE_PROFILER(name)	Timer timer##__LINE__(name, [&](BSE::TimerResult result){ BSE::Profiler::Push(result); });
+#ifdef BSE_PROFILING
+	// profiling to files in json format
+	#define BSE_PROFILE_SESSION_START(name, filepath) 	::BSE::Profiler::BeginSession(name, filepath);
+	#define BSE_PROFILE_SCOPE(name)							::BSE::ProfilerTimer timer##__LINE__(name);
+	#define BSE_PROFILE_FUNCTION() 							::BSE::ProfilerTimer funcTimer##__LINE__(__PRETTY_FUNCTION__);
+	#define BSE_PROFILE_SESSION_END() 					::BSE::Profiler::EndSession();
+	
+	// a simpler version: moment profiling
+	#define BSE_CORE_PROFILER(name)	Timer timer##__LINE__(name, [&](BSE::TimerResult result){ BSE::Profiler::Push(result); });
+	#define BSE_PROFILER(name)	Timer timer##__LINE__(name, [&](BSE::TimerResult result){ BSE::Profiler::Push(result); });
+#else
+	// profiling to files in json format
+	#define BSE_PROFILE_SESSION_START(name, filepath)
+	#define BSE_PROFILE_SCOPE(name)				
+	#define BSE_PROFILE_FUNCTION()					
+	#define BSE_PROFILE_SESSION_END() 				
+	
+	// a simpler version: moment profiling
+	#define BSE_CORE_PROFILER(name)	
+	#define BSE_PROFILER(name)	
+#endif
 
 namespace BSE {
 	struct ProfileResult {
@@ -61,24 +74,25 @@ namespace BSE {
 		inline static ProfilerSession* GetSession(){ 
 			return m_CurrentSession; 
 		}
-		inline static void BeginSession(std::string name, std::string filepath = "./debug/runtime.json"){ 
-			if (!m_OutputStream.is_open()){
-				m_OutputStream.open(filepath);
+		inline static void BeginSession(std::string name, std::string filepath = "./debug/runtime.json"){
+			// BSE_CORE_TRACE("Profiler session {0} started.", name);
+			//if (!m_OutputStream.is_open()){
+				m_OutputStream.open(filepath.c_str());
 				m_Filepath = filepath;
-			} else {
-				BSE_CORE_ERROR("Profiler: file {0} is open!", filepath);
-			}
+			//} else {
+			//	BSE_CORE_ERROR("Profiler: file {0} is open!", filepath);
+			//}
 			WriteHeader();
 			m_CurrentSession = new ProfilerSession{name};
 		}
 		
 		inline static void EndSession() {
 			WriteFooter();
-			if (m_OutputStream.is_open()){
+			//if (m_OutputStream.is_open()){
 				m_OutputStream.close();
-			} else {
-				BSE_CORE_ERROR("Profiler: file {0} is closed!", m_Filepath);
-			}
+			//} else {
+			//	BSE_CORE_ERROR("Profiler: file {0} is closed!", m_Filepath);
+			//}
 			delete m_CurrentSession;
 			m_CurrentSession = nullptr;
 			m_ProfileCount = 0;

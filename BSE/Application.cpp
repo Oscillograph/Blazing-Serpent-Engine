@@ -9,6 +9,7 @@ namespace BSE{
 	Application* Application::s_Instance = nullptr;
 	
 	Application::Application() {
+		BSE_PROFILE_FUNCTION();
 		s_Instance = this;
 		
 		// TODO: figure out how to fix crash if s_Instance != nullptr
@@ -96,6 +97,7 @@ namespace BSE{
 	}
 	
 	void Application::Run(){
+		BSE_PROFILE_FUNCTION();
 		BSE_TRACE("Enter Application Run routine");
 		
 		if (GetImGuiLayer() == nullptr){

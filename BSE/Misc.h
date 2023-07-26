@@ -7,6 +7,8 @@
 // misc useful functions
 namespace BSE {
 	BSE_API void print_hello(); 
+	
+	// glm::mat4 One4 = glm::mat4(1.0f);
 }
 
 #endif

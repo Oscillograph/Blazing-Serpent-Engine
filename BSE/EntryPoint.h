@@ -11,19 +11,21 @@
 extern BSE::Application* BSE::CreateApplication(); 
 
 int main(int argc, char** args) {
-	BSE::print_hello();
-
+	BSE_PROFILE_SESSION_START("Startup", "./debug/startup.json");
 	BSE::Log::Init();
 	BSE_CORE_WARN("Log System Initialized!");
 	BSE_INFO("Log System Initialized!");
-	
-	// BSE::Application* BSE::Application::s_Instance = nullptr;
-	
 	auto app = BSE::CreateApplication();
-	// BSE::Application::Set(app);
+	BSE_PROFILE_SESSION_END();
+	
+	BSE_PROFILE_SESSION_START("Runtime", "./debug/runtime.json");
 	app->Run();
+	BSE_PROFILE_SESSION_END();
+	
+	BSE_PROFILE_SESSION_START("Shutdown", "./debug/shutdown.json");
 	delete app;
 	BSE::Profiler::Flush();
+	BSE_PROFILE_SESSION_END();
 	return 0;
 }
 

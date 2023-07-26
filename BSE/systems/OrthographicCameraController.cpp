@@ -40,6 +40,7 @@ namespace BSE {
 		if (Input::IsKeyPressed(BSE_KEY_D)){
 			m_CameraPosition.x += m_CameraMoveSpeed * time;
 		}
+		
 		m_Camera->SetPosition(m_CameraPosition);
 		
 		if (m_Rotation){
@@ -57,6 +58,15 @@ namespace BSE {
 				rotation.x += m_CameraRotateSpeed * time;
 			}
 			m_Camera->SetRotation(rotation);
+		}
+		
+		if (Input::IsKeyPressed(BSE_KEY_PAGE_UP)){
+			m_ZoomLevel -= 0.1f;
+			SetProjectionDefault();
+		}
+		if (Input::IsKeyPressed(BSE_KEY_PAGE_DOWN)){
+			m_ZoomLevel += 0.1f;
+			SetProjectionDefault();
 		}
 	}
 	
