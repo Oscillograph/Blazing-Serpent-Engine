@@ -23,6 +23,7 @@ int main(int argc, char** args) {
 	// BSE::Application::Set(app);
 	app->Run();
 	delete app;
+	BSE::Profiler::Flush();
 	return 0;
 }
 

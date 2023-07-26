@@ -2,6 +2,9 @@
 #define BSE_APPLICATION_H
 
 #include <Core.h>
+
+#include <utils/Profiler.h>
+
 #include <Window.h>
 #include <Input.h>
 #include <KeyCodes.h>

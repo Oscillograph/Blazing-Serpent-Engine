@@ -14,9 +14,9 @@ namespace BSE {
 	}
 	
 	ImGuiLayer::~ImGuiLayer(){
-		if (font_config != nullptr){
-			delete font_config;
-		}
+		//if (font_config != nullptr){
+		//	delete font_config;
+		//}
 		BSE_TRACE("Destroy ImGuiLayer");
 	}
 	
