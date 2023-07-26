@@ -17,6 +17,11 @@ namespace BSE {
 		Renderer2D::Init();
 	}
 	
+	void Renderer::Clear(const glm::vec4& color){
+		RenderCommand::SetClearColor(color);
+		RenderCommand::Clear();
+	}
+	
 	void Renderer::Shutdown(){
 		// RenderCommand::Shutdown();
 		Renderer2D::Shutdown();

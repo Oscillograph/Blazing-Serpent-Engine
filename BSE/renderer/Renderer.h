@@ -20,6 +20,7 @@ namespace BSE {
 		static ShaderLibrary* GetShaderLibrary();
 		
 		static void Init();
+		static void Clear(const glm::vec4& color);
 		static void Shutdown();
 		
 		static void OnWindowResize(uint32_t width, uint32_t height);

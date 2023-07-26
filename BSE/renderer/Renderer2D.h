@@ -17,6 +17,7 @@ namespace BSE {
 		static ShaderLibrary* GetShaderLibrary();
 		
 		static void Init();
+		static void Clear(const glm::vec4& color);
 		static void Shutdown();
 		
 		static void OnWindowResize(uint32_t width, uint32_t height);
@@ -32,8 +33,14 @@ namespace BSE {
 		// ----------------------------------------------------------------
 		static void DrawFilledRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
 		static void DrawFilledQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
-		static void DrawTextureRect(const glm::vec2& position, const glm::vec2& size, Texture2D* texture);
-		static void DrawTextureQuad(const glm::vec3& position, const glm::vec2& size, Texture2D* texture);
+		static void DrawTextureRect(const glm::vec2& position, const glm::vec2& size, Texture2D* texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = OneVec4);
+		static void DrawTextureQuad(const glm::vec3& position, const glm::vec2& size, Texture2D* texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = OneVec4);
+		
+		static void DrawFilledRectRotated(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color);
+		static void DrawFilledQuadRotated(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color);
+		static void DrawTextureRectRotated(const glm::vec2& position, const glm::vec2& size, float rotation, Texture2D* texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = OneVec4);
+		static void DrawTextureQuadRotated(const glm::vec3& position, const glm::vec2& size, float rotation, Texture2D* texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = OneVec4);
+		
 		static void DrawRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
 	};
 }

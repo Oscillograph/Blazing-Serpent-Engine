@@ -50,6 +50,11 @@ namespace BSE {
 		RendererData->WhiteTexture->SetData(&whiteTextureData, sizeof(whiteTextureData));
 	}
 	
+	void Renderer2D::Clear(const glm::vec4& color){
+		RenderCommand::SetClearColor(color);
+		RenderCommand::Clear();
+	}
+	
 	void Renderer2D::Shutdown(){
 		delete RendererData;
 	}
@@ -75,15 +80,13 @@ namespace BSE {
 	}
 	
 	void Renderer2D::DrawFilledQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color){
-		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3({size.x, size.y, 0.0f}));
-		glm::vec3 m_SquareTransform = glm::vec3(0.0f);
+		glm::mat4 transform = glm::translate(OneMat4, glm::vec3(position.x, position.y, position.z))
+				* glm::scale(OneMat4, glm::vec3({size.x, size.y, 0.0f}));
 		
-		glm::vec3 pos(position.x, position.y, position.z);
-		pos = pos + m_SquareTransform;
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
-		
-		//RendererData->FlatColorShader->Bind();
+		float tilingFactor = 1.0f;
+
 		RendererData->TextureShader->UploadUniformVec4("u_Color", color);
+		RendererData->TextureShader->UploadUniformFloat("u_TilingFactor", tilingFactor);
 		RendererData->WhiteTexture->Bind(); // bind white texture
 		RendererData->TextureShader->UploadUniformMat4("u_Transform", transform);
 		
@@ -91,23 +94,58 @@ namespace BSE {
 		RenderCommand::DrawIndexed(RendererData->QuadVertexArray);
 	}
 	
-	void Renderer2D::DrawTextureRect(const glm::vec2& position, const glm::vec2& size, Texture2D* texture){
-		DrawTextureQuad({position.x, position.y, 0.0f}, size, texture);
+	void Renderer2D::DrawTextureRect(const glm::vec2& position, const glm::vec2& size, Texture2D* texture, float tilingFactor, const glm::vec4& tintColor){
+		DrawTextureQuad({position.x, position.y, 0.0f}, size, texture, tilingFactor, tintColor);
 	}
 	
-	void Renderer2D::DrawTextureQuad(const glm::vec3& position, const glm::vec2& size, Texture2D* texture){
-		RendererData->TextureShader->UploadUniformVec4("u_Color", glm::vec4({1.0f, 1.0f, 1.0f, 1.0f}));
+	void Renderer2D::DrawTextureQuad(const glm::vec3& position, const glm::vec2& size, Texture2D* texture, float tilingFactor, const glm::vec4& tintColor){
+		RendererData->TextureShader->UploadUniformVec4("u_Color", tintColor);
 		
-		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3({size.x, size.y, 0.0f}));
-		glm::vec3 m_SquareTransform = glm::vec3(0.0f);
+		glm::mat4 transform = glm::translate(OneMat4, glm::vec3(position.x, position.y, position.z))
+				* glm::scale(OneMat4, glm::vec3({size.x, size.y, 0.0f}));
 		
-		glm::vec3 pos(position.x, position.y, position.z);
-		pos = pos + m_SquareTransform;
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
-		
-		// RendererData->TextureShader->Bind();
-		// RendererData->TextureShader->UploadUniformVec4("u_Color", color);
+		RendererData->TextureShader->UploadUniformFloat("u_TilingFactor", tilingFactor);
 		RendererData->TextureShader->UploadUniformMat4("u_Transform", transform);
+		
+		texture->Bind();
+		
+		RendererData->QuadVertexArray->Bind();
+		RenderCommand::DrawIndexed(RendererData->QuadVertexArray);
+	}
+	
+	void Renderer2D::DrawFilledRectRotated(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color){
+		DrawFilledQuadRotated({position.x, position.y, 0.0f}, size, rotation, color);
+	}
+	
+	void Renderer2D::DrawFilledQuadRotated(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color){
+		glm::mat4 transform = glm::translate(OneMat4, glm::vec3(position.x, position.y, position.z))
+					* glm::rotate(OneMat4, rotation, glm::vec3({0.0f, 0.0f, 1.0f}))
+					* glm::scale(OneMat4, glm::vec3({size.x, size.y, 0.0f}));
+		
+		float tilingFactor = 1.0f;
+		
+		RendererData->TextureShader->UploadUniformVec4("u_Color", color);
+		RendererData->TextureShader->UploadUniformFloat("u_TilingFactor", tilingFactor);
+		RendererData->WhiteTexture->Bind(); // bind white texture
+		RendererData->TextureShader->UploadUniformMat4("u_Transform", transform);
+		
+		RendererData->QuadVertexArray->Bind();
+		RenderCommand::DrawIndexed(RendererData->QuadVertexArray);
+	}
+	
+	void Renderer2D::DrawTextureRectRotated(const glm::vec2& position, const glm::vec2& size, float rotation, Texture2D* texture, float tilingFactor, const glm::vec4& tintColor){
+		DrawTextureQuadRotated({position.x, position.y, 0.0f}, size, rotation, texture, tilingFactor, tintColor);
+	}
+	
+	void Renderer2D::DrawTextureQuadRotated(const glm::vec3& position, const glm::vec2& size, float rotation, Texture2D* texture, float tilingFactor, const glm::vec4& tintColor){
+		RendererData->TextureShader->UploadUniformVec4("u_Color", tintColor);
+		
+		glm::mat4 transform = glm::translate(OneMat4, glm::vec3(position.x, position.y, position.z))
+					* glm::rotate(OneMat4, rotation, glm::vec3({0.0f, 0.0f, 1.0f}))
+					* glm::scale(OneMat4, glm::vec3({size.x, size.y, 0.0f}));
+		
+		RendererData->TextureShader->UploadUniformMat4("u_Transform", transform);
+		RendererData->TextureShader->UploadUniformFloat("u_TilingFactor", tilingFactor);
 		
 		texture->Bind();
 		

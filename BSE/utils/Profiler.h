@@ -162,9 +162,6 @@ namespace BSE {
 			
 			float duration = (end - start) * 0.001f;
 			
-			// BSE_CORE_INFO("{1} operation took: {0} ms", duration, m_Name);
-			// return new TimerResult(m_Name, duration);
-			
 			uint32_t threadID = std::hash<std::thread::id>{}(std::this_thread::get_id());
 			Profiler::WriteProfile({ m_Name, start, end, threadID });
 		}
