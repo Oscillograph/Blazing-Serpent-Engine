@@ -10,11 +10,11 @@ namespace BSE {
 	
 	struct Renderer2DStorage {
 		// for batch rendering
-		const uint32_t MaxQuads = 160000;
+		const uint32_t MaxQuads = 120000;
 		const uint32_t MaxVertices = MaxQuads * 4;
 		const uint32_t MaxIndices = MaxQuads * 6;
 		
-		uint32_t quadIndexCount = 0;
+		uint32_t QuadIndexCount = 0;
 		
 		QuadVertex* QuadVertexBufferBase = nullptr;
 		QuadVertex* QuadVertexBufferPointer = nullptr;
@@ -91,20 +91,37 @@ namespace BSE {
 		RendererData->TextureShader->Bind();
 		RendererData->TextureShader->UploadUniformMat4("u_ViewProjection", camera->GetViewProjectionMatrix());
 		
-		RendererData->quadIndexCount = 0;
+		RendererData->QuadIndexCount = 0;
 		RendererData->QuadVertexBufferPointer = RendererData->QuadVertexBufferBase;
 	}
 	
 	void Renderer2D::EndScene(){
-		// why uint8_t on the right, while uint32_t on the left?
-		uint32_t dataSize = (uint8_t*)RendererData->QuadVertexBufferPointer - (uint8_t*)RendererData->QuadVertexBufferBase;  
-		RendererData->QuadVertexBuffer->SetData(RendererData->QuadVertexBufferBase, dataSize);
+		PrepareVertexBuffer();
 		
 		Flush();
 	} 
 	
+	void Renderer2D::PrepareVertexBuffer(){
+		// why uint8_t on the right, while uint32_t on the left?
+		uint32_t dataSize = (uint8_t*)RendererData->QuadVertexBufferPointer - (uint8_t*)RendererData->QuadVertexBufferBase;  
+		RendererData->QuadVertexBuffer->SetData(RendererData->QuadVertexBufferBase, dataSize);
+	}
+	
 	void Renderer2D::Flush(){
-		RenderCommand::DrawIndexed(RendererData->QuadVertexArray, RendererData->quadIndexCount);
+		if (RendererData->QuadIndexCount > 0){
+			RenderCommand::DrawIndexed(RendererData->QuadVertexArray, RendererData->QuadIndexCount);
+		}
+	}
+	
+	void Renderer2D::CheckFlush(){
+		if (RendererData->QuadIndexCount >= RendererData->MaxIndices) {
+			PrepareVertexBuffer();
+			
+			Flush();
+			
+			RendererData->QuadIndexCount = 0;
+			RendererData->QuadVertexBufferPointer = RendererData->QuadVertexBufferBase;
+		}
 	}
 	
 	// ----------------------------------------------------------------
@@ -113,6 +130,7 @@ namespace BSE {
 	
 	void Renderer2D::DrawFilledRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color){
 		DrawFilledQuad({position.x, position.y, 0.0f}, size, color);
+		CheckFlush();
 	}
 	
 	void Renderer2D::DrawFilledQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color){
@@ -136,7 +154,7 @@ namespace BSE {
 		RendererData->QuadVertexBufferPointer->TextureCoordinates = {0.0f, 0.0f};
 		RendererData->QuadVertexBufferPointer++;
 		
-		RendererData->quadIndexCount += 6;
+		RendererData->QuadIndexCount += 6;
 		
 		// glm::mat4 transform = glm::translate(OneMat4, glm::vec3(position.x, position.y, position.z))
 		//		* glm::scale(OneMat4, glm::vec3({size.x, size.y, 0.0f}));
