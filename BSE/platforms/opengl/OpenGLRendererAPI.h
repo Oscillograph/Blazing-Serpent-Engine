@@ -16,7 +16,7 @@ namespace BSE {
 		virtual void SetClearColor(const glm::vec4 color) override;
 		virtual void Clear() override;
 		
-		virtual void DrawIndexed(const VertexArray* vertexArray) override;
+		virtual void DrawIndexed(const VertexArray* vertexArray, uint32_t indeCount = 0) override;
 	};
 }
 

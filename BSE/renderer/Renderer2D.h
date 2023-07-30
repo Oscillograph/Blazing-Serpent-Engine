@@ -26,7 +26,7 @@ namespace BSE {
 		static void EndScene(); // 
 		
 		static void Submit(Shader* shader, VertexArray* vertexArray, const glm::mat4& transform = glm::mat4(1.0f));
-		// static void Flush();
+		static void Flush();
 		
 		// ----------------------------------------------------------------
 		//				2D Specific stuff

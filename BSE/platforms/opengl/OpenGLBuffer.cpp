@@ -6,19 +6,18 @@ namespace BSE {
 	// 								Vertex Buffer
 	// ----------------------------------------------------------------------
 	
+	OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size){
+		// The app crashed here when i used glCreateBuffers (OpenGL 4.5+) instead of glGenBuffers (can work on my videocard)
+		glGenBuffers(1, &m_RendererId);
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererId);
+		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+	}
+	
 	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, uint32_t size){
-		// Vertex array
-		//glGenVertexArrays(1, &m_VertexArray);
-		//glBindVertexArray(m_VertexArray);
-		
 		// The app crashed here when i used glCreateBuffers (OpenGL 4.5+) instead of glGenBuffers (can work on my videocard)
 		glGenBuffers(1, &m_RendererId);
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererId);
 		glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
-		
-		// Vertex buffer
-		//glGenBuffers(1, &m_VertexBuffer);
-		//glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
 	}
 	
 	OpenGLVertexBuffer::~OpenGLVertexBuffer(){
@@ -33,27 +32,22 @@ namespace BSE {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 	
+	void OpenGLVertexBuffer::SetData(const void* data, uint32_t size) {
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererId);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+	}
+	
 	// ----------------------------------------------------------------------
 	// 								Index Buffer
 	// ----------------------------------------------------------------------
 	
-	
-	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, uint32_t size)
-		: m_Size(size)
+	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, uint32_t count)
+		: m_Count(count)
 	{
-		// Vertex array
-		//glGenVertexArrays(1, &m_VertexArray);
-		//glBindVertexArray(m_VertexArray);
-		
 		// The app crashed here when i used glCreateBuffers (OpenGL 4.5+) instead of glGenBuffers (can work on my videocard)
 		glGenBuffers(1, &m_RendererId);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererId);
-		
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, size * sizeof(uint32_t), indices, GL_STATIC_DRAW);
-		
-		// Vertex buffer
-		//glGenBuffers(1, &m_VertexBuffer);
-		//glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
 	}
 	
 	OpenGLIndexBuffer::~OpenGLIndexBuffer(){

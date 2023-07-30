@@ -8,6 +8,7 @@
 namespace BSE {
 	class OpenGLVertexBuffer : public VertexBuffer {
 	public:
+		OpenGLVertexBuffer(uint32_t size);
 		OpenGLVertexBuffer(float* vertices, uint32_t size);
 		virtual ~OpenGLVertexBuffer();
 		
@@ -20,6 +21,7 @@ namespace BSE {
 		
 		virtual const BufferLayout& GetLayout() override { return m_Layout; };
 		virtual bool SetLayout(const BufferLayout& layout) override { m_Layout = layout; return true; }
+		virtual void SetData(const void* data, uint32_t size) override;
 		
 		//static OpenGLVertexBuffer* Create(float* vertices, uint32_t size);
 		
@@ -30,7 +32,7 @@ namespace BSE {
 	
 	class OpenGLIndexBuffer : public IndexBuffer {
 	public:
-		OpenGLIndexBuffer(uint32_t* indices, uint32_t size);
+		OpenGLIndexBuffer(uint32_t* indices, uint32_t count);
 		virtual ~OpenGLIndexBuffer();
 		
 		// virtual void SetData();
@@ -38,12 +40,12 @@ namespace BSE {
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
 		
-		virtual uint32_t GetSize() const { return m_Size; }
+		virtual uint32_t GetSize() const { return m_Count; }
 		//static OpenGLIndexBuffer* Create(uint32_t* indices, uint32_t size);
 		
 	protected:
 		uint32_t m_RendererId;
-		uint32_t m_Size;
+		uint32_t m_Count;
 	};
 }
 

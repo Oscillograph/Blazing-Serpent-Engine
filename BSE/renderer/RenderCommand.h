@@ -28,8 +28,8 @@ namespace BSE {
 			m_RendererAPI->Clear();
 		}
 		
-		inline static void DrawIndexed(VertexArray* vertexArray){
-			m_RendererAPI->DrawIndexed(vertexArray);
+		inline static void DrawIndexed(VertexArray* vertexArray, uint32_t indexCount = 0){
+			m_RendererAPI->DrawIndexed(vertexArray, indexCount);
 		}
 		
 		inline static void SetAPI(RendererAPI::API api){

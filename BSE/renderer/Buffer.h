@@ -105,12 +105,15 @@ namespace BSE {
 		
 		virtual const BufferLayout& GetLayout() = 0;
 		virtual bool SetLayout(const BufferLayout& layout) = 0;
+		virtual void SetData(const void* data, uint32_t size) = 0;
 		
+		static VertexBuffer* Create(uint32_t size);
 		static VertexBuffer* Create(float* vertices, uint32_t size);
 	protected:
 		
 	};
 	
+	// currently BSE supports only 32-bit buffers
 	class BSE_API IndexBuffer {
 	public:
 		virtual ~IndexBuffer() {}
@@ -122,7 +125,7 @@ namespace BSE {
 		
 		virtual uint32_t GetSize() const = 0;
 		
-		static IndexBuffer* Create(uint32_t* indices, uint32_t size);
+		static IndexBuffer* Create(uint32_t* indices, uint32_t count);
 	protected:
 		
 	};

@@ -1,11 +1,28 @@
 #include "Renderer2D.h"
 
 namespace BSE {
+	struct QuadVertex {
+		glm::vec3 Position;
+		glm::vec4 Color;
+		glm::vec2 TextureCoordinates;
+		// TODO: textureId, maskId
+	};
+	
 	struct Renderer2DStorage {
-		VertexArray* QuadVertexArray = nullptr;
-		//Shader* FlatColorShader = nullptr;
-		Shader* TextureShader = nullptr;
+		// for batch rendering
+		const uint32_t MaxQuads = 160000;
+		const uint32_t MaxVertices = MaxQuads * 4;
+		const uint32_t MaxIndices = MaxQuads * 6;
 		
+		uint32_t quadIndexCount = 0;
+		
+		QuadVertex* QuadVertexBufferBase = nullptr;
+		QuadVertex* QuadVertexBufferPointer = nullptr;
+		// --------------------------------------
+		
+		VertexArray* QuadVertexArray = nullptr;
+		VertexBuffer* QuadVertexBuffer = nullptr;
+		Shader* TextureShader = nullptr;
 		Texture2D* WhiteTexture;
 	};
 	static Renderer2DStorage* RendererData;
@@ -15,28 +32,36 @@ namespace BSE {
 		
 		// Square Vertex Array
 		RendererData->QuadVertexArray = VertexArray::Create();
-		float squareVertices[5 * 4] = {
-			// one vertice, three-component vector X,Y,Z clipping -1...1
-			// two numbers for texture coords
-			-0.5f, -0.5f,  0.0f, 	0.0f, 0.0f,
-			 0.5f, -0.5f,  0.0f, 	1.0f, 0.0f,
-			 0.5f,  0.5f,  0.0f, 	1.0f, 1.0f,
-			-0.5f,  0.5f,  0.0f, 	0.0f, 1.0f
-		};
-		BSE_TRACE("Square Vertices defined");
+		BSE_TRACE("Square Vertices created");
 		
-		VertexBuffer* m_SquareVB = VertexBuffer::Create(squareVertices, sizeof(squareVertices));	
+		RendererData->QuadVertexBuffer = VertexBuffer::Create(RendererData->MaxVertices * sizeof(QuadVertex));	
 		
-		m_SquareVB->SetLayout({
+		RendererData->QuadVertexBuffer->SetLayout({
 			{ShaderDataType::Float3, "a_Position"},
-			{BSE::ShaderDataType::Float2, "a_TextureCoordinates"},
+			{ShaderDataType::Float4, "a_Color"},
+			{ShaderDataType::Float2, "a_TextureCoordinates"},
 		});
-		RendererData->QuadVertexArray->AddVertexBuffer(m_SquareVB);
+		RendererData->QuadVertexArray->AddVertexBuffer(RendererData->QuadVertexBuffer);
 		BSE_TRACE("Square Vertex buffer layout construction successful");
 		
-		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-		RendererData->QuadVertexArray->SetIndexBuffer(IndexBuffer::Create(squareIndices, (sizeof(squareIndices) / sizeof(uint32_t))));
+		RendererData->QuadVertexBufferBase = new QuadVertex[RendererData->MaxVertices];
+		
+		uint32_t* quadIndices = new uint32_t[RendererData->MaxIndices];
+		uint32_t offset = 0;
+		for (uint32_t i = 0; i < RendererData->MaxIndices; i += 6 ){
+			quadIndices[i + 0] = offset + 0;
+			quadIndices[i + 1] = offset + 1;
+			quadIndices[i + 2] = offset + 2;
+			quadIndices[i + 3] = offset + 2;
+			quadIndices[i + 4] = offset + 3;
+			quadIndices[i + 5] = offset + 0;
+			offset += 4;
+		}
+		IndexBuffer* quadIB = IndexBuffer::Create(quadIndices, RendererData->MaxIndices);
+		RendererData->QuadVertexArray->SetIndexBuffer(quadIB);
+		delete[] quadIndices;
 		BSE_TRACE("Square Index buffer bind successful");
+		
 		
 		// Flat Color Shader
 		// RendererData->FlatColorShader = Shader::Create("Flat Color", "./shaders/glsl/FlatColor.glsl");
@@ -65,11 +90,22 @@ namespace BSE {
 		
 		RendererData->TextureShader->Bind();
 		RendererData->TextureShader->UploadUniformMat4("u_ViewProjection", camera->GetViewProjectionMatrix());
+		
+		RendererData->quadIndexCount = 0;
+		RendererData->QuadVertexBufferPointer = RendererData->QuadVertexBufferBase;
 	}
 	
 	void Renderer2D::EndScene(){
+		// why uint8_t on the right, while uint32_t on the left?
+		uint32_t dataSize = (uint8_t*)RendererData->QuadVertexBufferPointer - (uint8_t*)RendererData->QuadVertexBufferBase;  
+		RendererData->QuadVertexBuffer->SetData(RendererData->QuadVertexBufferBase, dataSize);
 		
+		Flush();
 	} 
+	
+	void Renderer2D::Flush(){
+		RenderCommand::DrawIndexed(RendererData->QuadVertexArray, RendererData->quadIndexCount);
+	}
 	
 	// ----------------------------------------------------------------
 	//				2D Specific stuff
@@ -80,18 +116,40 @@ namespace BSE {
 	}
 	
 	void Renderer2D::DrawFilledQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color){
-		glm::mat4 transform = glm::translate(OneMat4, glm::vec3(position.x, position.y, position.z))
-				* glm::scale(OneMat4, glm::vec3({size.x, size.y, 0.0f}));
+		RendererData->QuadVertexBufferPointer->Position = {position.x, position.y, 0.0f};
+		RendererData->QuadVertexBufferPointer->Color = color;
+		RendererData->QuadVertexBufferPointer->TextureCoordinates = {0.0f, 1.0f};
+		RendererData->QuadVertexBufferPointer++;
 		
-		float tilingFactor = 1.0f;
+		RendererData->QuadVertexBufferPointer->Position = {position.x + size.x, position.y, 0.0f};
+		RendererData->QuadVertexBufferPointer->Color = color;
+		RendererData->QuadVertexBufferPointer->TextureCoordinates = {1.0f, 1.0f};
+		RendererData->QuadVertexBufferPointer++;
+		
+		RendererData->QuadVertexBufferPointer->Position = {position.x + size.x, position.y + size.y, 0.0f};
+		RendererData->QuadVertexBufferPointer->Color = color;
+		RendererData->QuadVertexBufferPointer->TextureCoordinates = {1.0f, 0.0f};
+		RendererData->QuadVertexBufferPointer++;
+		
+		RendererData->QuadVertexBufferPointer->Position = {position.x, position.y + size.y, 0.0f};;
+		RendererData->QuadVertexBufferPointer->Color = color;
+		RendererData->QuadVertexBufferPointer->TextureCoordinates = {0.0f, 0.0f};
+		RendererData->QuadVertexBufferPointer++;
+		
+		RendererData->quadIndexCount += 6;
+		
+		// glm::mat4 transform = glm::translate(OneMat4, glm::vec3(position.x, position.y, position.z))
+		//		* glm::scale(OneMat4, glm::vec3({size.x, size.y, 0.0f}));
+		
+		// float tilingFactor = 1.0f;
 
-		RendererData->TextureShader->UploadUniformVec4("u_Color", color);
-		RendererData->TextureShader->UploadUniformFloat("u_TilingFactor", tilingFactor);
-		RendererData->WhiteTexture->Bind(); // bind white texture
-		RendererData->TextureShader->UploadUniformMat4("u_Transform", transform);
+		// RendererData->TextureShader->UploadUniformVec4("u_Color", color);
+		// RendererData->TextureShader->UploadUniformFloat("u_TilingFactor", tilingFactor);
+		// RendererData->WhiteTexture->Bind(); // bind white texture
+		// RendererData->TextureShader->UploadUniformMat4("u_Transform", transform);
 		
-		RendererData->QuadVertexArray->Bind();
-		RenderCommand::DrawIndexed(RendererData->QuadVertexArray);
+		// RendererData->QuadVertexArray->Bind();
+		// RenderCommand::DrawIndexed(RendererData->QuadVertexArray);
 	}
 	
 	void Renderer2D::DrawTextureRect(const glm::vec2& position, const glm::vec2& size, Texture2D* texture, float tilingFactor, const glm::vec4& tintColor){
