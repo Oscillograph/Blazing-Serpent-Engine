@@ -20,6 +20,7 @@ namespace BSE {
 		// virtual void UploadUniformBuffer() = 0;
 		
 		virtual void UploadUniformInt(std::string name, const int& value) const = 0;
+		virtual void UploadUniformIntArray(std::string name, int* values, int count) const = 0;
 		virtual void UploadUniformFloat(std::string name, const float& value) const = 0;
 		
 		virtual void UploadUniformVec2(std::string name, const glm::vec2& vector) const = 0;

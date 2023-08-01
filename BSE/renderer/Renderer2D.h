@@ -27,6 +27,7 @@ namespace BSE {
 		
 		static void Submit(Shader* shader, VertexArray* vertexArray, const glm::mat4& transform = glm::mat4(1.0f));
 		static void PrepareVertexBuffer(); 	// important for batch rendering
+		static void ResetVertexBufferPointer(); 	// important for batch rendering
 		static void Flush();				// important for batch rendering
 		static void CheckFlush();			// important for batch rendering
 		

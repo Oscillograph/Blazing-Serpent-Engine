@@ -17,6 +17,7 @@ namespace BSE {
 		// virtual void UploadUniformBuffer() override
 		
 		void UploadUniformInt(std::string name, const int& value) const override;
+		void UploadUniformIntArray(std::string name, int* values, int count) const override;
 		void UploadUniformFloat(std::string name, const float& value) const override;
 		
 		void UploadUniformVec2(std::string name, const glm::vec2& vector) const override;

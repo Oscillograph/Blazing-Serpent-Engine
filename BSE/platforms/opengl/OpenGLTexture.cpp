@@ -90,10 +90,17 @@ namespace BSE {
 		// bind to slot 0
 		// glBindTextureUnit(slot, m_RendererID);
 		// glBindTexture(slot, m_RendererID);
+		glActiveTexture(GL_TEXTURE0 + slot); // for batch texture renderer
+		// glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, m_RendererID);
+		// BSE_INFO("Texture is bound to: {0}", GL_TEXTURE0 + slot);
 	}
 	
 	void OpenGLTexture2D::Unbind(uint32_t slot) const {
+		glActiveTexture(GL_TEXTURE0 + slot); // for batch texture renderer
+		// glDisable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
+		// BSE_INFO("Texture is unbound from: {0}", GL_TEXTURE0 + slot);
 	}
+	
 }
