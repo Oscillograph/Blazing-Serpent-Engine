@@ -77,6 +77,11 @@ namespace BSE {
 		glUniform1f (location, value);
 	}
 	
+	void OpenGLShader::UploadUniformFloatArray(std::string name, float* values, int count) const {
+		GLint location = glGetUniformLocation(GetRendererID(), name.c_str());
+		glUniform1fv(location, count, values);
+	}
+	
 	void OpenGLShader::UploadUniformVec2(std::string name, const glm::vec2& vector) const {
 		GLint location = glGetUniformLocation(GetRendererID(), name.c_str());
 		glUniform2fv (location, 2, glm::value_ptr(vector));
