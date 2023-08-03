@@ -103,47 +103,13 @@ namespace BSE {
 		RendererData->TextureShader->Bind();
 		RendererData->TextureShader->UploadUniformMat4("u_ViewProjection", camera->GetViewProjectionMatrix());
 		
-		/*
-		float samplers[RendererData->MaxTextureSlots];
+		
+		int samplers[RendererData->MaxTextureSlots];
 		for (int i = 0; i < RendererData->MaxTextureSlots; i++){
-			samplers[i] = (float)i;
+			samplers[i] = i;
 			// BSE_INFO("Sampler #{0}", i);
 		}
-		RendererData->TextureShader->UploadUniformFloatArray("u_Textures", samplers, RendererData->MaxTextureSlots);
-		*/
-		
-		RendererData->TextureShader->UploadUniformInt("u_Texture00",  0);
-		RendererData->TextureShader->UploadUniformInt("u_Texture01",  1);
-		RendererData->TextureShader->UploadUniformInt("u_Texture02",  2);
-		RendererData->TextureShader->UploadUniformInt("u_Texture03",  3);
-		RendererData->TextureShader->UploadUniformInt("u_Texture04",  4);
-		RendererData->TextureShader->UploadUniformInt("u_Texture05",  5);
-		RendererData->TextureShader->UploadUniformInt("u_Texture06",  6);
-		RendererData->TextureShader->UploadUniformInt("u_Texture07",  7);
-		RendererData->TextureShader->UploadUniformInt("u_Texture08",  8);
-		RendererData->TextureShader->UploadUniformInt("u_Texture09",  9);
-		RendererData->TextureShader->UploadUniformInt("u_Texture10", 10);
-		RendererData->TextureShader->UploadUniformInt("u_Texture11", 11);
-		RendererData->TextureShader->UploadUniformInt("u_Texture12", 12);
-		RendererData->TextureShader->UploadUniformInt("u_Texture13", 13);
-		RendererData->TextureShader->UploadUniformInt("u_Texture14", 14);
-		RendererData->TextureShader->UploadUniformInt("u_Texture15", 15);
-		RendererData->TextureShader->UploadUniformInt("u_Texture16", 16);
-		RendererData->TextureShader->UploadUniformInt("u_Texture17", 17);
-		RendererData->TextureShader->UploadUniformInt("u_Texture18", 18);
-		RendererData->TextureShader->UploadUniformInt("u_Texture19", 19);
-		RendererData->TextureShader->UploadUniformInt("u_Texture20", 20);
-		RendererData->TextureShader->UploadUniformInt("u_Texture21", 21);
-		RendererData->TextureShader->UploadUniformInt("u_Texture22", 22);
-		RendererData->TextureShader->UploadUniformInt("u_Texture23", 23);
-		RendererData->TextureShader->UploadUniformInt("u_Texture24", 24);
-		RendererData->TextureShader->UploadUniformInt("u_Texture25", 25);
-		RendererData->TextureShader->UploadUniformInt("u_Texture26", 26);
-		RendererData->TextureShader->UploadUniformInt("u_Texture27", 27);
-		RendererData->TextureShader->UploadUniformInt("u_Texture28", 28);
-		RendererData->TextureShader->UploadUniformInt("u_Texture29", 29);
-		RendererData->TextureShader->UploadUniformInt("u_Texture30", 30);
-		RendererData->TextureShader->UploadUniformInt("u_Texture31", 31);
+		RendererData->TextureShader->UploadUniformIntArray("u_Textures", samplers, RendererData->MaxTextureSlots);
 		
 		ResetVertexBufferPointer();
 		RendererData->TextureCount = 1;
