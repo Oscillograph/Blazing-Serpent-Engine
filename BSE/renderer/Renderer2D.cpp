@@ -31,6 +31,8 @@ namespace BSE {
 		Texture2D* TextureSlots[MaxTextureSlots];
 		// std::array<Texture2D*, MaxTextureSlots> TextureSlots;
 		uint32_t TextureCount = 1; // 0 is a white texture
+		
+		glm::vec4 QuadVertices[4];
 	};
 	static Renderer2DStorage* RendererData;
 	
@@ -88,6 +90,12 @@ namespace BSE {
 		}
 		RendererData->TextureSlots[0] = RendererData->WhiteTexture;
 		RendererData->TextureCount = 1;
+		
+		// Set vertices for primitives
+		RendererData->QuadVertices[0] = {-0.5f, -0.5f, 0.0f, 1.0f};
+		RendererData->QuadVertices[1] = { 0.5f, -0.5f, 0.0f, 1.0f};
+		RendererData->QuadVertices[2] = { 0.5f,  0.5f, 0.0f, 1.0f};
+		RendererData->QuadVertices[3] = {-0.5f,  0.5f, 0.0f, 1.0f};
 	}
 	
 	void Renderer2D::Clear(const glm::vec4& color){
@@ -297,9 +305,50 @@ namespace BSE {
 	
 	void Renderer2D::DrawFilledRectRotated(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color){
 		DrawFilledQuadRotated({position.x, position.y, 0.0f}, size, rotation, color);
+		CheckFlush();
 	}
 	
 	void Renderer2D::DrawFilledQuadRotated(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color){
+		// const float textureIndex = 0.0f; // white texture
+		const float textureIndex = 0.0; // white texture
+		const float tilingFactor = 1.0f;
+		
+		glm::mat4 transform = 
+			glm::translate(OneMat4, position) *
+			glm::rotate(OneMat4, glm::radians(rotation), glm::vec3({0.0f, 0.0f, 1.0f})) *
+			glm::scale(OneMat4, {size.x, size.y, 1.0f});	
+		
+		RendererData->QuadVertexBufferPointer->Position = transform * RendererData->QuadVertices[0];
+		RendererData->QuadVertexBufferPointer->Color = color;
+		RendererData->QuadVertexBufferPointer->TextureCoordinates = {0.0f, 0.0f};
+		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
+		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
+		RendererData->QuadVertexBufferPointer++;
+		
+		RendererData->QuadVertexBufferPointer->Position = transform * RendererData->QuadVertices[1];
+		RendererData->QuadVertexBufferPointer->Color = color;
+		RendererData->QuadVertexBufferPointer->TextureCoordinates = {1.0f, 0.0f};
+		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
+		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
+		RendererData->QuadVertexBufferPointer++;
+		
+		RendererData->QuadVertexBufferPointer->Position = transform * RendererData->QuadVertices[2];
+		RendererData->QuadVertexBufferPointer->Color = color;
+		RendererData->QuadVertexBufferPointer->TextureCoordinates = {1.0f, 1.0f};
+		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
+		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
+		RendererData->QuadVertexBufferPointer++;
+		
+		RendererData->QuadVertexBufferPointer->Position = transform * RendererData->QuadVertices[3];
+		RendererData->QuadVertexBufferPointer->Color = color;
+		RendererData->QuadVertexBufferPointer->TextureCoordinates = {0.0f, 1.0f};
+		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
+		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
+		RendererData->QuadVertexBufferPointer++;
+		
+		RendererData->QuadIndexCount += 6;
+		
+		/*
 		glm::mat4 transform = glm::translate(OneMat4, glm::vec3(position.x, position.y, position.z))
 					* glm::rotate(OneMat4, rotation, glm::vec3({0.0f, 0.0f, 1.0f}))
 					* glm::scale(OneMat4, glm::vec3({size.x, size.y, 0.0f}));
@@ -313,6 +362,9 @@ namespace BSE {
 		
 		RendererData->QuadVertexArray->Bind();
 		RenderCommand::DrawIndexed(RendererData->QuadVertexArray);
+		*/
+		
+		CheckFlush();
 	}
 	
 	void Renderer2D::DrawTextureRectRotated(const glm::vec2& position, const glm::vec2& size, float rotation, Texture2D* texture, float tilingFactor, const glm::vec4& tintColor){
@@ -320,6 +372,63 @@ namespace BSE {
 	}
 	
 	void Renderer2D::DrawTextureQuadRotated(const glm::vec3& position, const glm::vec2& size, float rotation, Texture2D* texture, float tilingFactor, const glm::vec4& tintColor){
+		float textureIndex = 0.0;
+		for (uint32_t i = 1; i < RendererData->TextureCount; i++){
+			if (RendererData->TextureSlots[i] != nullptr) {
+				if (RendererData->TextureSlots[i]->GetID() == texture->GetID()) { // if textures are the same
+					textureIndex = (float)i;
+					break;
+				}
+			} else {
+				break;
+			}
+		}
+		
+		if (textureIndex == 0.0) {
+			textureIndex = (float)(RendererData->TextureCount);
+			RendererData->TextureSlots[RendererData->TextureCount] = texture;
+			RendererData->TextureCount++;
+		}
+		// BSE_INFO("TextureIndex = {0}", textureIndex);
+		
+		glm::mat4 transform = 
+			glm::translate(OneMat4, position) *
+			glm::rotate(OneMat4, glm::radians(rotation), glm::vec3({0.0f, 0.0f, 1.0f})) *
+			glm::scale(OneMat4, {size.x, size.y, 1.0f});	
+		
+		RendererData->QuadVertexBufferPointer->Position = transform * RendererData->QuadVertices[0];
+		RendererData->QuadVertexBufferPointer->Color = tintColor;
+		RendererData->QuadVertexBufferPointer->TextureCoordinates = {0.0f, 0.0f};
+		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
+		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
+		RendererData->QuadVertexBufferPointer++;
+		
+		RendererData->QuadVertexBufferPointer->Position = transform * RendererData->QuadVertices[1];
+		RendererData->QuadVertexBufferPointer->Color = tintColor;
+		RendererData->QuadVertexBufferPointer->TextureCoordinates = {1.0f, 0.0f};
+		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
+		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
+		RendererData->QuadVertexBufferPointer++;
+		
+		RendererData->QuadVertexBufferPointer->Position = transform * RendererData->QuadVertices[2];
+		RendererData->QuadVertexBufferPointer->Color = tintColor;
+		RendererData->QuadVertexBufferPointer->TextureCoordinates = {1.0f, 1.0f};
+		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
+		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
+		RendererData->QuadVertexBufferPointer++;
+		
+		RendererData->QuadVertexBufferPointer->Position = transform * RendererData->QuadVertices[3];
+		RendererData->QuadVertexBufferPointer->Color = tintColor;
+		RendererData->QuadVertexBufferPointer->TextureCoordinates = {0.0f, 1.0f};
+		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
+		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
+		RendererData->QuadVertexBufferPointer++;
+		
+		RendererData->QuadIndexCount += 6;
+		
+		CheckFlush();
+		
+		/*
 		RendererData->TextureShader->UploadUniformVec4("u_Color", tintColor);
 		
 		glm::mat4 transform = glm::translate(OneMat4, glm::vec3(position.x, position.y, position.z))
@@ -333,6 +442,7 @@ namespace BSE {
 		
 		RendererData->QuadVertexArray->Bind();
 		RenderCommand::DrawIndexed(RendererData->QuadVertexArray);
+		*/
 	}
 	
 	void Renderer2D::DrawRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color){
