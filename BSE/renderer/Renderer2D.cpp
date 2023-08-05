@@ -232,33 +232,51 @@ namespace BSE {
 			}
 		}
 		
-		glm::mat4 transform = 
-			glm::translate(OneMat4, position) *
-			glm::rotate(OneMat4, glm::radians(rotation), glm::vec3({0.0f, 0.0f, 1.0f})) *
-			glm::scale(OneMat4, {size.x, size.y, 1.0f});	
+		glm::mat4 transform = OneMat4;
+		glm::vec3 pos[4];
 		
-		RendererData->QuadVertexBufferPointer->Position = transform * RendererData->QuadVertices[0];
+		if (rotation == 0.0f){
+			//transform = 
+			//	glm::translate(OneMat4, position) *
+			//	glm::scale(OneMat4, {size.x, size.y, 1.0f});
+			pos[0] = {position.x, 			position.y, 			position.z};
+			pos[1] = {position.x + size.x, 	position.y, 			position.z};
+			pos[2] = {position.x + size.x, 	position.y + size.y, 	position.z};
+			pos[3] = {position.x, 			position.y + size.y, 	position.z};
+		} else {
+			transform = 
+				glm::translate(OneMat4, position) *
+				glm::rotate(OneMat4, glm::radians(rotation), glm::vec3({0.0f, 0.0f, 1.0f})) *
+				glm::scale(OneMat4, {size.x, size.y, 1.0f});
+			
+			pos[0] = glm::vec3(transform * RendererData->QuadVertices[0]);
+			pos[1] = glm::vec3(transform * RendererData->QuadVertices[1]);
+			pos[2] = glm::vec3(transform * RendererData->QuadVertices[2]);
+			pos[3] = glm::vec3(transform * RendererData->QuadVertices[3]);
+		}
+		
+		RendererData->QuadVertexBufferPointer->Position = pos[0];
 		RendererData->QuadVertexBufferPointer->Color = tintColor;
 		RendererData->QuadVertexBufferPointer->TextureCoordinates = {0.0f, 0.0f};
 		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
 		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
 		RendererData->QuadVertexBufferPointer++;
 		
-		RendererData->QuadVertexBufferPointer->Position = transform * RendererData->QuadVertices[1];
+		RendererData->QuadVertexBufferPointer->Position = pos[1];
 		RendererData->QuadVertexBufferPointer->Color = tintColor;
 		RendererData->QuadVertexBufferPointer->TextureCoordinates = {1.0f, 0.0f};
 		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
 		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
 		RendererData->QuadVertexBufferPointer++;
 		
-		RendererData->QuadVertexBufferPointer->Position = transform * RendererData->QuadVertices[2];
+		RendererData->QuadVertexBufferPointer->Position = pos[2];
 		RendererData->QuadVertexBufferPointer->Color = tintColor;
 		RendererData->QuadVertexBufferPointer->TextureCoordinates = {1.0f, 1.0f};
 		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
 		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
 		RendererData->QuadVertexBufferPointer++;
 		
-		RendererData->QuadVertexBufferPointer->Position = transform * RendererData->QuadVertices[3];
+		RendererData->QuadVertexBufferPointer->Position = pos[3];
 		RendererData->QuadVertexBufferPointer->Color = tintColor;
 		RendererData->QuadVertexBufferPointer->TextureCoordinates = {0.0f, 1.0f};
 		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
