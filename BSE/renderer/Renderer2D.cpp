@@ -32,7 +32,9 @@ namespace BSE {
 		// std::array<Texture2D*, MaxTextureSlots> TextureSlots;
 		uint32_t TextureCount = 1; // 0 is a white texture
 		
-		glm::vec4 QuadVertices[4];
+		glm::vec4 TriangleVertices[3]; // for triangles
+		glm::vec4 QuadVertices[4]; // for rectangles
+		glm::vec4 CustomVertices[1000]; // for custom figures, like circles, polygons, monkeys, etc.
 	};
 	static Renderer2DStorage* RendererData;
 	
@@ -92,6 +94,10 @@ namespace BSE {
 		RendererData->TextureCount = 1;
 		
 		// Set vertices for primitives
+		RendererData->TriangleVertices[0] = {-0.5f, -0.5f, 0.0f, 1.0f};
+		RendererData->TriangleVertices[1] = { 0.5f, -0.5f, 0.0f, 1.0f};
+		RendererData->TriangleVertices[2] = { 0.0f,  0.5f, 0.0f, 1.0f};
+		
 		RendererData->QuadVertices[0] = {-0.5f, -0.5f, 0.0f, 1.0f};
 		RendererData->QuadVertices[1] = { 0.5f, -0.5f, 0.0f, 1.0f};
 		RendererData->QuadVertices[2] = { 0.5f,  0.5f, 0.0f, 1.0f};
@@ -181,215 +187,50 @@ namespace BSE {
 	// ----------------------------------------------------------------
 	
 	void Renderer2D::DrawFilledRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color){
-		DrawFilledQuad({position.x, position.y, 0.0f}, size, color);
-	}
-	
-	void Renderer2D::DrawFilledQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color){
-		// const float textureIndex = 0.0f; // white texture
-		const float textureIndex = 0.0; // white texture
-		const float tilingFactor = 1.0f;
-		
-		RendererData->QuadVertexBufferPointer->Position = {position.x, position.y, 0.0f};
-		RendererData->QuadVertexBufferPointer->Color = color;
-		RendererData->QuadVertexBufferPointer->TextureCoordinates = {0.0f, 0.0f};
-		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
-		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
-		RendererData->QuadVertexBufferPointer++;
-		
-		RendererData->QuadVertexBufferPointer->Position = {position.x + size.x, position.y, 0.0f};
-		RendererData->QuadVertexBufferPointer->Color = color;
-		RendererData->QuadVertexBufferPointer->TextureCoordinates = {1.0f, 0.0f};
-		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
-		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
-		RendererData->QuadVertexBufferPointer++;
-		
-		RendererData->QuadVertexBufferPointer->Position = {position.x + size.x, position.y + size.y, 0.0f};
-		RendererData->QuadVertexBufferPointer->Color = color;
-		RendererData->QuadVertexBufferPointer->TextureCoordinates = {1.0f, 1.0f};
-		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
-		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
-		RendererData->QuadVertexBufferPointer++;
-		
-		RendererData->QuadVertexBufferPointer->Position = {position.x, position.y + size.y, 0.0f};;
-		RendererData->QuadVertexBufferPointer->Color = color;
-		RendererData->QuadVertexBufferPointer->TextureCoordinates = {0.0f, 1.0f};
-		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
-		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
-		RendererData->QuadVertexBufferPointer++;
-		
-		RendererData->QuadIndexCount += 6;
-		
-		// glm::mat4 transform = glm::translate(OneMat4, glm::vec3(position.x, position.y, position.z))
-		//		* glm::scale(OneMat4, glm::vec3({size.x, size.y, 0.0f}));
-		
-		// float tilingFactor = 1.0f;
-
-		// RendererData->TextureShader->UploadUniformVec4("u_Color", color);
-		// RendererData->TextureShader->UploadUniformFloat("u_TilingFactor", tilingFactor);
-		// RendererData->WhiteTexture->Bind(); // bind white texture
-		// RendererData->TextureShader->UploadUniformMat4("u_Transform", transform);
-		
-		// RendererData->QuadVertexArray->Bind();
-		// RenderCommand::DrawIndexed(RendererData->QuadVertexArray);
-		
+		// DrawFilledQuad({position.x, position.y, 0.0f}, size, color);
+		DrawQuadGeneral({position.x, position.y, 0.0f}, size, 0.0f, nullptr, 1.0f, color);
 		CheckFlush();
 	}
 	
 	void Renderer2D::DrawTextureRect(const glm::vec2& position, const glm::vec2& size, Texture2D* texture, float tilingFactor, const glm::vec4& tintColor){
-		DrawTextureQuad({position.x, position.y, 0.0f}, size, texture, tilingFactor, tintColor);
-	}
-	
-	void Renderer2D::DrawTextureQuad(const glm::vec3& position, const glm::vec2& size, Texture2D* texture, float tilingFactor, const glm::vec4& tintColor){
-		float textureIndex = 0.0;
-		for (uint32_t i = 1; i < RendererData->TextureCount; i++){
-			if (RendererData->TextureSlots[i] != nullptr) {
-				if (RendererData->TextureSlots[i]->GetID() == texture->GetID()) { // if textures are the same
-					textureIndex = (float)i;
-					break;
-				}
-			} else {
-				break;
-			}
-		}
-		
-		if (textureIndex == 0.0) {
-			textureIndex = (float)(RendererData->TextureCount);
-			RendererData->TextureSlots[RendererData->TextureCount] = texture;
-			RendererData->TextureCount++;
-		}
-		// BSE_INFO("TextureIndex = {0}", textureIndex);
-		
-		RendererData->QuadVertexBufferPointer->Position = {position.x, position.y, 0.0f};
-		RendererData->QuadVertexBufferPointer->Color = tintColor;
-		RendererData->QuadVertexBufferPointer->TextureCoordinates = {0.0f, 0.0f};
-		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
-		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
-		RendererData->QuadVertexBufferPointer++;
-		
-		RendererData->QuadVertexBufferPointer->Position = {position.x + size.x, position.y, 0.0f};
-		RendererData->QuadVertexBufferPointer->Color = tintColor;
-		RendererData->QuadVertexBufferPointer->TextureCoordinates = {1.0f, 0.0f};
-		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
-		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
-		RendererData->QuadVertexBufferPointer++;
-		
-		RendererData->QuadVertexBufferPointer->Position = {position.x + size.x, position.y + size.y, 0.0f};
-		RendererData->QuadVertexBufferPointer->Color = tintColor;
-		RendererData->QuadVertexBufferPointer->TextureCoordinates = {1.0f, 1.0f};
-		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
-		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
-		RendererData->QuadVertexBufferPointer++;
-		
-		RendererData->QuadVertexBufferPointer->Position = {position.x, position.y + size.y, 0.0f};;
-		RendererData->QuadVertexBufferPointer->Color = tintColor;
-		RendererData->QuadVertexBufferPointer->TextureCoordinates = {0.0f, 1.0f};
-		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
-		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
-		RendererData->QuadVertexBufferPointer++;
-		
-		RendererData->QuadIndexCount += 6;
-		
-		//RendererData->TextureShader->UploadUniformVec4("u_Color", tintColor);
-		//glm::mat4 transform = glm::translate(OneMat4, glm::vec3(position.x, position.y, position.z))
-		//		* glm::scale(OneMat4, glm::vec3({size.x, size.y, 0.0f}));
-		//RendererData->TextureShader->UploadUniformFloat("u_TilingFactor", tilingFactor);
-		//RendererData->TextureShader->UploadUniformMat4("u_Transform", transform);
-		//
-		//texture->Bind();
-		//
-		//RendererData->QuadVertexArray->Bind();
-		//RenderCommand::DrawIndexed(RendererData->QuadVertexArray);
-		
+		// DrawTextureQuad({position.x, position.y, 0.0f}, size, texture, tilingFactor, tintColor);
+		DrawQuadGeneral({position.x, position.y, 0.0f}, size, 0.0f, texture, tilingFactor, tintColor);
 		CheckFlush();
 	}
 	
 	void Renderer2D::DrawFilledRectRotated(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color){
-		DrawFilledQuadRotated({position.x, position.y, 0.0f}, size, rotation, color);
-		CheckFlush();
-	}
-	
-	void Renderer2D::DrawFilledQuadRotated(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color){
-		// const float textureIndex = 0.0f; // white texture
-		const float textureIndex = 0.0; // white texture
-		const float tilingFactor = 1.0f;
-		
-		glm::mat4 transform = 
-			glm::translate(OneMat4, position) *
-			glm::rotate(OneMat4, glm::radians(rotation), glm::vec3({0.0f, 0.0f, 1.0f})) *
-			glm::scale(OneMat4, {size.x, size.y, 1.0f});	
-		
-		RendererData->QuadVertexBufferPointer->Position = transform * RendererData->QuadVertices[0];
-		RendererData->QuadVertexBufferPointer->Color = color;
-		RendererData->QuadVertexBufferPointer->TextureCoordinates = {0.0f, 0.0f};
-		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
-		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
-		RendererData->QuadVertexBufferPointer++;
-		
-		RendererData->QuadVertexBufferPointer->Position = transform * RendererData->QuadVertices[1];
-		RendererData->QuadVertexBufferPointer->Color = color;
-		RendererData->QuadVertexBufferPointer->TextureCoordinates = {1.0f, 0.0f};
-		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
-		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
-		RendererData->QuadVertexBufferPointer++;
-		
-		RendererData->QuadVertexBufferPointer->Position = transform * RendererData->QuadVertices[2];
-		RendererData->QuadVertexBufferPointer->Color = color;
-		RendererData->QuadVertexBufferPointer->TextureCoordinates = {1.0f, 1.0f};
-		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
-		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
-		RendererData->QuadVertexBufferPointer++;
-		
-		RendererData->QuadVertexBufferPointer->Position = transform * RendererData->QuadVertices[3];
-		RendererData->QuadVertexBufferPointer->Color = color;
-		RendererData->QuadVertexBufferPointer->TextureCoordinates = {0.0f, 1.0f};
-		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
-		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
-		RendererData->QuadVertexBufferPointer++;
-		
-		RendererData->QuadIndexCount += 6;
-		
-		/*
-		glm::mat4 transform = glm::translate(OneMat4, glm::vec3(position.x, position.y, position.z))
-					* glm::rotate(OneMat4, rotation, glm::vec3({0.0f, 0.0f, 1.0f}))
-					* glm::scale(OneMat4, glm::vec3({size.x, size.y, 0.0f}));
-		
-		float tilingFactor = 1.0f;
-		
-		RendererData->TextureShader->UploadUniformVec4("u_Color", color);
-		RendererData->TextureShader->UploadUniformFloat("u_TilingFactor", tilingFactor);
-		RendererData->WhiteTexture->Bind(); // bind white texture
-		RendererData->TextureShader->UploadUniformMat4("u_Transform", transform);
-		
-		RendererData->QuadVertexArray->Bind();
-		RenderCommand::DrawIndexed(RendererData->QuadVertexArray);
-		*/
-		
+		// DrawFilledQuadRotated({position.x, position.y, 0.0f}, size, rotation, color);
+		DrawQuadGeneral({position.x, position.y, 0.0f}, size, rotation, nullptr, 1.0f, color);
 		CheckFlush();
 	}
 	
 	void Renderer2D::DrawTextureRectRotated(const glm::vec2& position, const glm::vec2& size, float rotation, Texture2D* texture, float tilingFactor, const glm::vec4& tintColor){
-		DrawTextureQuadRotated({position.x, position.y, 0.0f}, size, rotation, texture, tilingFactor, tintColor);
+		// DrawTextureQuadRotated({position.x, position.y, 0.0f}, size, rotation, texture, tilingFactor, tintColor);
+		DrawQuadGeneral({position.x, position.y, 0.0f}, size, rotation, texture, tilingFactor, tintColor);
+		CheckFlush();
 	}
 	
-	void Renderer2D::DrawTextureQuadRotated(const glm::vec3& position, const glm::vec2& size, float rotation, Texture2D* texture, float tilingFactor, const glm::vec4& tintColor){
+	void Renderer2D::DrawQuadGeneral(const glm::vec3& position, const glm::vec2& size, float rotation, Texture2D* texture, float tilingFactor, const glm::vec4& tintColor){
 		float textureIndex = 0.0;
-		for (uint32_t i = 1; i < RendererData->TextureCount; i++){
-			if (RendererData->TextureSlots[i] != nullptr) {
-				if (RendererData->TextureSlots[i]->GetID() == texture->GetID()) { // if textures are the same
-					textureIndex = (float)i;
+		
+		if (texture != nullptr) {
+			for (uint32_t i = 1; i < RendererData->TextureCount; i++){
+				if (RendererData->TextureSlots[i] != nullptr) {
+					if (RendererData->TextureSlots[i]->GetID() == texture->GetID()) { // if textures are the same
+						textureIndex = (float)i;
+						break;
+					}
+				} else {
 					break;
 				}
-			} else {
-				break;
+			}
+			
+			if (textureIndex == 0.0) {
+				textureIndex = (float)(RendererData->TextureCount);
+				RendererData->TextureSlots[RendererData->TextureCount] = texture;
+				RendererData->TextureCount++;
 			}
 		}
-		
-		if (textureIndex == 0.0) {
-			textureIndex = (float)(RendererData->TextureCount);
-			RendererData->TextureSlots[RendererData->TextureCount] = texture;
-			RendererData->TextureCount++;
-		}
-		// BSE_INFO("TextureIndex = {0}", textureIndex);
 		
 		glm::mat4 transform = 
 			glm::translate(OneMat4, position) *
@@ -425,24 +266,6 @@ namespace BSE {
 		RendererData->QuadVertexBufferPointer++;
 		
 		RendererData->QuadIndexCount += 6;
-		
-		CheckFlush();
-		
-		/*
-		RendererData->TextureShader->UploadUniformVec4("u_Color", tintColor);
-		
-		glm::mat4 transform = glm::translate(OneMat4, glm::vec3(position.x, position.y, position.z))
-					* glm::rotate(OneMat4, rotation, glm::vec3({0.0f, 0.0f, 1.0f}))
-					* glm::scale(OneMat4, glm::vec3({size.x, size.y, 0.0f}));
-		
-		RendererData->TextureShader->UploadUniformMat4("u_Transform", transform);
-		RendererData->TextureShader->UploadUniformFloat("u_TilingFactor", tilingFactor);
-		
-		texture->Bind();
-		
-		RendererData->QuadVertexArray->Bind();
-		RenderCommand::DrawIndexed(RendererData->QuadVertexArray);
-		*/
 	}
 	
 	void Renderer2D::DrawRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color){

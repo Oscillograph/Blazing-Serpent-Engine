@@ -151,7 +151,7 @@ namespace BSE {
 				//ImGui::GetAllocatorFunctions(ImGuiMemAllocFunc* m_ImGuiMemAllocFunc, 
 				//	ImGuiMemFreeFunc* m_ImGuiMemFreeFunc, 
 				//	void** m_ImGuiUserData);
-				//ImGui::SetAllocatorFunctions(m_ImGuiMemAllocFunc, m_ImGuiMemFreeFunc, NULL);
+				ImGui::SetAllocatorFunctions(m_ImGuiMemAllocFunc, m_ImGuiMemFreeFunc, NULL);
 				//BSE_TRACE("SandboxGui: Memory alloc/free functions set again!");
 			}
 		}

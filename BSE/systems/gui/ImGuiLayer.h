@@ -38,6 +38,7 @@ namespace BSE {
 		virtual void End() override;
 		
 		void FixImGuiContext();
+		inline ImGuiContext* GetImGuiContext(){ return m_ImGuiContext; }
 		//void OnEvent(Event& event) override;
 		
 		// event callbacks
