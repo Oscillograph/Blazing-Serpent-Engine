@@ -40,6 +40,8 @@
 #include <renderer/OrthographicCamera.h>
 #include <systems/OrthographicCameraController.h>
 
+#include <renderer/GeometryPrimitives.h>
+
 #include <renderer/Material.h>
 
 // entry point

@@ -1,17 +1,22 @@
 #include "Renderer2D.h"
 
 namespace BSE {
+	// -------------------------------------------
+	// TODO: Design and implement Particles System
+	// -------------------------------------------
+	
 	struct QuadVertex {
 		glm::vec3 Position;
 		glm::vec4 Color;
 		glm::vec2 TextureCoordinates;
 		float TextureIndex;
 		float TilingFactor;
-		// TODO: textureId, maskId
+		// TODO: maskId
 	};
 	
 	struct Renderer2DStorage {
 		// for batch rendering
+		// TODO: Make MaxQuads and corresponding arrays modifiable in runtime
 		const uint32_t MaxQuads = 36000;
 		const uint32_t MaxVertices = MaxQuads * 4;
 		const uint32_t MaxIndices = MaxQuads * 6;
@@ -32,11 +37,37 @@ namespace BSE {
 		// std::array<Texture2D*, MaxTextureSlots> TextureSlots;
 		uint32_t TextureCount = 1; // 0 is a white texture
 		
+		// TODO: Make Renderer2D Primitives collection accessible by renderer
 		glm::vec4 TriangleVertices[3]; // for triangles
 		glm::vec4 QuadVertices[4]; // for rectangles
 		glm::vec4 CustomVertices[1000]; // for custom figures, like circles, polygons, monkeys, etc.
 	};
 	static Renderer2DStorage* RendererData;
+	
+	struct RendererStatistics {
+		bool Collecting   = false; 
+		uint32_t Vertices = 0;
+		uint32_t Flushes  = 0;
+		uint32_t Quads    = 0;
+		uint32_t Textures = 0;
+		
+		void StartCollecting() {
+			Collecting = true;
+			Reset();
+		}
+		
+		void StopCollecting() {
+			Collecting = false;
+		}
+		
+		void Reset() { 
+			Vertices   = 0;
+			Flushes    = 0;
+			Quads      = 0;
+			Textures   = 0;
+		}
+	};
+	RendererStatistics* RendererStats;
 	
 	void Renderer2D::Init(){
 		RendererData = new Renderer2DStorage;
@@ -236,9 +267,6 @@ namespace BSE {
 		glm::vec3 pos[4];
 		
 		if (rotation == 0.0f){
-			//transform = 
-			//	glm::translate(OneMat4, position) *
-			//	glm::scale(OneMat4, {size.x, size.y, 1.0f});
 			pos[0] = {position.x, 			position.y, 			position.z};
 			pos[1] = {position.x + size.x, 	position.y, 			position.z};
 			pos[2] = {position.x + size.x, 	position.y + size.y, 	position.z};

@@ -8,6 +8,7 @@
 #include <renderer/Texture.h>
 #include <renderer/Shader.h>
 #include <renderer/OrthographicCamera.h>
+#include <renderer/GeometryPrimitives.h>
 
 namespace BSE {
 	class BSE_API Renderer2D {
