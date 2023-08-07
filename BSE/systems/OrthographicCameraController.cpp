@@ -1,12 +1,19 @@
 #include <systems/OrthographicCameraController.h>
 
 namespace BSE {
-	OrthographicCameraController::OrthographicCameraController(float aspectRatio, float zoomLevel, bool rotation){
+	OrthographicCameraController::OrthographicCameraController(float aspectRatio, float zoomLevel, bool rotation) {
 		//BSE_CORE_TRACE("Calling Camera Controller constructor");
 		m_AspectRatio = aspectRatio;
 		m_AspectRatioPrev = m_AspectRatio;
 		m_ZoomLevel = zoomLevel;
 		m_Rotation = rotation;
+		
+		m_CameraBounds = {
+			-m_AspectRatio * m_ZoomLevel, 
+			 m_AspectRatio * m_ZoomLevel, 
+			 m_ZoomLevel, 
+			-m_ZoomLevel 
+		};
 		
 		m_Camera = new OrthographicCamera(
 			-m_AspectRatio * m_ZoomLevel,

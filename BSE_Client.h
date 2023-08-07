@@ -45,7 +45,7 @@
 #include <renderer/Material.h>
 
 // entry point
-#include <EntryPoint.h>
+// #include <EntryPoint.h> // need to be included in Client main file
 
 // - utils
 // #include <utils/FileIO.h> // already in Core.h

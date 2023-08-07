@@ -12,6 +12,14 @@
 #include <systems/events/MouseEvent.h>
 
 namespace BSE {
+	struct BSE_API OrthographicCameraBounds {
+		float Left, Right;
+		float Top, Bottom;
+		
+		float GetWidth() { return Right - Left; }
+		float GetHeight() { return Top - Bottom; }
+	};
+	
 	class BSE_API OrthographicCameraController {
 	public:
 		OrthographicCameraController(float aspectRatio, float zoomLevel = 1.0f, bool rotation = false); 
@@ -25,6 +33,12 @@ namespace BSE {
 				 m_ZoomLevel,
 				-m_ZoomLevel
 				);
+			m_CameraBounds = {
+				-m_AspectRatio * m_ZoomLevel, 
+				 m_AspectRatio * m_ZoomLevel, 
+				 m_ZoomLevel, 
+				-m_ZoomLevel 
+			};
 		}
 		inline void SetZoomLevel(float zoomLevel){
 			m_ZoomLevel = zoomLevel;
@@ -37,6 +51,8 @@ namespace BSE {
 			SetProjectionDefault();
 		}
 		inline float GetAspectRatio(){ return m_AspectRatio; }
+		
+		inline const OrthographicCameraBounds& GetBounds() const { return m_CameraBounds; }
 		
 		void OnUpdate(float time);
 		void OnEvent(Event& e);
@@ -67,6 +83,7 @@ namespace BSE {
 		float m_CameraMoveSpeed = 5.0f;
 		float m_CameraRotateSpeed = 10.0f;
 		
+		OrthographicCameraBounds m_CameraBounds;
 	};
 }
 

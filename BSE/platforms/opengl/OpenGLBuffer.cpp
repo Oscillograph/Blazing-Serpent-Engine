@@ -35,6 +35,9 @@ namespace BSE {
 	void OpenGLVertexBuffer::SetData(const void* data, uint32_t size) {
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererId);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+		
+		// TODO: Think about dynamic index buffers using
+		// glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, size, data);
 	}
 	
 	// ----------------------------------------------------------------------
