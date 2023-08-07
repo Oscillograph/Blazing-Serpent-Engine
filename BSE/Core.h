@@ -12,6 +12,12 @@ namespace BSE {
 	// BSE_API void print_hello(); 
 	
 	// BSE_API void Callback_dummy(Event& event);
+	struct BSE_Rect {
+		float x;
+		float y;
+		float w;
+		float h;
+	};
 }
 
 #endif

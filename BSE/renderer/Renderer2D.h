@@ -40,7 +40,7 @@ namespace BSE {
 		static void DrawFilledRectRotated(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color);
 		static void DrawTextureRectRotated(const glm::vec2& position, const glm::vec2& size, float rotation, Texture2D* texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = OneVec4);
 		
-		static void DrawQuadGeneral(const glm::vec3& position, const glm::vec2& size, float rotation = 0.0f, Texture2D* texture = nullptr, float tilingFactor = 1.0f, const glm::vec4& tintColor = OneVec4);
+		static void DrawQuadGeneral(const glm::vec3& position, const glm::vec2& size, float rotation = 0.0f, Texture2D* texture = nullptr, float tilingFactor = 1.0f, const glm::vec4& tintColor = OneVec4, BSE_Rect* subTexture = nullptr);
 		
 		static void DrawRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
 	};
