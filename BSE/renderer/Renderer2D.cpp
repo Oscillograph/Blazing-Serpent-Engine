@@ -241,53 +241,20 @@ namespace BSE {
 		CheckFlush();
 	}
 	
-	void Renderer2D::DrawQuadGeneral(const glm::vec3& position, const glm::vec2& size, float rotation, Texture2D* texture, float tilingFactor, const glm::vec4& tintColor, BSE_Rect* subTexture){
+	void Renderer2D::DrawSprite(const glm::vec2& position, const glm::vec2& size, float rotation, Texture2DSprite* sprite, float tilingFactor, const glm::vec4& tintColor){
+		DrawQuadGeneral({position.x, position.y, 0.0f}, size, rotation, sprite->GetSpriteSheet(), tilingFactor, tintColor, sprite->GetCoordinates());
+	}
+	void Renderer2D::DrawQuadGeneral(const glm::vec3& position, const glm::vec2& size, float rotation, Texture2D* texture, float tilingFactor, const glm::vec4& tintColor, glm::vec2* spriteCoordinates){
+		// default is the 0-th texture which basically a single color background
 		float textureIndex = 0.0;
 		glm::vec2 textureCoordinates[4];
-		
 		textureCoordinates[0] = { 0.0f , 0.0f };
 		textureCoordinates[1] = { 1.0f , 0.0f };
 		textureCoordinates[2] = { 1.0f , 1.0f };
 		textureCoordinates[3] = { 0.0f , 1.0f };
 		
-		if (texture != nullptr){
-			if (subTexture != nullptr){
-				float x = (float)subTexture->x / subTexture->w; 
-				float y = (float)subTexture->y / subTexture->h;
-				float sheetWidth = (float)texture->GetWidth();
-				float sheetHeight = (float)texture->GetHeight();
-				float spriteWidth = (float)subTexture->w;
-				float spriteHeight = (float)subTexture->h;
-				
-				float tc0x = (x * spriteWidth) / sheetWidth;
-				if (tc0x > 1.0f)
-					tc0x = 1.0f;
-				if (tc0x < 0.0f)
-					tc0x = 0.0f;
-				float tc0y = (y * spriteHeight) / sheetHeight;
-				if (tc0y > 1.0f)
-					tc0y = 1.0f;
-				if (tc0y < 0.0f)
-					tc0y = 0.0f;
-				float tc1x = ((x + 1) * spriteWidth) / sheetWidth;
-				if (tc1x > 1.0f)
-					tc1x = 1.0f;
-				if (tc1x < 0.0f)
-					tc1x = 0.0f;
-				float tc1y = ((y + 1) * spriteHeight) / sheetHeight;
-				if (tc1y > 1.0f)
-					tc1y = 1.0f;
-				if (tc1y < 0.0f)
-					tc1y = 0.0f;
-				
-				textureCoordinates[0] = { tc0x , tc0y };
-				textureCoordinates[1] = { tc1x , tc0y };
-				textureCoordinates[2] = { tc1x , tc1y };
-				textureCoordinates[3] = { tc0x , tc1y };
-			}
-		}
-		
 		if (texture != nullptr) {
+			// check if texture is registered in TextureSlots
 			for (uint32_t i = 1; i < RendererData->TextureCount; i++){
 				if (RendererData->TextureSlots[i] != nullptr) {
 					if (RendererData->TextureSlots[i]->GetID() == texture->GetID()) { // if textures are the same
@@ -299,10 +266,18 @@ namespace BSE {
 				}
 			}
 			
+			// register the texture if it's not yet
 			if (textureIndex == 0.0) {
 				textureIndex = (float)(RendererData->TextureCount);
 				RendererData->TextureSlots[RendererData->TextureCount] = texture;
 				RendererData->TextureCount++;
+			}
+			
+			if (spriteCoordinates != nullptr) {
+				textureCoordinates[0] = spriteCoordinates[0];
+				textureCoordinates[1] = spriteCoordinates[1];
+				textureCoordinates[2] = spriteCoordinates[2];
+				textureCoordinates[3] = spriteCoordinates[3];
 			}
 		}
 		

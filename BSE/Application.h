@@ -3,7 +3,7 @@
 
 #include <Core.h>
 
-#include <utils/Profiler.h>
+// #include <utils/Profiler.h>
 
 #include <Window.h>
 #include <Input.h>
@@ -23,6 +23,8 @@
 #include <renderer/Buffer.h>
 #include <renderer/VertexArray.h>
 #include <renderer/Texture.h>
+#include <systems/Texture2DSpriteSheet.h>
+
 #include <renderer/Renderer.h>
 #include <renderer/Renderer2D.h>
 #include <renderer/OrthographicCamera.h>

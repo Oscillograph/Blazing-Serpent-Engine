@@ -60,7 +60,7 @@ namespace BSE {
 	
 	template <typename T>
 	using Ref = std::shared_ptr<T>;
-	// Thing is, shared pointers make use of a reference counter which is in	cremented through
+	// Thing is, shared pointers make use of a reference counter which is incremented through
 	// operator "=" and std::make_shared<T>(value) function.
 	// Unique pointers are created with constructor std::unique_ptr<T> m(new T(value)).
 	// They have no reference count, and they get destroyed when they are out of scope.

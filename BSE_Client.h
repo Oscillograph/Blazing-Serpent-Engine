@@ -37,6 +37,8 @@
 
 #include <renderer/VertexArray.h>
 #include <renderer/Texture.h>
+#include <systems/Texture2DSpriteSheet.h>
+
 #include <renderer/OrthographicCamera.h>
 #include <systems/OrthographicCameraController.h>
 
