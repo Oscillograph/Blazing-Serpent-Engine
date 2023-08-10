@@ -160,7 +160,7 @@ namespace BSE {
 			long long end = std::chrono::time_point_cast<std::chrono::microseconds>(endTimePoint).time_since_epoch().count();
 			m_Stopped = true;
 			
-			float duration = (end - start) * 0.001f;
+			// float duration = (end - start) * 0.001f;
 			
 			uint32_t threadID = std::hash<std::thread::id>{}(std::this_thread::get_id());
 			Profiler::WriteProfile({ m_Name, start, end, threadID });

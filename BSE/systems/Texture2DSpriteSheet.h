@@ -70,7 +70,9 @@ namespace BSE {
 	};
 	
 	// =====================================
-	typedef std::unordered_map<std::string, Texture2DSprite*> BSE_SpriteSheet;
+	typedef std::unordered_map<std::string, Texture2DSprite*> BSE_SpritePack; // sprites of one type or one object 
+	typedef std::unordered_map<uint32_t, BSE_SpritePack*> BSE_SpriteSheet; // sprites collections
+	typedef std::pair<uint32_t, std::string> BSE_Tile; // tiles combine into a tile map
 	
 	BSE_API BSE_SpriteSheet CreateSpriteSheet(const std::string& filename);
 }

@@ -14,6 +14,7 @@ namespace BSE {
 	
 	static uint32_t ShaderDataTypeSize(ShaderDataType type){
 		switch (type) {
+			case ShaderDataType::None:		return 0; break;
 			case ShaderDataType::Float:		return 4; break;
 			case ShaderDataType::Float2: 	return 4 * 2; break;
 			case ShaderDataType::Float3: 	return 4 * 3; break;
@@ -48,6 +49,7 @@ namespace BSE {
 		
 		const uint32_t GetComponentCount(){
 			switch(Type){
+				case ShaderDataType::None:		return 0; break;
 				case ShaderDataType::Float: 	return 1; break;
 				case ShaderDataType::Float2: 	return 2; break;
 				case ShaderDataType::Float3: 	return 3; break;
