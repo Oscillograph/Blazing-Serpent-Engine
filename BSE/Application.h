@@ -19,6 +19,7 @@
 	#include <platforms/windows/WindowsInput.h>
 #endif
 
+#include <renderer/FrameBuffer.h>
 #include <renderer/Shader.h>
 #include <renderer/Buffer.h>
 #include <renderer/VertexArray.h>
@@ -45,6 +46,8 @@ namespace BSE {
 		void PushOverlay(Layer* overlay);
 		void PopLayer(Layer* layer);
 		void PopOverlay(Layer* overlay);
+		
+		inline void Close() { m_Running = true; }
 		
 		inline Window* GetWindow() { return m_Window; }
 		inline static Application* Get() { return s_Instance; }

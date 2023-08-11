@@ -1,6 +1,11 @@
 #include <Application.h>
 // #include <renderer/Renderer.h>
 
+// TODO: share framebuffers of layers through GameData and|or AssetManager structures,
+// otherwise I can't use OnImGuiRender() to view a scene, as the method resides in ImGuiLayers.
+// ImGuiLayers are separated from Layers and can't read their data directly - need an API.
+// Trying to use OnImGuiLayer method from a Layer crashes app as DLL does't share memory with EXE.
+
 namespace BSE{
 	// DONE: Figure out how to allow this instance through static library
 	// Current answer: no-how.
@@ -130,6 +135,7 @@ namespace BSE{
 			if (!m_Minimized){
 				// Layers
 				for (Layer* layer : m_LayerStack){
+					// BSE_TRACE("Layer {0} selected", layer->GetName());
 					updatesCounter += layer->OnUpdate(deltaTime);
 				}
 				

@@ -8,6 +8,7 @@
 #include <renderer/Texture.h>
 #include <systems/Texture2DSpriteSheet.h>
 #include <renderer/Shader.h>
+#include <renderer/FrameBuffer.h>
 #include <renderer/OrthographicCamera.h>
 #include <renderer/GeometryPrimitives.h>
 

@@ -34,6 +34,7 @@
 
 #include <renderer/Buffer.h>
 #include <renderer/Shader.h>
+#include <renderer/FrameBuffer.h>
 
 #include <renderer/VertexArray.h>
 #include <renderer/Texture.h>
