@@ -2,7 +2,7 @@
 #define BSE_RENDERERAPI_H
 
 #include <Core.h>
-#include <glm/glm.hpp>
+// #include <glm/glm.hpp>
 #include <renderer/VertexArray.h>
 
 // ===============================================

@@ -3,7 +3,7 @@
 
 #include <Core.h>
 #include <renderer/RendererAPI.h>
-#include <glm/glm.hpp>
+// #include <glm/glm.hpp>
 
 namespace BSE {
 	class BSE_API RenderCommand {

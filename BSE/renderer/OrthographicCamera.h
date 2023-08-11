@@ -2,7 +2,7 @@
 #define BSE_ORTHOGRAPHICCAMERA_H
 
 #include <Core.h>
-#include <glm/glm.hpp>
+// #include <glm/glm.hpp>
 
 namespace BSE {
 	class BSE_API OrthographicCamera {

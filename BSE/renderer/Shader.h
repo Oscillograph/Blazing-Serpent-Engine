@@ -3,7 +3,7 @@
 
 #include <Core.h>
 #include <platforms/opengl/OpenGLContext.h>
-#include <glm/glm.hpp>
+// #include <glm/glm.hpp>
 
 namespace BSE {
 	class BSE_API Shader {

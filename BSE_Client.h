@@ -54,4 +54,6 @@
 // #include <utils/FileIO.h> // already in Core.h
 #include <utils/Profiler.h>
 
+// #include <GameData.h> // must be included last
+
 #endif
