@@ -26,7 +26,7 @@ namespace BSE {
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
 		
-		static FrameBuffer* FrameBuffer::Create(const FrameBufferSpecification& spec);
+		static FrameBuffer* Create(const FrameBufferSpecification& spec);
 		
 	protected:
 	};

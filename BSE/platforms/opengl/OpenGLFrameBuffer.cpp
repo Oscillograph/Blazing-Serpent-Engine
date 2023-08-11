@@ -5,7 +5,7 @@ namespace BSE {
 	OpenGLFrameBuffer::OpenGLFrameBuffer(const FrameBufferSpecification& spec)
 		:m_Specification(spec) 
 	{
-		Create();
+		Invalidate();
 	}
 	
 	OpenGLFrameBuffer::~OpenGLFrameBuffer(){
