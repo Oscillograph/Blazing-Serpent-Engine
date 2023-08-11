@@ -4,7 +4,17 @@
 A C++ game engine based on "Game Engine Series" by The Cherno.
 
 The engine is designed to be used as a DLL, but the consequences are:
-- Dear ImGui requires a client app to implement a sort of hack to reset the context and functions;
+- Dear ImGui requires a client app to reset the context:
+```
+#define FixImGuiContext(m_Context) \
+	if (m_Context != nullptr){									\
+		if (m_Context != ImGui::GetCurrentContext()){ 			\
+			BSE_TRACE("SandboxGui: Current Context is different!"); \
+			ImGui::SetCurrentContext(m_Context);				\
+			BSE_TRACE("SandboxGui: Current Context is set again!"); \
+		} \
+	}
+```
 - Layers and ImGuiLayers don't share data between them, and Layer can't utilize OnImGuiRenderer method as it crashes the app with 0x000000c5 error;
 - Due to the above there's a dire need of Asset Manager and Game Data Manager to provide API through which Layers, client App and the DLL could communicate.
 
