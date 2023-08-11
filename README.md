@@ -1,6 +1,6 @@
-#! WORK IN PROGRESS !#
+# ! WORK IN PROGRESS ! #
 
-#BLAZING SERPENT ENGINE#
+# BLAZING SERPENT ENGINE #
 A C++ game engine based on "Game Engine Series" by The Cherno.
 
 The engine is designed to be used as a DLL, but the consequences are:
