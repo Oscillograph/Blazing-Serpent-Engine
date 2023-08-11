@@ -1,21 +1,21 @@
 # ! WORK IN PROGRESS ! #
-
+The goal is to make the 2D game engine while "Game Engine Series" by The Cherno is being watched.
+As the first third of the series passed I realized that my vision of what I would like to get is quite different from what the author did choose, but the way Cherno explains things and demonstrates really intrigues me and motivates to replicate and rethink the experience shared by the author of Hazel.
 # BLAZING SERPENT ENGINE #
 A C++ game engine based on "Game Engine Series" by The Cherno.
 
 The engine is designed to be used as a DLL, but the consequences are:
-- Dear ImGui requires a client app to reset the context:
+- Dear ImGui requires a client app to reset the context at the start of OnImGuiRender method of the client ImGuiLayer:
 ```
-#define FixImGuiContext(m_Context) \
-	if (m_Context != nullptr){									\
-		if (m_Context != ImGui::GetCurrentContext()){ 			\
-			BSE_TRACE("SandboxGui: Current Context is different!"); \
-			ImGui::SetCurrentContext(m_Context);				\
-			BSE_TRACE("SandboxGui: Current Context is set again!"); \
-		} \
+if (m_Context != nullptr){
+	if (m_Context != ImGui::GetCurrentContext()){
+		BSE_TRACE("SandboxGui: Current Context is different!"); 
+		ImGui::SetCurrentContext(m_Context);
+		BSE_TRACE("SandboxGui: Current Context is set again!");
 	}
+}
 ```
-- Layers and ImGuiLayers don't share data between them, and Layer can't utilize OnImGuiRenderer method as it crashes the app with 0x000000c5 error;
+- Layers and ImGuiLayers don't share data between them, and Layer can't utilize OnImGuiRenderer method of its own as it crashes the app with 0x000000c5 error;
 - Due to the above there's a dire need of Asset Manager and Game Data Manager to provide API through which Layers, client App and the DLL could communicate.
 
 ## Build notes ##
