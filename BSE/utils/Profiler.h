@@ -6,26 +6,18 @@
 
 // Most of this Profiler's code has been taken from Instrumentor.h file from:
 // https://gist.github.com/TheCherno/31f135eea6ee729ab5f26a6908eb3a5e/raw/55619bb8dd4349895f7d5f2520cc35a0e6d38c09/Instrumentor.h
-//
-// High-level usage: include this header file somewhere in your code (eg. precompiled header), and then use like:
-//
-// Profiler::BeginSession("Session Name", "filepath");        // Begin session 
-// {
-//     ProfilerTimer timer("Profiled Scope Name");   // Place code like this in scopes you'd like to include in profiling
-//     // Code
-// }
-// Profiler::EndSession();                        // End Session
-//
-// You will probably want to macro-fy this, to switch on/off easily and use things like __FUNCSIG__ for the profile name.
 
 #ifdef BSE_PROFILING
-	// profiling to files in json format
+	// Profiling to files in json format. These macros' order represents usage in a project.
+	// - each session is saved in a different file;
+	// - "Scope" means a timer shall auto-destroy itself once its scope ends, so it might be a good practice to place the corresponding code in brackets;
+	// - "Function" is an advanced version of "Scope" timers, it should be places at the start of the function
 	#define BSE_PROFILE_SESSION_START(name, filepath) 	::BSE::Profiler::BeginSession(name, filepath);
-	#define BSE_PROFILE_SCOPE(name)							::BSE::ProfilerTimer timer##__LINE__(name);
-	#define BSE_PROFILE_FUNCTION() 							::BSE::ProfilerTimer funcTimer##__LINE__(__PRETTY_FUNCTION__);
+	#define BSE_PROFILE_SCOPE(name)						::BSE::ProfilerTimer timer##__LINE__(name);
+	#define BSE_PROFILE_FUNCTION() 						::BSE::ProfilerTimer funcTimer##__LINE__(__PRETTY_FUNCTION__);
 	#define BSE_PROFILE_SESSION_END() 					::BSE::Profiler::EndSession();
 	
-	// a simpler version: moment profiling
+	// A simpler version: moment profiling which can be read by ImGuiLayers, etc.
 	#define BSE_CORE_PROFILER(name)	Timer timer##__LINE__(name, [&](BSE::TimerResult result){ BSE::Profiler::Push(result); });
 	#define BSE_PROFILER(name)	Timer timer##__LINE__(name, [&](BSE::TimerResult result){ BSE::Profiler::Push(result); });
 #else
@@ -52,7 +44,8 @@ namespace BSE {
 		std::string Name;
 	};
 	
-	// Usage example:
+	// Usage example of a "simpler profiler".
+	// 
 	// SOMEWHERE:
 	//	BSE_PROFILER(u8"my_operation::step");
 	//
@@ -66,33 +59,29 @@ namespace BSE {
 	
 	class BSE_API Profiler {
 	public:
-		static void Push(TimerResult result);
+		inline static void Push(TimerResult result){
+			m_ProfileResults[result.Name] = result.Time;
+		}
 		inline static std::unordered_map<std::string, float> Read(){
 			return m_ProfileResults;
 		}
-		static void Flush();
+		inline static void Flush(){
+			m_ProfileResults.clear();
+		}
 		inline static ProfilerSession* GetSession(){ 
 			return m_CurrentSession; 
 		}
 		inline static void BeginSession(std::string name, std::string filepath = "./debug/runtime.json"){
-			// BSE_CORE_TRACE("Profiler session {0} started.", name);
-			//if (!m_OutputStream.is_open()){
-				m_OutputStream.open(filepath.c_str());
-				m_Filepath = filepath;
-			//} else {
-			//	BSE_CORE_ERROR("Profiler: file {0} is open!", filepath);
-			//}
+			m_OutputStream.open(filepath.c_str());
+			m_Filepath = filepath;
 			WriteHeader();
 			m_CurrentSession = new ProfilerSession{name};
 		}
 		
 		inline static void EndSession() {
 			WriteFooter();
-			//if (m_OutputStream.is_open()){
-				m_OutputStream.close();
-			//} else {
-			//	BSE_CORE_ERROR("Profiler: file {0} is closed!", m_Filepath);
-			//}
+			
+			m_OutputStream.close();
 			delete m_CurrentSession;
 			m_CurrentSession = nullptr;
 			m_ProfileCount = 0;
@@ -131,8 +120,6 @@ namespace BSE {
 		
 	private:
 		static std::unordered_map<std::string, float> m_ProfileResults;
-		// std::unordered_map<std::string, float> m_ProfileResults;
-		// std::vector<TimerResult> m_ProfileResults;
 		static ProfilerSession* m_CurrentSession;
 		static std::string m_Filepath;
 		static std::ofstream m_OutputStream;

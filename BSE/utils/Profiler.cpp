@@ -1,5 +1,5 @@
 #include <utils/Profiler.h>
-#include <Cherno/Instrumentor.h>
+// #include <Cherno/Instrumentor.h>
 
 namespace BSE {
 	// std::vector<TimerResult> Profiler::m_ProfileResults = {};
@@ -9,6 +9,7 @@ namespace BSE {
 	std::ofstream Profiler::m_OutputStream;
 	int Profiler::m_ProfileCount = 0;
 	
+	/*
 	void Profiler::Push(TimerResult result){
 		m_ProfileResults[result.Name] = result.Time;
 	}
@@ -16,4 +17,5 @@ namespace BSE {
 	void Profiler::Flush(){
 		m_ProfileResults.clear();
 	}
+	*/
 }
