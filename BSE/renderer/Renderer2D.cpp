@@ -118,7 +118,7 @@ namespace BSE {
 		// RendererData->TextureShader->UploadUniformInt("u_Texture", 0);
 		
 		// Set all texture slots to white texture
-		for (int i = 0; i < RendererData->MaxTextureSlots; i++){
+		for (uint32_t i = 0; i < RendererData->MaxTextureSlots; i++){
 			RendererData->TextureSlots[i] = RendererData->WhiteTexture;
 		}
 		RendererData->TextureSlots[0] = RendererData->WhiteTexture;
@@ -150,7 +150,7 @@ namespace BSE {
 		
 		
 		int samplers[RendererData->MaxTextureSlots];
-		for (int i = 0; i < RendererData->MaxTextureSlots; i++){
+		for (uint32_t i = 0; i < RendererData->MaxTextureSlots; i++){
 			samplers[i] = i;
 			// BSE_INFO("Sampler #{0}", i);
 		}
