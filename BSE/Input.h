@@ -6,6 +6,8 @@
 namespace BSE {
 	class BSE_API Input {
 	public:
+		virtual ~Input() = default;
+		
 		inline static bool IsKeyPressed(int keycode){
 			return s_Instance->IsKeyPressedImplementation(keycode);
 		}

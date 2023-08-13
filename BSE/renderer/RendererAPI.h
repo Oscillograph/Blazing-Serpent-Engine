@@ -19,7 +19,7 @@ namespace BSE {
 		};
 		
 	public:
-		// virtual ~RendererAPI() = default;
+		virtual ~RendererAPI() = default;
 		// to be succeded by API implementations
 		virtual void Init() = 0;
 		virtual void Shutdown() = 0;
