@@ -9,10 +9,20 @@ namespace BSE {
 	}
 	
 	OpenGLFrameBuffer::~OpenGLFrameBuffer(){
+		DeleteEverything();
+	}
+	
+	void OpenGLFrameBuffer::DeleteEverything(){
 		glDeleteFramebuffers(1, &m_RendererID);
+		glDeleteTextures(1, &m_ColorAttachment);
+		glDeleteTextures(1, &m_DepthAttachment);
 	}
 	
 	void OpenGLFrameBuffer::Invalidate(){
+		if (m_RendererID) {
+			DeleteEverything();
+		}
+		
 		glGenFramebuffers(1, &m_RendererID);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 		
@@ -41,10 +51,17 @@ namespace BSE {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 	
-	void OpenGLFrameBuffer::Bind(){
+	void OpenGLFrameBuffer::Bind() {
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+		glViewport(0.0f, 0.0f, m_Specification.Width, m_Specification.Height);
 	}
-	void OpenGLFrameBuffer::Unbind(){
+	void OpenGLFrameBuffer::Unbind() {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+	
+	void OpenGLFrameBuffer::Resize(const glm::vec2& size) {
+		m_Specification.Width = (uint32_t)roundf(size.x);
+		m_Specification.Height = (uint32_t)roundf(size.y);
+		Invalidate();
 	}
 }

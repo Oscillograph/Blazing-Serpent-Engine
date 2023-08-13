@@ -30,6 +30,9 @@
 #include <renderer/Renderer2D.h>
 #include <renderer/OrthographicCamera.h>
 #include <systems/OrthographicCameraController.h>
+
+#include <GameData.h>
+
 // #include <glm/glm.hpp>
 
 namespace BSE {
@@ -47,7 +50,7 @@ namespace BSE {
 		void PopLayer(Layer* layer);
 		void PopOverlay(Layer* overlay);
 		
-		inline void Close() { m_Running = true; }
+		inline void Close() { m_Running = false; }
 		
 		inline Window* GetWindow() { return m_Window; }
 		inline static Application* Get() { return s_Instance; }
@@ -67,6 +70,7 @@ namespace BSE {
 		Layer* m_ImGuiLayer = nullptr;
 		bool m_ImGuiLayerEnabled = true;
 		float m_LastFrameTime = 0.0f;
+		float m_FrameTime = 0.0f;
 		
 	private:
 		static Application* s_Instance;

@@ -55,6 +55,7 @@ namespace BSE {
 		inline const OrthographicCameraBounds& GetBounds() const { return m_CameraBounds; }
 		
 		void OnUpdate(float time);
+		void OnResize(float width, float height);
 		void OnEvent(Event& e);
 	
 		inline OrthographicCamera* GetCamera() { return m_Camera; }

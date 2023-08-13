@@ -11,6 +11,8 @@ namespace BSE {
 		virtual ~OpenGLFrameBuffer();
 		
 		void Invalidate();
+		void DeleteEverything();
+		virtual void Resize(const glm::vec2& size) override;
 
 		virtual uint32_t GetColorAttachmentID() override { return m_ColorAttachment; };
 		virtual const FrameBufferSpecification& GetSpecification() const override { return m_Specification; };

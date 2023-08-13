@@ -124,6 +124,7 @@ namespace BSE{
 			// --------------------------------------------------
 			float currentTime = m_Window->GetTime();
 			float deltaTime = currentTime - m_LastFrameTime;
+			m_FrameTime += deltaTime;
 			m_LastFrameTime = currentTime;
 			// Profiler::Flush();
 			
@@ -133,19 +134,26 @@ namespace BSE{
 			updatesCounter = 0;
 			
 			if (!m_Minimized){
-				// Layers
-				for (Layer* layer : m_LayerStack){
-					// BSE_TRACE("Layer {0} selected", layer->GetName());
-					updatesCounter += layer->OnUpdate(deltaTime);
-				}
-				
-				// Overlays
-				if (m_ImGuiLayerEnabled && (m_ImGuiLayer != nullptr)){
-					m_ImGuiLayer->Begin();
+				if (m_FrameTime >= GameData::FPS_deltaTime){
+					// general framebuffer clear
+					Renderer2D::Clear(GameData::RendererClearColor);
+					
+					// Layers
 					for (Layer* layer : m_LayerStack){
-						layer->OnImGuiRender(deltaTime);
+						// BSE_TRACE("Layer {0} selected", layer->GetName());
+						updatesCounter += layer->OnUpdate(m_FrameTime);
 					}
-					m_ImGuiLayer->End();
+					
+					// Overlays
+					if (m_ImGuiLayerEnabled && (m_ImGuiLayer != nullptr)){
+						m_ImGuiLayer->Begin();
+						for (Layer* layer : m_LayerStack){
+							layer->OnImGuiRender(m_FrameTime);
+						}
+						m_ImGuiLayer->End();
+					}
+					
+					m_FrameTime = 0.0f;
 				}
 			}
 			

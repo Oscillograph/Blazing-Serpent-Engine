@@ -35,8 +35,8 @@
 
 // #include <renderer/Renderer.h>
 // #include <renderer/Renderer2D.h>
-// #include <renderer/OrthographicCamera.h>
-// #include <systems/OrthographicCameraController.h>
+#include <renderer/OrthographicCamera.h>
+#include <systems/OrthographicCameraController.h>
 
 namespace BSE {
 	class BSE_API GameData {
@@ -47,6 +47,10 @@ namespace BSE {
 		static Layer* m_ImGuiLayer;
 		static FrameBuffer* m_FrameBuffer;
 		static bool m_ImGuiLayerEnabled;
+		static float FPS_deltaTime;
+		static glm::vec4 RendererClearColor;
+		static glm::vec4 CustomColor;
+		static OrthographicCameraController* m_CameraController;
 	};
 }
 

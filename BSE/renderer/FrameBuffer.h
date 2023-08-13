@@ -25,6 +25,7 @@ namespace BSE {
 		
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
+		virtual void Resize(const glm::vec2& size) = 0;
 		
 		static FrameBuffer* Create(const FrameBufferSpecification& spec);
 		
