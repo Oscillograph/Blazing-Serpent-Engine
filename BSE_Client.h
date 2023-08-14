@@ -6,6 +6,7 @@
 //#include <log.h>
 #include <Core.h>
 #include <Application.h>
+#include <KeyCodes.h>
 
 // BSE systems
 // - events system
