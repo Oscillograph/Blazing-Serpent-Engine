@@ -16,7 +16,7 @@
 
 #ifdef BSE_PLATFORM_WINDOWS
 	#include <platforms/windows/WindowsWindow.h>
-	#include <platforms/windows/WindowsInput.h>
+// 	#include <platforms/windows/WindowsInput.cpp>
 #endif
 
 #include <renderer/FrameBuffer.h>

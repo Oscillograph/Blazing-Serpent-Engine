@@ -71,17 +71,20 @@ namespace BSE {
 		font_config->PixelSnapH = 1;
 		BSE_TRACE("ImGui cyrillic support continues to start from font config set");
 		
+		/*
 		static const ImWchar ranges[] = {
 			0x0020, 0x00FF, // Basic Latin + Latin Supplement
 			0x0400, 0x044F, // Cyrillic
 			0,
 		};
+		*/
 		BSE_TRACE("ImGui cyrillic support continues with character ranges set");
 		
 		// TODO: fix ё
-		m_io->Fonts->AddFontFromFileTTF("./assets/fonts/tahoma.ttf", 14.0f, font_config, ranges);
-		// m_io->Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Tahoma.ttf", 14.0f, &font_config, ranges);
-		// m_io->Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Arial.ttf", 14.0f, &font_config, ranges);
+		// m_io->Fonts->AddFontFromFileTTF("./assets/fonts/tahoma.ttf", 14.0f, font_config, ranges);
+		m_io->Fonts->AddFontFromFileTTF("./assets/fonts/tahoma.ttf", 14.0f, font_config, m_io->Fonts->GetGlyphRangesCyrillic());
+		// m_io->Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Tahoma.ttf", 14.0f, &font_config, m_io->Fonts->GetGlyphRangesCyrillic());
+		// m_io->Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Arial.ttf", 14.0f, &font_config, m_io->Fonts->GetGlyphRangesCyrillic());
 		BSE_TRACE("...set!");
 		
 		// ImGui OpenGL init
