@@ -4,6 +4,7 @@
 namespace BSE {
 	static const GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type) {
 		switch (type) {
+			case ShaderDataType::None: 		return GL_NONE; break;
 			case ShaderDataType::Float: 	return GL_FLOAT; break;
 			case ShaderDataType::Float2: 	return GL_FLOAT; break;
 			case ShaderDataType::Float3: 	return GL_FLOAT; break;

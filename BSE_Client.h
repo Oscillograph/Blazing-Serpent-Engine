@@ -51,6 +51,8 @@
 // entry point
 // #include <EntryPoint.h> // need to be included in Client main file
 
+#include <systems/scene/Scene.h>
+
 // - utils
 // #include <utils/FileIO.h> // already in Core.h
 #include <utils/Profiler.h>

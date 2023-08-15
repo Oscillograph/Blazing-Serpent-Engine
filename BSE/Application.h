@@ -31,6 +31,8 @@
 #include <renderer/OrthographicCamera.h>
 #include <systems/OrthographicCameraController.h>
 
+#include <systems/scene/Scene.h>
+
 #include <GameData.h>
 
 // #include <glm/glm.hpp>

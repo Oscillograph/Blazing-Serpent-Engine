@@ -294,40 +294,69 @@ namespace BSE {
 				glm::translate(OneMat4, position) *
 				glm::rotate(OneMat4, glm::radians(rotation), glm::vec3({0.0f, 0.0f, 1.0f})) *
 				glm::scale(OneMat4, {size.x, size.y, 1.0f});
-			
-			pos[0] = glm::vec3(transform * RendererData->QuadVertices[0]);
-			pos[1] = glm::vec3(transform * RendererData->QuadVertices[1]);
-			pos[2] = glm::vec3(transform * RendererData->QuadVertices[2]);
-			pos[3] = glm::vec3(transform * RendererData->QuadVertices[3]);
+		
+			for (int i = 0; i < 4; i++){
+				pos[i] = glm::vec3(transform * RendererData->QuadVertices[i]);
+			}
 		}
 		
-		RendererData->QuadVertexBufferPointer->Position = pos[0];
-		RendererData->QuadVertexBufferPointer->Color = tintColor;
-		RendererData->QuadVertexBufferPointer->TextureCoordinates = textureCoordinates[0];
-		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
-		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
-		RendererData->QuadVertexBufferPointer++;
+		for (int i = 0; i < 4; i++){
+			RendererData->QuadVertexBufferPointer->Position = pos[i];
+			RendererData->QuadVertexBufferPointer->Color = tintColor;
+			RendererData->QuadVertexBufferPointer->TextureCoordinates = textureCoordinates[i];
+			RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
+			RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
+			RendererData->QuadVertexBufferPointer++;
+		}
 		
-		RendererData->QuadVertexBufferPointer->Position = pos[1];
-		RendererData->QuadVertexBufferPointer->Color = tintColor;
-		RendererData->QuadVertexBufferPointer->TextureCoordinates = textureCoordinates[1];
-		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
-		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
-		RendererData->QuadVertexBufferPointer++;
+		RendererData->QuadIndexCount += 6;
+	}
+	
+	void Renderer2D::DrawQuadGeneral(const glm::mat4& transform, Texture2D* texture, float tilingFactor, const glm::vec4& tintColor, glm::vec2* spriteCoordinates){
+		// default is the 0-th texture which basically a single color background
+		float textureIndex = 0.0;
+		glm::vec2 textureCoordinates[4];
+		textureCoordinates[0] = { 0.0f , 0.0f };
+		textureCoordinates[1] = { 1.0f , 0.0f };
+		textureCoordinates[2] = { 1.0f , 1.0f };
+		textureCoordinates[3] = { 0.0f , 1.0f };
 		
-		RendererData->QuadVertexBufferPointer->Position = pos[2];
-		RendererData->QuadVertexBufferPointer->Color = tintColor;
-		RendererData->QuadVertexBufferPointer->TextureCoordinates = textureCoordinates[2];
-		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
-		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
-		RendererData->QuadVertexBufferPointer++;
+		if (texture != nullptr) {
+			// check if texture is registered in TextureSlots
+			for (uint32_t i = 1; i < RendererData->TextureCount; i++){
+				if (RendererData->TextureSlots[i] != nullptr) {
+					if (RendererData->TextureSlots[i]->GetID() == texture->GetID()) { // if textures are the same
+						textureIndex = (float)i;
+						break;
+					}
+				} else {
+					break;
+				}
+			}
+			
+			// register the texture if it's not yet
+			if (textureIndex == 0.0) {
+				textureIndex = (float)(RendererData->TextureCount);
+				RendererData->TextureSlots[RendererData->TextureCount] = texture;
+				RendererData->TextureCount++;
+			}
+			
+			if (spriteCoordinates != nullptr) {
+				textureCoordinates[0] = spriteCoordinates[0];
+				textureCoordinates[1] = spriteCoordinates[1];
+				textureCoordinates[2] = spriteCoordinates[2];
+				textureCoordinates[3] = spriteCoordinates[3];
+			}
+		}
 		
-		RendererData->QuadVertexBufferPointer->Position = pos[3];
-		RendererData->QuadVertexBufferPointer->Color = tintColor;
-		RendererData->QuadVertexBufferPointer->TextureCoordinates = textureCoordinates[3];
-		RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
-		RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
-		RendererData->QuadVertexBufferPointer++;
+		for (int i = 0; i < 4; i++){
+			RendererData->QuadVertexBufferPointer->Position = glm::vec3(transform * RendererData->QuadVertices[i]);
+			RendererData->QuadVertexBufferPointer->Color = tintColor;
+			RendererData->QuadVertexBufferPointer->TextureCoordinates = textureCoordinates[i];
+			RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
+			RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
+			RendererData->QuadVertexBufferPointer++;
+		}
 		
 		RendererData->QuadIndexCount += 6;
 	}
