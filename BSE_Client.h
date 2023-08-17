@@ -52,6 +52,8 @@
 // #include <EntryPoint.h> // need to be included in Client main file
 
 #include <systems/scene/Scene.h>
+#include <systems/ecs/Entity.h>
+#include <systems/ecs/Components.h>
 
 // - utils
 // #include <utils/FileIO.h> // already in Core.h
