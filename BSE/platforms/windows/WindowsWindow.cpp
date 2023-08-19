@@ -78,10 +78,12 @@ namespace BSE {
 		// this one is required for my AMD Mobility Radeon 6650M to change framebuffer size properly
 		glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* window, int width, int height){
 			WindowData& data = *(WindowData*) glfwGetWindowUserPointer(window);
-			glViewport(0, 0, width, height);
-			// BSE_CORE_INFO("Framebuffer resized to: {0}, {1}", width, height);
+			// glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			// glViewport(0, 0, width, height);
+			BSE_CORE_INFO("Framebuffer resized to: {0}, {1}", width, height);
 		});
 		*/
+		
 		
 		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window){
 			WindowData& data = *(WindowData*) glfwGetWindowUserPointer(window);
@@ -154,10 +156,12 @@ namespace BSE {
 	
 	void WindowsWindow::OnUpdate(int code) const {
 		glfwPollEvents();
-		if (code == 0){
-			m_GraphicsContext->CopyBuffers();
-		} else {
-			m_GraphicsContext->SwapBuffers();
+		if ((m_Data.Width != 0) && (m_Data.Height != 0)){
+			if (code == 0){
+				m_GraphicsContext->CopyBuffers();
+			} else {
+				m_GraphicsContext->SwapBuffers();
+			}
 		}
 	}
 	

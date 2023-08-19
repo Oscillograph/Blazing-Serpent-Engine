@@ -78,14 +78,16 @@ namespace BSE {
 	}
 	
 	void OrthographicCameraController::OnResize(float width, float height) {
-		m_AspectRatio = width / height;
-		m_ZoomLevel = m_ZoomLevel * m_AspectRatio / m_AspectRatioPrev;
-		
-		m_AspectRatioPrev = m_AspectRatio;
-		m_HeightPrev = width;
-		m_WidthPrev = height;
-		
-		SetProjectionDefault();
+		if ((width > 0.0f) && height > 0.0f){
+			m_AspectRatio = width / height;
+			m_ZoomLevel = m_ZoomLevel * m_AspectRatio / m_AspectRatioPrev;
+			
+			m_AspectRatioPrev = m_AspectRatio;
+			m_HeightPrev = width;
+			m_WidthPrev = height;
+			
+			SetProjectionDefault();
+		}
 	}
 	
 	void OrthographicCameraController::OnEvent(Event& e){
