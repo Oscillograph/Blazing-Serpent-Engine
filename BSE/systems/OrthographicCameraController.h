@@ -3,6 +3,7 @@
 
 #include <Core.h>
 //#include <Application.h>
+#include <renderer/GeneralCamera.h>
 #include <renderer/OrthographicCamera.h>
 
 #include <Input.h>
@@ -77,6 +78,7 @@ namespace BSE {
 		float m_ZoomLevel = 1.0f;
 		float m_ZoomMin = -2.0f;
 		float m_ZoomMax = 2.0f;
+		// GeneralCamera* m_Camera;
 		OrthographicCamera* m_Camera;
 		
 		bool m_Rotation;

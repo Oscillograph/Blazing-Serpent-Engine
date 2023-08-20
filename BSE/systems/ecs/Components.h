@@ -2,6 +2,8 @@
 #define BSE_COMPONENTS_H
 
 #include <Core.h>
+// #include <renderer/GeneralCamera.h>
+#include <renderer/OrthographicCamera.h>
 
 namespace BSE {
 	struct BSE_API NameComponent {
@@ -31,7 +33,28 @@ namespace BSE {
 			: Color(color) {};
 	};
 	
-	
+	struct BSE_API CameraComponent {
+		OrthographicCamera Camera;
+		bool Works = true;
+		
+		CameraComponent(){
+			Camera = OrthographicCamera();
+		};
+		CameraComponent(const CameraComponent&) = default;
+		CameraComponent(OrthographicCamera* camera)
+		: Camera(*camera) {};
+		
+		void TurnOn(){ Works = true; }
+		void Toggle() { Works = true ? false : true; }
+		void TurnOff() { Works = false; }
+		
+		void SetCamera(OrthographicCamera* camera, bool deletePrevious = false) {
+			// if (deletePrevious)
+			//	delete camera;
+			Camera = *camera;
+		}
+		
+	};
 }
 
 #endif

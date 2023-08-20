@@ -8,6 +8,7 @@ namespace BSE {
 	class BSE_API OrthographicCamera {
 	public:
 		OrthographicCamera();
+		OrthographicCamera(const OrthographicCamera& camera) = default;
 		OrthographicCamera(float left, float right, float top, float bottom);
 		~OrthographicCamera();
 		
@@ -17,15 +18,15 @@ namespace BSE {
 		inline void SetRotation(float rotation) { m_Rotation.z = rotation; RecalculateViewMatrix(); }
 		inline void SetRotation(const glm::vec3 rotation) { m_Rotation = rotation; RecalculateViewMatrix(); }
 		
-		inline const glm::vec3 GetPosition() const { return m_Position; }
+		inline const glm::vec3& GetPosition() const { return m_Position; }
 		inline float GetRotationX() const { return m_RotationX; }
 		inline float GetRotationY() const { return m_RotationY; }
 		inline float GetRotationZ() const { return m_RotationZ; }
 		inline glm::vec3 GetRotation() const { return m_Rotation; }
 		
-		inline const glm::mat4 GetProjectionMatrix() { return m_ProjectionMatrix; }
-		inline const glm::mat4 GetViewMatrix() { return m_ViewMatrix; }
-		inline const glm::mat4 GetViewProjectionMatrix() { return m_ViewProjectionMatrix; }
+		inline const glm::mat4& GetProjectionMatrix() { return m_ProjectionMatrix; }
+		inline const glm::mat4& GetViewMatrix() { return m_ViewMatrix; }
+		inline const glm::mat4& GetViewProjectionMatrix() { return m_ViewProjectionMatrix; }
 		
 	private:
 		void RecalculateViewMatrix(); // called everytime when we set position or rotation
