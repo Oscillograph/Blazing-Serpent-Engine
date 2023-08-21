@@ -1,33 +1,30 @@
 #include <systems/OrthographicCameraController.h>
 
 namespace BSE {
-	OrthographicCameraController::OrthographicCameraController(float aspectRatio, float zoomLevel, bool rotation) {
+	OrthographicCameraController::OrthographicCameraController(float aspectRatio, float zoomLevel, bool rotation, bool constantAspectRatio){
 		//BSE_CORE_TRACE("Calling Camera Controller constructor");
 		m_AspectRatio = aspectRatio;
 		m_AspectRatioPrev = m_AspectRatio;
 		m_ZoomLevel = zoomLevel;
 		m_Rotation = rotation;
+		m_ConstantAspectRatio = constantAspectRatio;
 		
 		m_CameraBounds = {
 			-m_AspectRatio * m_ZoomLevel, 
-			 m_AspectRatio * m_ZoomLevel, 
-			 m_ZoomLevel, 
+			m_AspectRatio * m_ZoomLevel, 
+			m_ZoomLevel, 
 			-m_ZoomLevel 
 		};
 		
 		m_Camera = new OrthographicCamera(
 			-m_AspectRatio * m_ZoomLevel,
-			 m_AspectRatio * m_ZoomLevel,
-			 m_ZoomLevel,
+			m_AspectRatio * m_ZoomLevel,
+			m_ZoomLevel,
 			-m_ZoomLevel
 			);
 		
 		m_CameraPosition = m_Camera->GetPosition();
-		
-		// m_WidthPrev = Application::Get()->GetWindow()->GetWidth();
-		// m_HeightPrev = Application::Get()->GetWindow()->GetHeight();
-		//BSE_CORE_TRACE("Camera Controller constructor out");
-	} 
+	}
 	
 	OrthographicCameraController::~OrthographicCameraController(){
 		
@@ -79,8 +76,18 @@ namespace BSE {
 	
 	void OrthographicCameraController::OnResize(float width, float height) {
 		if ((width > 0.0f) && height > 0.0f){
-			m_AspectRatio = width / height;
-			m_ZoomLevel = m_ZoomLevel * m_AspectRatio / m_AspectRatioPrev;
+			BSE_INFO("CameraControl_OnResize - Aspect Ratio is constant: {0}", GetConstantAspectRatio());
+			BSE_INFO("DLL Adress: {}", fmt::ptr(this));
+			
+			if (GetConstantAspectRatio()){
+				BSE_INFO("Aspect Ratio is set to be constant");
+				m_AspectRatio = m_AspectRatioPrev;
+				m_ZoomLevel = m_ZoomLevel;
+			} else {
+				BSE_INFO("Width: {0}, Height: {1}", width, height);
+				m_AspectRatio = width / height;
+				m_ZoomLevel = m_ZoomLevel * m_AspectRatio / m_AspectRatioPrev;
+			}
 			
 			m_AspectRatioPrev = m_AspectRatio;
 			m_HeightPrev = width;

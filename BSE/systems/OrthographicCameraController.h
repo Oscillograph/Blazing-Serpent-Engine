@@ -23,7 +23,7 @@ namespace BSE {
 	
 	class BSE_API OrthographicCameraController {
 	public:
-		OrthographicCameraController(float aspectRatio, float zoomLevel = 1.0f, bool rotation = false); 
+		OrthographicCameraController(float aspectRatio, float zoomLevel = 1.0f, bool rotation = false, bool constantAspectRatio = false);
 		~OrthographicCameraController();
 		
 		// void SetProjection(float left, float right, float top, float bottom);
@@ -45,13 +45,25 @@ namespace BSE {
 			m_ZoomLevel = zoomLevel;
 			SetProjectionDefault();
 		}
-		inline float GetZoomLevel(){ return m_ZoomLevel; }
+		inline float GetZoomLevel() { return m_ZoomLevel; }
 		
 		inline void SetAspectRatio(float aspectRatio){
 			m_AspectRatio = aspectRatio;
 			SetProjectionDefault();
 		}
-		inline float GetAspectRatio(){ return m_AspectRatio; }
+		
+		inline void SetConstantAspectRatio(bool isConstant) { m_ConstantAspectRatio = isConstant; }
+		inline bool GetConstantAspectRatio() { return m_ConstantAspectRatio; }
+		inline bool ToggleConstantAspectRatio() {
+			m_ConstantAspectRatio = m_ConstantAspectRatio == true ? false : true; 
+			return m_ConstantAspectRatio; 
+		}
+		
+		inline float GetAspectRatio() { return m_AspectRatio; }
+		
+		inline void AllowRotation(bool isAllowed) { m_Rotation = isAllowed; }
+		
+		inline bool RotationStatus() { return m_Rotation; }
 		
 		inline const OrthographicCameraBounds& GetBounds() const { return m_CameraBounds; }
 		
@@ -82,6 +94,8 @@ namespace BSE {
 		OrthographicCamera* m_Camera;
 		
 		bool m_Rotation;
+		bool m_ConstantAspectRatio = true;
+		
 		glm::vec3 m_CameraPosition = {0.0f, 0.0f, 0.0f};
 		float m_CameraMoveSpeed = 5.0f;
 		float m_CameraRotateSpeed = 10.0f;

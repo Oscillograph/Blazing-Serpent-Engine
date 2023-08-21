@@ -4,6 +4,7 @@
 #include <Core.h>
 // #include <renderer/GeneralCamera.h>
 #include <renderer/OrthographicCamera.h>
+#include <systems/OrthographicCameraController.h>
 
 namespace BSE {
 	struct BSE_API NameComponent {
@@ -54,6 +55,21 @@ namespace BSE {
 			Camera = *camera;
 		}
 		
+	};
+	
+	struct BSE_API CameraControllerComponent {
+		OrthographicCameraController* CameraController;
+		
+		CameraControllerComponent(const CameraControllerComponent&) = default;
+		CameraControllerComponent(OrthographicCameraController* cameraController)
+		: CameraController(cameraController) {};
+		
+		bool PlayerControlled = false;
+		bool Works = true;
+		
+		void TurnOn(){ Works = true; }
+		void Toggle() { Works = true ? false : true; }
+		void TurnOff() { Works = false; }
 	};
 }
 
