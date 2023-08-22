@@ -73,8 +73,9 @@ namespace BSE {
 		inline float GetAspectRatio() { return m_AspectRatio; }
 		
 		inline void AllowRotation(bool isAllowed) { m_Rotation = isAllowed; }
-		
 		inline bool RotationStatus() { return m_Rotation; }
+		inline void Rotate(const glm::vec3& rotation) { m_Camera->SetRotation(rotation); }
+		inline void Rotate(float rotation) { m_Camera->SetRotation(rotation); }
 		
 		inline const OrthographicCameraBounds& GetBounds() const { return m_CameraBounds; }
 		
