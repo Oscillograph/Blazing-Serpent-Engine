@@ -13,6 +13,8 @@ namespace BSE {
 		Entity(entt::entity entityID, Scene* scene);
 		~Entity();
 		
+		inline entt::entity GetID(){ return m_EntityID; } 
+		
 		template <typename T, typename... Args>
 		T& AddComponent(Args&&... args){
 			// BSE_ASSERT(!HasComponent<T>(), "Entity already has the component.");

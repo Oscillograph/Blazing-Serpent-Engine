@@ -58,11 +58,18 @@ namespace BSE {
 	};
 	
 	struct BSE_API CameraControllerComponent {
-		OrthographicCameraController* CameraController;
+		OrthographicCameraController* CameraController = nullptr;
 		
 		CameraControllerComponent(const CameraControllerComponent&) = default;
-		CameraControllerComponent(OrthographicCameraController* cameraController)
-		: CameraController(cameraController) {};
+		CameraControllerComponent(float aspectRatio, float zoomLevel = 1.0f, bool rotation = false, bool constantAspectRatio = false){
+			CameraController = new OrthographicCameraController(aspectRatio, zoomLevel, rotation, constantAspectRatio);
+			// BSE_INFO("Component initialized with CameraController at {}", fmt::ptr(CameraController));
+		};
+		CameraControllerComponent(OrthographicCameraController* cameraController){
+			CameraController = cameraController;
+			// BSE_INFO("Component initialized with CameraController at {}", fmt::ptr(CameraController));
+			// BSE_INFO("The passed argument points at: {}", fmt::ptr(cameraController));
+		};
 		
 		bool PlayerControlled = false;
 		bool Works = true;

@@ -1,7 +1,7 @@
 #ifndef BSE_TIME_H
 #define BSE_TIME_H
 
-#include <Core.h>
+#include <ProtoCore.h>
 
 namespace BSE {
 	class BSE_API Timestep {
