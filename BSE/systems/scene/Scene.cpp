@@ -24,6 +24,20 @@ namespace BSE {
 	};
 	
 	void Scene::OnUpdate(float sceneTime){
+		// Script updating
+		{
+			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc){
+				if (!nsc.Instance){
+					nsc.InstantiateFunction();
+					nsc.Instance->m_Entity = new Entity(entity, this); // WHAT IS IT
+					nsc.OnCreateFunction(nsc.Instance);
+				}
+				
+				nsc.OnUpdateFunction(nsc.Instance, sceneTime);
+			});
+		}
+		
+		/*
 		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteComponent>);
 		for (auto entity : group){
 			auto [transform, sprite] = group.get<TransformComponent, SpriteComponent>(entity);
@@ -31,5 +45,6 @@ namespace BSE {
 			// TODO: remove temporary usage of renderer
 			Renderer2D::DrawQuadGeneral(transform.Transform, nullptr, 1.0f, sprite.Color);
 		}
+		*/
 	}
 }

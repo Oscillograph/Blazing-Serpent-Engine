@@ -3,6 +3,7 @@
 
 #include <Core.h>
 #include <Input.h>
+#include <KeyCodes.h>
 
 namespace BSE {
 	/*
@@ -20,6 +21,7 @@ namespace BSE {
 	class BSE_API Input {
 	public:
 		static bool IsKeyPressed(int keycode);
+		static bool IsKeyPressed(KeyCode keycode);
 		static bool IsMouseButtonPressed(int button);
 		static std::pair<float, float> GetMousePosition();
 		static float GetMouseX();

@@ -78,6 +78,39 @@ namespace BSE {
 		void Toggle() { Works = true ? false : true; }
 		void TurnOff() { Works = false; }
 	};
+	
+	struct BSE_API NativeScriptComponent {
+		ScriptableEntity* Instance = nullptr;
+		
+		std::function<void()> InstantiateFunction;
+		std::function<void()> DestroyInstanceFunction;
+		
+		std::function<void(ScriptableEntity*)> OnCreateFunction;
+		std::function<void(ScriptableEntity*)> OnDestroyFunction;
+		std::function<void(ScriptableEntity*, float)> OnUpdateFunction;
+		
+		template <typename T>
+		void Bind() {
+			InstantiateFunction = [&](){
+				Instance = new T();
+			};
+			
+			DestroyInstanceFunction = [&](){
+				delete (T*)Instance;
+				Instance = nullptr;
+			};
+			
+			OnCreateFunction = [](ScriptableEntity* instance) {
+				((T*)instance)->OnCreate();
+			};
+			OnDestroyFunction = [](ScriptableEntity* instance) {
+				((T*)instance)->OnDestroy();
+			};
+			OnUpdateFunction = [](ScriptableEntity* instance, float time) {
+				((T*)instance)->OnUpdate(time);
+			};
+		}
+	};
 }
 
 #endif

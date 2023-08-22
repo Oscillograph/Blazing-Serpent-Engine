@@ -43,6 +43,37 @@ namespace BSE {
 		entt::entity m_EntityID;
 		Scene* m_Scene;
 	};
+	
+	
+	class BSE_API ScriptableEntity {
+	public:
+		~ScriptableEntity(){
+			m_Entity = nullptr;
+		}
+		
+		template <typename T, typename... Args>
+		T& AddComponent(Args&&... args){
+			return m_Entity->AddComponent<T>(std::forward<Args>(args)...);
+		}
+		
+		template <typename T>
+		T& GetComponent(){
+			return m_Entity->GetComponent<T>();
+		}
+		
+		template <typename T>
+		bool HasComponent(){
+			return m_Entity->HasComponent<T>();
+		}
+		
+		template <typename T>
+		void RemoveComponent(){
+			return m_Entity->RemoveComponent<T>();
+		} 
+	private:
+		Entity* m_Entity;
+		friend class Scene;
+	};
 }
 
 #endif

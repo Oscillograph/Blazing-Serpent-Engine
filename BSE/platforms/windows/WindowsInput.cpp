@@ -1,11 +1,18 @@
 #include <Core.h>
 #include <Application.h>
+#include <KeyCodes.h>
 #include <glfw/glfw3.h>
 
 namespace BSE {
 	bool Input::IsKeyPressed(int keycode){
 		auto window = static_cast<GLFWwindow*>(Application::Get()->GetWindow()->GetNativeWindow());
 		auto state = glfwGetKey(window, keycode);
+		return (state == GLFW_PRESS) || (state == GLFW_REPEAT);  
+	}
+	
+	bool Input::IsKeyPressed(KeyCode keycode){
+		auto window = static_cast<GLFWwindow*>(Application::Get()->GetWindow()->GetNativeWindow());
+		auto state = glfwGetKey(window, (int)keycode);
 		return (state == GLFW_PRESS) || (state == GLFW_REPEAT);  
 	}
 	
