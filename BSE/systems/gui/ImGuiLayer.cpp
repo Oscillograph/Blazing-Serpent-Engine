@@ -108,9 +108,9 @@ namespace BSE {
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 		
-		float time = (float)glfwGetTime();
-		m_io->DeltaTime = m_Time > 0.0 ? (time - m_Time) : (1.0f / 60.0f );
-		m_Time = time;
+		// float time = (float)glfwGetTime();
+		// m_io->DeltaTime = m_Time > 0.0 ? (time - m_Time) : (1.0f / 60.0f );
+		// m_Time = time;
 	}
 	
 	void ImGuiLayer::ImGuiContent(){
@@ -131,10 +131,10 @@ namespace BSE {
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 			
 			if (m_io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable){
-				GLFWwindow* window_backup_context = glfwGetCurrentContext();
+				// GLFWwindow* window_backup_context = glfwGetCurrentContext();
 				ImGui::UpdatePlatformWindows();
 				ImGui::RenderPlatformWindowsDefault();
-				glfwMakeContextCurrent(window_backup_context);
+				// glfwMakeContextCurrent(window_backup_context);
 			}
 		}
 	}

@@ -26,7 +26,7 @@ namespace BSE {
 	public:
 		//ImGuiLayer(Application* app);
 		ImGuiLayer();
-		~ImGuiLayer();
+		virtual ~ImGuiLayer();
 		
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;

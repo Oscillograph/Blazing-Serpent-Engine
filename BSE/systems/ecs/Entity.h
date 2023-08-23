@@ -70,6 +70,12 @@ namespace BSE {
 		void RemoveComponent(){
 			return m_Entity->RemoveComponent<T>();
 		} 
+		
+	protected:
+		virtual void OnCreate() {};
+		virtual void OnDestroy() {};
+		virtual void OnUpdate(float time) {};
+		
 	private:
 		Entity* m_Entity;
 		friend class Scene;

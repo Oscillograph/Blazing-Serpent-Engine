@@ -26,14 +26,15 @@ namespace BSE {
 	void Scene::OnUpdate(float sceneTime){
 		// Script updating
 		{
+			// TODO: move to OnScenePlay;
+			// TODO: build OnSceneStart; OnSceneStop; OnScenePause; OnSceneReset; OnSceneDestroy;
 			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc){
 				if (!nsc.Instance){
-					nsc.InstantiateFunction();
+					nsc.Instance = nsc.InstantiateScript();
 					nsc.Instance->m_Entity = new Entity(entity, this); // WHAT IS IT
-					nsc.OnCreateFunction(nsc.Instance);
+					nsc.Instance->OnCreate();
 				}
-				
-				nsc.OnUpdateFunction(nsc.Instance, sceneTime);
+				nsc.Instance->OnUpdate(sceneTime);
 			});
 		}
 		
