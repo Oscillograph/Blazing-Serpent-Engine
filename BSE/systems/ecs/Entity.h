@@ -45,6 +45,12 @@ namespace BSE {
 		};
 		bool operator!=(Entity* other) {
 			return !(this == other);
+		};
+		bool operator==(Entity& other) {
+			return ((m_EntityID == other.GetID()) && (m_Scene == other.GetScene()));
+		};
+		bool operator!=(Entity& other) {
+			return !(*this == other);
 		}; 
 	private:
 		entt::entity m_EntityID;
