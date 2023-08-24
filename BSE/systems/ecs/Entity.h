@@ -14,6 +14,7 @@ namespace BSE {
 		~Entity();
 		
 		inline entt::entity GetID(){ return m_EntityID; } 
+		inline Scene* GetScene(){ return m_Scene; };
 		
 		template <typename T, typename... Args>
 		T& AddComponent(Args&&... args){
@@ -39,6 +40,12 @@ namespace BSE {
 		}
 		
 		operator bool() { return (this->m_EntityID != entt::null); }
+		bool operator==(Entity* other) {
+			return ((this->m_EntityID == other->GetID()) && (this->m_Scene == other->GetScene()));
+		};
+		bool operator!=(Entity* other) {
+			return !(this == other);
+		}; 
 	private:
 		entt::entity m_EntityID;
 		Scene* m_Scene;
