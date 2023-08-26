@@ -23,22 +23,86 @@ namespace BSE {
 		float GetDepth() { return ZFar - ZNear; }
 	};
 	
+	enum class CameraProjectionType : int {
+		Perspective 	= 0,
+		Orthographic 	= 1
+	};
+	
 	class BSE_API OrthographicCameraController {
 	public:
 		OrthographicCameraController(float aspectRatio, float zoomlevel = 1.0f, bool rotation = false, bool constantAspectRatio = false);
 		~OrthographicCameraController();
 		
+		inline CameraProjectionType GetProjectionType(){ return m_ProjectionType; }
+		inline void SetProjectionType(CameraProjectionType projectionType){ m_ProjectionType = projectionType; }
+		
+		// Perspective stuff
+		inline float GetPerspectiveVerticalFOV(){ return m_PerspectiveVerticalFOV; }
+		inline float GetPerspectiveHorizontalFOV(){ return m_PerspectiveHorizontalFOV; }
+		inline float GetPerspectiveNear(){ return m_PerspectiveNear; }
+		inline float GetPerspectiveFar(){ return m_PerspectiveFar; }
+		
+		inline void SetPerspectiveVerticalFOV(float value){ m_PerspectiveVerticalFOV = value; SetProjectionDefault(); }
+		inline void SetPerspectiveHorizontalFOV(float value){ m_PerspectiveHorizontalFOV = value; SetProjectionDefault(); }
+		inline void SetPerspectiveNear(float value){ m_PerspectiveNear = value; SetProjectionDefault(); }
+		inline void SetPerspectiveFar(float value){ m_PerspectiveFar = value; SetProjectionDefault(); }
+		
+		// Orthographic stuff
+		inline float GetOrthographicZNear(){ return m_CameraBounds.ZNear; }
+		inline void SetOrthographicZNear(float zNear){ 
+			m_CameraBounds.ZNear = zNear;
+			m_Camera->SetProjection(
+				m_CameraBounds.Left, m_CameraBounds.Right, 
+				m_CameraBounds.Top, m_CameraBounds.Bottom, 
+				m_CameraBounds.ZNear, m_CameraBounds.ZFar
+				);
+		}
+		
+		inline float GetOrthographicZFar(){ return m_CameraBounds.ZFar; }
+		inline void SetOrthographicZFar(float zFar){ 
+			m_CameraBounds.ZFar = zFar;
+			m_Camera->SetProjection(
+				m_CameraBounds.Left, m_CameraBounds.Right, 
+				m_CameraBounds.Top, m_CameraBounds.Bottom, 
+				m_CameraBounds.ZNear, m_CameraBounds.ZFar
+				);
+		}
+		
 		// void SetProjection(float left, float right, float top, float bottom);
-		inline void SetProjectionDefault(){
-			float orthoLeft 	= -m_AspectRatio * m_ZoomLevel * 0.5f;
-			float orthoRight 	=  m_AspectRatio * m_ZoomLevel * 0.5f;
-			float orthoTop 		=  m_ZoomLevel * 0.5f;
-			float orthoBottom 	= -m_ZoomLevel * 0.5f;
-			float orthoZNear 	= -2.0f;
-			float orthoZFar 	=  16.0f;
+		inline void SetOrthographicProjectionDefault(){
+			m_CameraBounds.Left 	= -m_AspectRatio * m_ZoomLevel * 0.5f;
+			m_CameraBounds.Right 	=  m_AspectRatio * m_ZoomLevel * 0.5f;
+			m_CameraBounds.Top 		=  m_ZoomLevel * 0.5f;
+			m_CameraBounds.Bottom 	= -m_ZoomLevel * 0.5f;
+			m_CameraBounds.ZNear 	= -2.0f;
+			m_CameraBounds.ZFar 	=  16.0f;
 			
-			m_Camera->SetProjection(orthoLeft, orthoRight, orthoTop, orthoBottom, orthoZNear, orthoZFar);
-			m_CameraBounds = { orthoLeft, orthoRight, orthoTop, orthoBottom, orthoZNear, orthoZFar };
+			m_Camera->SetProjection(
+				m_CameraBounds.Left, m_CameraBounds.Right, 
+				m_CameraBounds.Top, m_CameraBounds.Bottom, 
+				m_CameraBounds.ZNear, m_CameraBounds.ZFar
+				);
+		}
+		
+		inline void SetPerspectiveProjectionDefault(){
+			glm::mat4 projection = glm::perspective(
+				glm::radians(m_PerspectiveVerticalFOV), 
+				m_AspectRatio, 
+				m_PerspectiveNear,
+				m_PerspectiveFar
+				);
+			m_Camera->SetProjection(projection);
+		}
+		
+		inline void SetProjectionDefault(){
+			switch (GetProjectionType()) {
+			case CameraProjectionType::Orthographic:
+				SetOrthographicProjectionDefault();
+				break;
+			case CameraProjectionType::Perspective:
+				SetPerspectiveProjectionDefault();
+				break;
+			}
 		}
 		
 		inline void SetZoomLevel(float zoomLevel){
@@ -77,7 +141,7 @@ namespace BSE {
 		inline void Rotate(const glm::vec3& rotation) { m_Camera->SetRotation(rotation); }
 		inline void Rotate(float rotation) { m_Camera->SetRotation(rotation); }
 		
-		inline const OrthographicCameraBounds& GetBounds() const { return m_CameraBounds; }
+		inline OrthographicCameraBounds& GetBounds() { return m_CameraBounds; }
 		
 		void OnUpdate(float time);
 		void OnResize(float width, float height);
@@ -91,6 +155,8 @@ namespace BSE {
 			m_Camera = camera; 
 		}
 	private:
+		CameraProjectionType m_ProjectionType;
+		
 		bool OnMouseScrolled(MouseScrolledEvent& e);
 		bool OnWindowResized(WindowResizeEvent& e);
 		
@@ -118,6 +184,12 @@ namespace BSE {
 		float m_CameraRotateSpeed = 10.0f;
 		
 		OrthographicCameraBounds m_CameraBounds;
+		
+		// Perspective stuff
+		float m_PerspectiveHorizontalFOV = 60.0f;
+		float m_PerspectiveVerticalFOV = 45.0f;
+		float m_PerspectiveNear = 0.01f;
+		float m_PerspectiveFar = 1000.0f;
 	};
 }
 

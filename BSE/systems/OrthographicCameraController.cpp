@@ -9,6 +9,7 @@ namespace BSE {
 		// m_Size = size;
 		m_Rotation = rotation;
 		m_ConstantAspectRatio = constantAspectRatio;
+		m_ProjectionType = CameraProjectionType::Orthographic;
 		
 		float orthoLeft 	= -m_AspectRatio * m_ZoomLevel * 0.5f;
 		float orthoRight 	=  m_AspectRatio * m_ZoomLevel * 0.5f;
@@ -21,12 +22,12 @@ namespace BSE {
 		m_CameraBounds = { orthoLeft, orthoRight, orthoTop, orthoBottom, orthoZNear, orthoZFar };
 		
 		m_Camera = new OrthographicCamera(
-			orthoLeft, 
-			orthoRight, 
-			orthoTop, 
-			orthoBottom, 
-			orthoZNear, 
-			orthoZFar);
+			m_CameraBounds.Left, 
+			m_CameraBounds.Right, 
+			m_CameraBounds.Top, 
+			m_CameraBounds.Bottom, 
+			m_CameraBounds.ZNear, 
+			m_CameraBounds.ZFar);
 		
 		m_CameraPosition = m_Camera->GetPosition();
 	}

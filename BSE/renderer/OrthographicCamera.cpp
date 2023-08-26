@@ -21,7 +21,15 @@ namespace BSE {
 	void OrthographicCamera::SetProjection(float left, float right, float top, float bottom, float znear, float zfar){
 		m_ProjectionMatrix = glm::ortho(left, right, bottom, top, znear, zfar);
 		// m_ProjectionMatrix = glm::ortho(left, right, bottom, top);
-		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+		// m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+		RecalculateViewMatrix();
+	}
+	
+	void OrthographicCamera::SetProjection(glm::mat4 projection){
+		m_ProjectionMatrix = projection;
+		// m_ProjectionMatrix = glm::ortho(left, right, bottom, top);
+		// m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+		RecalculateViewMatrix();
 	}
 	
 	void OrthographicCamera::RecalculateViewMatrix(){
