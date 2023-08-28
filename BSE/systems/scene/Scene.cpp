@@ -23,6 +23,10 @@ namespace BSE {
 		return entity; 
 	};
 	
+	void Scene::DestroyEntity(Entity* entity){
+		delete entity;
+	}
+	
 	void Scene::OnUpdate(float sceneTime){
 		// Script updating
 		{
