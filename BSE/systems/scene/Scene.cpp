@@ -23,8 +23,9 @@ namespace BSE {
 		return entity; 
 	};
 	
-	void Scene::DestroyEntity(Entity* entity){
-		delete entity;
+	void Scene::DestroyEntity(Entity& entity){
+		m_Registry.destroy(entity.GetID());
+		// delete entity;
 	}
 	
 	void Scene::OnUpdate(float sceneTime){

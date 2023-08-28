@@ -19,7 +19,7 @@ namespace BSE {
 		
 		void OnUpdate(float sceneTime);
 		Entity* CreateEntity(const std::string& name = "");
-		void DestroyEntity(Entity* entity);
+		void DestroyEntity(Entity& entity);
 		inline entt::registry& Registry() { return m_Registry; };
 		inline void SetCamera(OrthographicCamera* camera) { m_Camera = camera; }
 		inline OrthographicCamera* GetCamera() { return m_Camera; }

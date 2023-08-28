@@ -7,7 +7,7 @@ namespace BSE {
 	{}
 	
 	Entity::~Entity(){
-		m_Scene->Registry().destroy(m_EntityID);
+		// m_Scene->Registry().destroy(m_EntityID);
 		m_Scene = nullptr;
 	}
 	
