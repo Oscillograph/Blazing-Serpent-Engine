@@ -82,7 +82,7 @@ namespace BSE {
 		
 		// TODO: fix ё
 		// m_io->Fonts->AddFontFromFileTTF("./assets/fonts/tahoma.ttf", 14.0f, font_config, ranges);
-		m_io->Fonts->AddFontFromFileTTF("./assets/fonts/tahoma.ttf", 14.0f, font_config, m_io->Fonts->GetGlyphRangesCyrillic());
+		m_FontDefault = m_io->Fonts->AddFontFromFileTTF("./assets/fonts/tahoma.ttf", 18.0f, font_config, m_io->Fonts->GetGlyphRangesCyrillic());
 		// m_io->Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Tahoma.ttf", 14.0f, &font_config, m_io->Fonts->GetGlyphRangesCyrillic());
 		// m_io->Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Arial.ttf", 14.0f, &font_config, m_io->Fonts->GetGlyphRangesCyrillic());
 		BSE_TRACE("...set!");

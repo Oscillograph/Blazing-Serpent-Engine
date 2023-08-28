@@ -57,6 +57,8 @@ namespace BSE {
 		ImGuiIO* m_io = nullptr;
 		ImGuiContext* m_ImGuiContext = nullptr;
 		
+		ImFont* m_FontDefault;
+		
 		ImGuiMemAllocFunc m_ImGuiMemAllocFunc;
 		ImGuiMemFreeFunc m_ImGuiMemFreeFunc;
 		void* m_ImGuiUserData = NULL;
