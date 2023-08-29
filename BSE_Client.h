@@ -52,6 +52,7 @@
 // #include <EntryPoint.h> // need to be included in Client main file
 
 #include <systems/scene/Scene.h>
+#include <systems/scene/SceneSerializer.h>
 #include <systems/ecs/Entity.h>
 #include <systems/ecs/Components.h>
 
