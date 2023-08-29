@@ -10,7 +10,6 @@ namespace BSE {
 		if (!iFile.is_open()){
 			iFile.open(filename.c_str());
 			if(iFile.is_open()){
-				int i = 0;
 				while (std::getline(iFile, lineRead, delimLine)){
 					output += (lineRead + "\n");
 				}
@@ -20,6 +19,21 @@ namespace BSE {
 		}
 		
 		return output;
+	}
+	
+	bool FileIO::WriteRawText(const std::string& filename, const char* text){
+		std::ofstream oFile; // output file descriptor
+		if (!oFile.is_open()){
+			oFile.open(filename.c_str());
+			if (oFile.is_open()){
+				oFile << text;
+				oFile.close();
+				return true;
+			} else {
+				BSE_CORE_ERROR("Couldn't open file: {0}", filename);
+			}
+		}
+		return false;
 	}
 	
 	std::string FileIO::GetName(std::string filepath){
