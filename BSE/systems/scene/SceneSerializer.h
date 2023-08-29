@@ -5,9 +5,10 @@
 #include <systems/scene/Scene.h>
 #include <systems/ecs/Entity.h>
 #include <systems/ecs/Components.h>
+#include <systems/OrthographicCameraController.h>
 
 namespace BSE {
-	class SceneSerializer {
+	class BSE_API SceneSerializer {
 	public:
 		SceneSerializer(Scene* scene);
 		~SceneSerializer();
