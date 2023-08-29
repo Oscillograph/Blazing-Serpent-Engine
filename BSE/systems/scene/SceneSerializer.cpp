@@ -1,4 +1,121 @@
 #include <systems/scene/SceneSerializer.h>
+// #include <vendor/yaml_cpp/include/yaml-cpp/node/convert.h>
+
+namespace YAML {
+	template<>
+	struct convert<glm::vec3> {
+		static Node encode(const glm::vec3& rhs) {
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			node.push_back(rhs.z);
+			return node;
+		}
+		
+		static bool decode(const Node& node, glm::vec3& rhs) {
+			if (!node.IsSequence() || (node.size() != 3))
+				return false;
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			rhs.z = node[2].as<float>();
+			return true;
+		}
+	};
+	
+	template<>
+	struct convert<glm::vec4> {
+		static Node encode(const glm::vec4& rhs) {
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			node.push_back(rhs.z);
+			node.push_back(rhs.w);
+			return node;
+		}
+		
+		static bool decode(const Node& node, glm::vec4& rhs) {
+			if (!node.IsSequence() || (node.size() != 4))
+				return false;
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			rhs.z = node[2].as<float>();
+			rhs.w = node[3].as<float>();
+			return true;
+		}
+	};
+	
+	template<>
+	struct convert<glm::mat4> {
+		static Node encode(const glm::mat4& rhs) {
+			Node node;
+			node.push_back(rhs[0][0]);
+			node.push_back(rhs[0][1]);
+			node.push_back(rhs[0][2]);
+			node.push_back(rhs[0][3]);
+			node.push_back(rhs[1][0]);
+			node.push_back(rhs[1][1]);
+			node.push_back(rhs[1][2]);
+			node.push_back(rhs[1][3]);
+			node.push_back(rhs[2][0]);
+			node.push_back(rhs[2][1]);
+			node.push_back(rhs[2][2]);
+			node.push_back(rhs[2][3]);
+			node.push_back(rhs[3][0]);
+			node.push_back(rhs[3][1]);
+			node.push_back(rhs[3][2]);
+			node.push_back(rhs[3][3]);
+			return node;
+		}
+		
+		static bool decode(const Node& node, glm::mat4& rhs) {
+			if (!node.IsSequence() || (node.size() != 16))
+				return false;
+			rhs[0][0] = node[0].as<float>();
+			rhs[0][1] = node[1].as<float>();
+			rhs[0][2] = node[2].as<float>();
+			rhs[0][3] = node[3].as<float>();
+			rhs[1][0] = node[4].as<float>();
+			rhs[1][1] = node[5].as<float>();
+			rhs[1][2] = node[6].as<float>();
+			rhs[1][3] = node[7].as<float>();
+			rhs[2][0] = node[8].as<float>();
+			rhs[2][1] = node[9].as<float>();
+			rhs[2][2] = node[10].as<float>();
+			rhs[2][3] = node[11].as<float>();
+			rhs[3][0] = node[12].as<float>();
+			rhs[3][1] = node[13].as<float>();
+			rhs[3][2] = node[14].as<float>();
+			rhs[3][3] = node[15].as<float>();
+			return true;
+		}
+	};
+	
+	template<>
+	struct convert<BSE::OrthographicCameraBounds> {
+		static Node encode(const BSE::OrthographicCameraBounds& rhs) {
+			Node node;
+			node.push_back(rhs.Left);
+			node.push_back(rhs.Right);
+			node.push_back(rhs.Top);
+			node.push_back(rhs.Bottom);
+			node.push_back(rhs.ZNear);
+			node.push_back(rhs.ZFar);
+			return node;
+		}
+		
+		static bool decode(const Node& node, BSE::OrthographicCameraBounds& rhs) {
+			if (!node.IsSequence() || (node.size() != 6))
+				return false;
+			rhs.Left = node[0].as<float>();
+			rhs.Right = node[1].as<float>();
+			rhs.Top = node[2].as<float>();
+			rhs.Bottom = node[3].as<float>();
+			rhs.ZNear = node[4].as<float>();
+			rhs.ZFar = node[5].as<float>();
+			return true;
+		}
+	};
+}
 
 namespace BSE {
 	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec3& vec3){
@@ -76,9 +193,85 @@ namespace BSE {
 	}
 	
 	bool SceneSerializer::DeserializeFromFile(const std::string& filename){
-		// Not implemented yet
-		BSE_CORE_ASSERT(false);
-		return false;
+		std::string text = FileIO::GetRawText(filename);
+		YAML::Node data = YAML::Load(text);
+		if (!data["Scene"]){
+			return false;
+		}
+		
+		std::string sceneName = data["Scene"].as<std::string>();
+		BSE_CORE_INFO("Deserializing scene {0}", sceneName.c_str());
+		
+		auto entities = data["Entities"];
+		if (entities) {
+			for (auto entity : entities) {
+				uint32_t uuid = entity["Entity"].as<uint32_t>(); // TODO: implement entity id restoration
+				
+				std::string name;
+				auto nameNode = entity["NameComponent"];
+				if (nameNode)
+					name = nameNode["Name"].as<std::string>();
+				
+				BSE_CORE_INFO("Deserializing entity with id = {0}, name = {1}", uuid, name);
+				
+				Entity deserializedEntity = *(m_SceneContext->CreateEntity(name));
+				
+				auto transformNode = entity["TransformComponent"];
+				if (transformNode){
+					auto& transform = deserializedEntity.GetComponent<TransformComponent>();
+					transform.Translation = transformNode["Translation"].as<glm::vec3>();
+					transform.Rotation = transformNode["Rotation"].as<glm::vec3>();
+					transform.Scale = transformNode["Scale"].as<glm::vec3>();
+				}
+
+				auto cameraControllerComponentNode = entity["CameraControllerComponent"];
+				if (cameraControllerComponentNode){
+					bool playerControlled = cameraControllerComponentNode["Player Controlled"].as<bool>();
+					bool works = cameraControllerComponentNode["Works"].as<bool>();
+					
+					auto cameraControllerNode = cameraControllerComponentNode["CameraController"];
+					if (cameraControllerNode){
+						float aspectRatio = cameraControllerNode["AspectRatio"].as<float>();
+						float zoomLevel = cameraControllerNode["ZoomLevel"].as<float>();
+						bool rotation = cameraControllerNode["Rotatable"].as<bool>();
+						bool constantAspectRatio = cameraControllerNode["ConstantAspectRatio"].as<bool>();
+						
+						
+						auto& component = deserializedEntity.AddComponent<CameraControllerComponent>(aspectRatio, zoomLevel, rotation, constantAspectRatio);
+						component.PlayerControlled = playerControlled;
+						component.Works = works;
+						
+						OrthographicCameraController* controller = component.CameraController;
+						m_SceneContext->SetCameraController(controller);
+						controller->SetProjectionType((CameraProjectionType)cameraControllerNode["ProjectionType"].as<int>());
+						if (controller->GetProjectionType() == CameraProjectionType::Perspective){
+							controller->SetPerspectiveHorizontalFOV(cameraControllerNode["PerspectiveHorizontalFOV"].as<float>());
+							controller->SetPerspectiveVerticalFOV(cameraControllerNode["PerspectiveVerticalFOV"].as<float>());
+							controller->SetPerspectiveNear(cameraControllerNode["PerspectiveNear"].as<float>());
+							controller->SetPerspectiveFar(cameraControllerNode["PerspectiveFar"].as<float>());
+						}
+						
+						auto cameraNode = cameraControllerNode["Camera"];
+						if (cameraNode){
+							OrthographicCamera* camera = controller->GetCamera();
+							camera->SetProjection(cameraNode["ProjectionMatrix"].as<glm::mat4>());
+							camera->SetPosition(cameraNode["Position"].as<glm::vec3>());
+							camera->SetRotation(cameraNode["Rotation"].as<glm::vec3>());
+							camera = nullptr;
+						}
+						controller = nullptr;
+					}
+				}
+				
+				auto spriteNode = entity["SpriteComponent"];
+				if (spriteNode){
+					auto& sprite = deserializedEntity.AddComponent<SpriteComponent>();
+					sprite.Color = spriteNode["Color"].as<glm::vec4>();
+				}
+			}
+		}
+
+		return true;
 	}
 	
 	bool SceneSerializer::DeserializeRuntime(const std::string& filename){
@@ -98,9 +291,9 @@ namespace BSE {
 					out << YAML::Key << "Name" << YAML::Value << name;
 				out << YAML::EndMap;
 			}
-			
+
 			if (entity.HasComponent<TransformComponent>()){
-				out << YAML::Key << "NameComponent";
+				out << YAML::Key << "TransformComponent";
 				out << YAML::BeginMap;
 					auto& transform = entity.GetComponent<TransformComponent>();
 					out << YAML::Key << "Translation" << YAML::Value << transform.Translation;
@@ -128,12 +321,11 @@ namespace BSE {
 							out << YAML::Key << "PerspectiveNear" << YAML::Value << cameraController->GetPerspectiveNear();
 							out << YAML::Key << "PerspectiveFar" << YAML::Value << cameraController->GetPerspectiveFar();
 						}
-						if (cameraController->GetProjectionType() == CameraProjectionType::Orthographic){
-							out << YAML::Key << "OrthographicCameraBounds" << cameraController->GetBounds();
-							out << YAML::Key << "AspectRatio" << cameraController->GetAspectRatio();
-							out << YAML::Key << "ZoomLevel" << cameraController->GetZoomLevel();
-						}
 				
+						out << YAML::Key << "OrthographicCameraBounds" << YAML::Value << cameraController->GetBounds();
+						out << YAML::Key << "AspectRatio" << YAML::Value << cameraController->GetAspectRatio();
+						out << YAML::Key << "ZoomLevel" << YAML::Value << cameraController->GetZoomLevel();
+						
 						auto camera = cameraController->GetCamera();
 						out << YAML::Key << "Camera" << YAML::Value;
 						out << YAML::BeginMap;
@@ -149,16 +341,15 @@ namespace BSE {
 					out << YAML::EndMap;
 				out << YAML::EndMap;
 			}
-		
+			
 			if (entity.HasComponent<SpriteComponent>()){
 				out << YAML::Key << "SpriteComponent";
 				out << YAML::BeginMap;
 					auto& component = entity.GetComponent<SpriteComponent>();
-					out << YAML::Key << "Name" << YAML::Value << component.Color;
+					out << YAML::Key << "Color" << YAML::Value << component.Color;
 				out << YAML::EndMap;
 			}
 		out << YAML::EndMap;
-		
 		return false;
 	}
 }
