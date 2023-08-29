@@ -56,10 +56,12 @@
 #include <systems/ecs/Entity.h>
 #include <systems/ecs/Components.h>
 
+// Various Application data stored by Engine for Client App to use 
+#include <GameData.h> // must be included last
+
 // - utils
 // #include <utils/FileIO.h> // already in Core.h
 #include <utils/Profiler.h>
-
-#include <GameData.h> // must be included last
+#include <utils/PlatformUtils.h> // modal windows
 
 #endif

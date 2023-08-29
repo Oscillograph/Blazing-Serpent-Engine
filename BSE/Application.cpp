@@ -24,6 +24,7 @@ namespace BSE{
 		// Create an App window and set callbacks
 		BSE_TRACE("Trying to create an app window");
 		m_Window = Window::Create(*(new WindowProperties()));
+		GameData::m_Window = m_Window;
 		BSE_TRACE("Window created and stored in m_Window");
 		
 		m_Window->SetEventCallback([this](Event& event){
