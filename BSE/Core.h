@@ -7,6 +7,7 @@
 #include <utils/FileIO.h>
 #include <utils/Time.h>
 #include <utils/Profiler.h>
+#include <utils/Math.h>
 // #include <vendor/json.hpp>
 // #include <vendor/entt/entt.hpp>
 

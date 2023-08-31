@@ -30,6 +30,8 @@
 #include <glm/glm.hpp> // complex math for graphics
 #include <glm/gtc/matrix_transform.hpp> // matrix transform and translate libraries
 #include <glm/gtc/type_ptr.hpp> // for value_ptr function
+#include <glm/gtx/quaternion.hpp> // for quaternions
+#include <glm/gtx/matrix_decompose.hpp> // for glm::decompose
 
 #include <imgui/imgui.h> // in systems/gui/ImGuiLayer.h
 #include <imgui/imgui_internal.h> // to use PushMultiItemsWidths function, etc.
