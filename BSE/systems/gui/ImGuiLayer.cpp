@@ -107,7 +107,8 @@ namespace BSE {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		
+		ImGuizmo::BeginFrame();
+
 		float time = (float)glfwGetTime();
 		m_io->DeltaTime = m_Time > 0.0 ? (time - m_Time) : (1.0f / 60.0f );
 		m_Time = time;
