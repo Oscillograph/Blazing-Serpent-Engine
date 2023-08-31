@@ -1,0 +1,3 @@
+[submodule "BSE/vendor/Cherno/ImGuizmo"]
+	path = BSE/vendor/Cherno/ImGuizmo
+	url = https://github.com/thecherno/imguizmo
