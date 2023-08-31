@@ -1,3 +1,6 @@
+#ifndef BSE_Cherno_ImGuizmo_H
+#define BSE_Cherno_ImGuizmo_H
+
 // https://github.com/CedricGuillemet/ImGuizmo
 // v 1.61 WIP
 //
@@ -41,7 +44,8 @@
 // - OPERATION as bitmask
 // 
 // -------------------------------------------------------------------------------------------
-// Example 
+// Example
+/*
 #if 0
 void EditTransform(const Camera& camera, matrix_t& matrix)
 {
@@ -67,7 +71,7 @@ void EditTransform(const Camera& camera, matrix_t& matrix)
 	ImGui::InputFloat3("Rt", matrixRotation, 3);
 	ImGui::InputFloat3("Sc", matrixScale, 3);
 	ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix.m16);
-
+		
 	if (mCurrentGizmoOperation != ImGuizmo::SCALE)
 	{
 		if (ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
@@ -102,7 +106,9 @@ void EditTransform(const Camera& camera, matrix_t& matrix)
 	ImGuizmo::Manipulate(camera.mView.m16, camera.mProjection.m16, mCurrentGizmoOperation, mCurrentGizmoMode, matrix.m16, NULL, useSnap ? &snap.x : NULL);
 }
 #endif
-#pragma once
+*/
+
+// #include <ProtoCore.h>
 
 #ifdef USE_IMGUI_API
 #include "imconfig.h"
@@ -116,20 +122,20 @@ namespace ImGuizmo
 	// call inside your own window and before Manipulate() in order to draw gizmo to that window.
 	// Or pass a specific ImDrawList to draw to (e.g. ImGui::GetForegroundDrawList()).
 	IMGUI_API void SetDrawlist(ImDrawList* drawlist = nullptr);
-
+		
 	// call BeginFrame right after ImGui_XXXX_NewFrame();
 	IMGUI_API void BeginFrame();
-
+		
 	// return true if mouse cursor is over any gizmo control (axis, plan or screen component)
 	IMGUI_API bool IsOver();
-
+		
 	// return true if mouse IsOver or if the gizmo is in moving state
 	IMGUI_API bool IsUsing();
-
+		
 	// enable/disable the gizmo. Stay in the state until next call to Enable.
 	// gizmo is rendered with gray half transparent color when disabled
 	IMGUI_API void Enable(bool enable);
-
+		
 	// helper functions for manualy editing translation/rotation/scale with an input float
 	// translation, rotation and scale float points to 3 floats each
 	// Angles are in degrees (more suitable for human editing)
@@ -144,15 +150,15 @@ namespace ImGuizmo
 	// These functions have some numerical stability issues for now. Use with caution.
 	IMGUI_API void DecomposeMatrixToComponents(const float *matrix, float *translation, float *rotation, float *scale);
 	IMGUI_API void RecomposeMatrixFromComponents(const float *translation, const float *rotation, const float *scale, float *matrix);
-
+		
 	IMGUI_API void SetRect(float x, float y, float width, float height);
 	// default is false
 	IMGUI_API void SetOrthographic(bool isOrthographic);
-
+		
 	// Render a cube with face color corresponding to face normal. Usefull for debug/tests
 	IMGUI_API void DrawCubes(const float *view, const float *projection, const float *matrices, int matrixCount);
 	IMGUI_API void DrawGrid(const float *view, const float *projection, const float *matrix, const float gridSize);
-
+		
 	// call it when you want a gizmo
 	// Needs view and projection matrices. 
 	// matrix parameter is the source matrix (where will be gizmo be drawn) and might be transformed by the function. Return deltaMatrix is optional
@@ -164,13 +170,13 @@ namespace ImGuizmo
 		SCALE,
 		BOUNDS,
 	};
-
+		
 	enum MODE
 	{
 		LOCAL,
 		WORLD
 	};
-
+		
 	IMGUI_API bool Manipulate(const float *view, const float *projection, OPERATION operation, MODE mode, float *matrix, float *deltaMatrix = NULL, float *snap = NULL, float *localBounds = NULL, float *boundsSnap = NULL);
    //
    // Please note that this cubeview is patented by Autodesk : https://patents.google.com/patent/US7782319B2/en
@@ -185,3 +191,5 @@ namespace ImGuizmo
    IMGUI_API bool IsOver(OPERATION op);
 	IMGUI_API void SetGizmoSizeClipSpace(float value);
 };
+
+#endif
