@@ -51,6 +51,7 @@ namespace BSE {
 		static glm::vec4 RendererClearColor;
 		static glm::vec4 CustomColor;
 		static OrthographicCameraController* m_CameraController;
+		static bool EditorCameraOn;
 	};
 }
 
