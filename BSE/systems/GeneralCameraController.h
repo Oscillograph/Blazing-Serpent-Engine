@@ -5,6 +5,7 @@
 //#include <Application.h>
 #include <renderer/GeneralCamera.h>
 #include <renderer/OrthographicCamera.h>
+#include <renderer/EditorCamera.h>
 
 #include <Input.h>
 #include <KeyCodes.h>
@@ -33,6 +34,8 @@ namespace BSE {
 		GeneralCameraController() = default;
 		GeneralCameraController(int, int){}; // dummy constructor to be called specifically to prevent from parent corrupt a child
 		GeneralCameraController(float aspectRatio, float zoomlevel = 1.0f, bool rotation = false, bool constantAspectRatio = false);
+		// constructor for Editor Camera
+		GeneralCameraController(float fov = 45.0f, float aspectRatio = 1.778f, float znear = 0.1f, float zfar = 1000.0f);
 		virtual ~GeneralCameraController();
 		
 		virtual inline CameraProjectionType GetProjectionType(){ return m_ProjectionType; }
@@ -87,13 +90,24 @@ namespace BSE {
 		}
 		
 		virtual inline void SetPerspectiveProjectionDefault(){
-			glm::mat4 projection = glm::perspective(
-				glm::radians(m_PerspectiveVerticalFOV), 
-				m_AspectRatio, 
-				m_PerspectiveNear,
-				m_PerspectiveFar
-				);
-			m_Camera->SetProjection(projection);
+			if (m_EditorCamera) {
+				EditorCamera* cam = (EditorCamera*)m_Camera;
+				glm::mat4 projection = glm::perspective(
+					cam->GetFOV(), 
+					cam->GetAspectRatio(), 
+					cam->GetNearClip(),
+					cam->GetFarClip()
+					);
+				m_Camera->SetProjection(projection);
+			} else {
+				glm::mat4 projection = glm::perspective(
+					glm::radians(m_PerspectiveVerticalFOV), 
+					m_AspectRatio, 
+					m_PerspectiveNear,
+					m_PerspectiveFar
+					);
+				m_Camera->SetProjection(projection);
+			}
 		}
 		
 		virtual inline void SetProjectionDefault(){
@@ -102,20 +116,45 @@ namespace BSE {
 				SetOrthographicProjectionDefault();
 				break;
 			case CameraProjectionType::Perspective:
-				SetPerspectiveProjectionDefault();
+				if (m_EditorCamera){
+					EditorCamera* cam = (EditorCamera*)m_Camera;
+					cam->UpdateProjection();
+					cam->UpdateView();
+				} else {
+					SetPerspectiveProjectionDefault();
+				}
 				break;
 			}
 		}
 		
 		virtual inline void SetZoomLevel(float zoomLevel){
-			m_ZoomLevel = zoomLevel;
-			SetProjectionDefault();
+			if (m_EditorCamera){
+				EditorCamera* cam = (EditorCamera*)m_Camera;
+				cam->SetDistance(m_ZoomLevel);
+				SetProjectionDefault();
+			} else {
+				m_ZoomLevel = zoomLevel;
+				SetProjectionDefault();
+			}
 		}
-		virtual inline float GetZoomLevel() { return m_ZoomLevel; }
+		virtual inline float GetZoomLevel() {
+			if (m_EditorCamera){
+				EditorCamera* cam = (EditorCamera*)m_Camera;
+				m_ZoomLevel = cam->GetDistance();
+			}
+			return m_ZoomLevel;
+		}
 		
 		virtual inline void SetAspectRatio(float aspectRatio){
-			m_AspectRatio = aspectRatio;
-			SetProjectionDefault();
+			if (m_EditorCamera){
+				EditorCamera* cam = (EditorCamera*)m_Camera;
+				m_AspectRatio = aspectRatio;
+				cam->SetAspectRatio(m_AspectRatio);
+				SetProjectionDefault();
+			} else {
+				m_AspectRatio = aspectRatio;
+				SetProjectionDefault();
+			}
 		}
 		
 		virtual inline void RefreshCamera() { SetProjectionDefault(); }
@@ -123,10 +162,18 @@ namespace BSE {
 		virtual inline void SetSize(float width, float height) {
 			m_Width = width;
 			m_Height = height;
+			if (m_EditorCamera){
+				EditorCamera* cam = (EditorCamera*)m_Camera;
+				cam->SetViewPort(width, height);
+			}
 		}
 		virtual inline void SetSize(uint32_t width, uint32_t height, float size) {
 			m_Width = (float)width;
 			m_Height = (float)height;
+			if (m_EditorCamera){
+				EditorCamera* cam = (EditorCamera*)m_Camera;
+				cam->SetViewPort(m_Width, m_Height);
+			}
 		}
 		
 		virtual inline void SetConstantAspectRatio(bool isConstant) { m_ConstantAspectRatio = isConstant; }
@@ -136,10 +183,13 @@ namespace BSE {
 			return m_ConstantAspectRatio; 
 		}
 		
+		virtual inline void SetEditorCamera(bool isEditor) { m_EditorCamera = isEditor; }
+		virtual inline bool IsEditorCamera() { return m_EditorCamera; }
+		
 		virtual inline float GetAspectRatio() { return m_AspectRatio; }
 		
-		virtual inline void AllowRotation(bool isAllowed) { m_Rotation = isAllowed; }
-		virtual inline bool RotationStatus() { return m_Rotation; }
+		virtual inline void AllowRotation(bool isAllowed) { m_Rotate = isAllowed; }
+		virtual inline bool RotationStatus() { return m_Rotate; }
 		virtual inline void Rotate(const glm::vec3& rotation) { m_Camera->SetRotation(rotation); }
 		virtual inline void Rotate(float rotation) { m_Camera->SetRotation(rotation); }
 		
@@ -151,6 +201,13 @@ namespace BSE {
 	
 		virtual inline OrthographicCamera* GetCamera() { return m_Camera; }
 		virtual inline void SetCamera(OrthographicCamera* camera, bool destroyPrevCamera = false) {
+			if (destroyPrevCamera && (m_Camera != nullptr)){
+				delete m_Camera;
+			}
+			m_Camera = camera; 
+		}
+		
+		inline void SetCamera(EditorCamera* camera, bool destroyPrevCamera = false) {
 			if (destroyPrevCamera && (m_Camera != nullptr)){
 				delete m_Camera;
 			}
@@ -178,7 +235,7 @@ namespace BSE {
 		// GeneralCamera* m_Camera;
 		OrthographicCamera* m_Camera;
 		
-		bool m_Rotation;
+		bool m_Rotate;
 		bool m_ConstantAspectRatio = true;
 		
 		glm::vec3 m_CameraPosition = {0.0f, 0.0f, 0.0f};
@@ -187,11 +244,26 @@ namespace BSE {
 		
 		OrthographicCameraBounds m_CameraBounds;
 		
+		bool m_EditorCamera = false;
+		
 		// Perspective stuff
 		float m_PerspectiveHorizontalFOV = 60.0f;
 		float m_PerspectiveVerticalFOV = 45.0f;
 		float m_PerspectiveNear = 0.01f;
 		float m_PerspectiveFar = 1000.0f;
+		
+		// glm::vec3 m_FocalPoint = {0.0f, 0.0f, 0.0f};
+		// glm::vec3 m_Rotation = {0.0f, 0.0f, 0.0f};
+		// float m_RotationX = 0.0f; // on X axis
+		// float m_RotationY = 0.0f; // on Y axis
+		// float m_RotationZ = 0.0f; // on Z axis
+		
+		// glm::vec2 m_InitialMousePosition;
+		
+		// float m_Pitch = 0.0f;
+		// float m_Yaw = 0.0f;
+		// float m_ViewportWidth = 1280.0f;
+		// float m_ViewportHeight = 768.0f;
 	};
 }
 

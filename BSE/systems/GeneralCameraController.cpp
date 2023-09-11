@@ -7,9 +7,10 @@ namespace BSE {
 		m_AspectRatioPrev = m_AspectRatio;
 		m_ZoomLevel = zoomlevel;
 		// m_Size = size;
-		m_Rotation = rotation;
+		m_Rotate = rotation;
 		m_ConstantAspectRatio = constantAspectRatio;
 		m_ProjectionType = CameraProjectionType::Orthographic;
+		m_EditorCamera = false;
 		
 		float orthoLeft 	= -m_AspectRatio * m_ZoomLevel * 0.5f;
 		float orthoRight 	=  m_AspectRatio * m_ZoomLevel * 0.5f;
@@ -28,6 +29,41 @@ namespace BSE {
 			m_CameraBounds.Bottom, 
 			m_CameraBounds.ZNear, 
 			m_CameraBounds.ZFar);
+		BSE_CORE_TRACE("General Camera Controller constructor: Orthographic Camera created");
+		m_CameraPosition = m_Camera->GetPosition();
+		BSE_CORE_TRACE("General Camera Controller constructor: Orthographic Camera position taken");
+	}
+	
+	GeneralCameraController::GeneralCameraController(float fov, float aspectRatio, float znear, float zfar)
+	// : OrthographicCameraController(0, 0) // use parent dummy contructor to prevent it from doing harm here
+	{
+		BSE_CORE_TRACE("Calling Editor Camera Controller constructor");
+		m_PerspectiveVerticalFOV = glm::radians(fov);
+		m_PerspectiveHorizontalFOV = m_PerspectiveVerticalFOV;
+		m_AspectRatio = aspectRatio;
+		m_AspectRatioPrev = m_AspectRatio;
+		m_ZoomLevel = 10.0f;
+		// m_Size = size;
+		m_Rotate = true;
+		m_ConstantAspectRatio = false;
+		m_ProjectionType = CameraProjectionType::Perspective;
+		// m_EditorCamera = true;
+		
+		float orthoLeft 	= -m_AspectRatio * m_ZoomLevel * 0.5f;
+		float orthoRight 	=  m_AspectRatio * m_ZoomLevel * 0.5f;
+		float orthoTop 		=  m_ZoomLevel * 0.5f;
+		float orthoBottom 	= -m_ZoomLevel * 0.5f;
+		float orthoZNear 	= -2.0f;
+		float orthoZFar 	=  16.0f;
+		
+		// m_Camera->SetProjection(orthoLeft, orthoRight, orthoTop, orthoBottom, orthoZNear, orthoZFar);
+		m_CameraBounds = { orthoLeft, orthoRight, orthoTop, orthoBottom, orthoZNear, orthoZFar };
+		
+		m_Camera = new EditorCamera(
+			m_PerspectiveVerticalFOV, 
+			m_AspectRatio, 
+			m_CameraBounds.ZNear, 
+			m_CameraBounds.ZFar);
 		
 		m_CameraPosition = m_Camera->GetPosition();
 	}
@@ -37,46 +73,51 @@ namespace BSE {
 	}
 	
 	void GeneralCameraController::OnUpdate(float time){
-		m_CameraPosition = m_Camera->GetPosition();
-		if (Input::IsKeyPressed(BSE_KEY_W)){
-			m_CameraPosition.y += m_CameraMoveSpeed * time;
-		}
-		if (Input::IsKeyPressed(BSE_KEY_A)){
-			m_CameraPosition.x -= m_CameraMoveSpeed * time;
-		}
-		if (Input::IsKeyPressed(BSE_KEY_S)){
-			m_CameraPosition.y -= m_CameraMoveSpeed * time;
-		}
-		if (Input::IsKeyPressed(BSE_KEY_D)){
-			m_CameraPosition.x += m_CameraMoveSpeed * time;
-		}
-		
-		m_Camera->SetPosition(m_CameraPosition);
-		
-		if (m_Rotation){
-			glm::vec3 rotation = m_Camera->GetRotation();
-			if (Input::IsKeyPressed(BSE_KEY_UP)){
-				rotation.z -= m_CameraRotateSpeed * time;
+		if (m_EditorCamera) {
+			EditorCamera* cam = (EditorCamera*)m_Camera;
+			cam->OnUpdate(time);
+		} else {
+			m_CameraPosition = m_Camera->GetPosition();
+			if (Input::IsKeyPressed(BSE_KEY_W)){
+				m_CameraPosition.y += m_CameraMoveSpeed * time;
 			}
-			if (Input::IsKeyPressed(BSE_KEY_DOWN)){
-				rotation.z += m_CameraRotateSpeed * time;
+			if (Input::IsKeyPressed(BSE_KEY_A)){
+				m_CameraPosition.x -= m_CameraMoveSpeed * time;
 			}
-			if (Input::IsKeyPressed(BSE_KEY_LEFT)){
-				rotation.x -= m_CameraRotateSpeed * time;
+			if (Input::IsKeyPressed(BSE_KEY_S)){
+				m_CameraPosition.y -= m_CameraMoveSpeed * time;
 			}
-			if (Input::IsKeyPressed(BSE_KEY_RIGHT)){
-				rotation.x += m_CameraRotateSpeed * time;
+			if (Input::IsKeyPressed(BSE_KEY_D)){
+				m_CameraPosition.x += m_CameraMoveSpeed * time;
 			}
-			m_Camera->SetRotation(rotation);
-		}
-		
-		if (Input::IsKeyPressed(BSE_KEY_PAGE_UP)){
-			m_ZoomLevel -= 0.1f;
-			SetProjectionDefault();
-		}
-		if (Input::IsKeyPressed(BSE_KEY_PAGE_DOWN)){
-			m_ZoomLevel += 0.1f;
-			SetProjectionDefault();
+			
+			m_Camera->SetPosition(m_CameraPosition);
+			
+			if (m_Rotate){
+				glm::vec3 rotation = m_Camera->GetRotation();
+				if (Input::IsKeyPressed(BSE_KEY_UP)){
+					rotation.z -= m_CameraRotateSpeed * time;
+				}
+				if (Input::IsKeyPressed(BSE_KEY_DOWN)){
+					rotation.z += m_CameraRotateSpeed * time;
+				}
+				if (Input::IsKeyPressed(BSE_KEY_LEFT)){
+					rotation.x -= m_CameraRotateSpeed * time;
+				}
+				if (Input::IsKeyPressed(BSE_KEY_RIGHT)){
+					rotation.x += m_CameraRotateSpeed * time;
+				}
+				m_Camera->SetRotation(rotation);
+			}
+			
+			if (Input::IsKeyPressed(BSE_KEY_PAGE_UP)){
+				m_ZoomLevel -= 0.1f;
+				SetProjectionDefault();
+			}
+			if (Input::IsKeyPressed(BSE_KEY_PAGE_DOWN)){
+				m_ZoomLevel += 0.1f;
+				SetProjectionDefault();
+			}
 		}
 	}
 	
@@ -107,15 +148,20 @@ namespace BSE {
 	}
 	
 	void GeneralCameraController::OnEvent(Event& e){
-		EventDispatcher dispatcher(e);
-		
-		dispatcher.Dispatch<MouseScrolledEvent>([this](MouseScrolledEvent& event){
-			return OnMouseScrolled(event);
-		});
-		
-		dispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent& event){
-			return OnWindowResized(event);
-		});
+		if (m_EditorCamera) {
+			EditorCamera* cam = (EditorCamera*)m_Camera;
+			cam->OnEvent(e);
+		} else {
+			EventDispatcher dispatcher(e);
+			
+			dispatcher.Dispatch<MouseScrolledEvent>([this](MouseScrolledEvent& event){
+				return OnMouseScrolled(event);
+			});
+			
+			dispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent& event){
+				return OnWindowResized(event);
+			});
+		}
 	}
 	
 	bool GeneralCameraController::OnMouseScrolled(MouseScrolledEvent& e){

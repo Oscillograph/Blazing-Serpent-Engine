@@ -27,7 +27,7 @@ namespace BSE {
 		
 		virtual inline const glm::mat4& GetProjectionMatrix() { return m_ProjectionMatrix; }
 		virtual inline const glm::mat4& GetViewMatrix() { return m_ViewMatrix; }
-		virtual inline const glm::mat4& GetViewProjectionMatrix() { BSE_CORE_INFO("BSECamera. Is this the stop point?"); return m_ViewProjectionMatrix; }
+		virtual inline const glm::mat4& GetViewProjectionMatrix() { return m_ViewProjectionMatrix; }
 		
 	private:
 		virtual void RecalculateViewMatrix(); // called everytime when we set position or rotation

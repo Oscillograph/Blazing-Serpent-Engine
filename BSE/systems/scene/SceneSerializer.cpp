@@ -257,7 +257,7 @@ namespace BSE {
 							camera->SetProjection(cameraNode["ProjectionMatrix"].as<glm::mat4>());
 							camera->SetPosition(cameraNode["Position"].as<glm::vec3>());
 							camera->SetRotation(cameraNode["Rotation"].as<glm::vec3>());
-							camera = nullptr;
+							// camera = nullptr;
 						}
 						controller = nullptr;
 					}
@@ -270,6 +270,7 @@ namespace BSE {
 				}
 			}
 		}
+		BSE_CORE_INFO("Deserialization complete");
 
 		return true;
 	}
