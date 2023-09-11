@@ -1,7 +1,7 @@
-#include <systems/OrthographicCameraController.h>
+#include <systems/GeneralCameraController.h>
 
 namespace BSE {
-	OrthographicCameraController::OrthographicCameraController(float aspectRatio, float zoomlevel, bool rotation, bool constantAspectRatio){
+	GeneralCameraController::GeneralCameraController(float aspectRatio, float zoomlevel, bool rotation, bool constantAspectRatio){
 		BSE_CORE_TRACE("Calling Camera Controller constructor");
 		m_AspectRatio = aspectRatio;
 		m_AspectRatioPrev = m_AspectRatio;
@@ -32,11 +32,11 @@ namespace BSE {
 		m_CameraPosition = m_Camera->GetPosition();
 	}
 	
-	OrthographicCameraController::~OrthographicCameraController(){
+	GeneralCameraController::~GeneralCameraController(){
 		
 	}
 	
-	void OrthographicCameraController::OnUpdate(float time){
+	void GeneralCameraController::OnUpdate(float time){
 		m_CameraPosition = m_Camera->GetPosition();
 		if (Input::IsKeyPressed(BSE_KEY_W)){
 			m_CameraPosition.y += m_CameraMoveSpeed * time;
@@ -80,7 +80,7 @@ namespace BSE {
 		}
 	}
 	
-	void OrthographicCameraController::OnResize(float width, float height) {
+	void GeneralCameraController::OnResize(float width, float height) {
 		if ((width > 0.0f) && height > 0.0f){
 			m_Width = width;
 			m_Height = height;
@@ -106,7 +106,7 @@ namespace BSE {
 		}
 	}
 	
-	void OrthographicCameraController::OnEvent(Event& e){
+	void GeneralCameraController::OnEvent(Event& e){
 		EventDispatcher dispatcher(e);
 		
 		dispatcher.Dispatch<MouseScrolledEvent>([this](MouseScrolledEvent& event){
@@ -118,7 +118,7 @@ namespace BSE {
 		});
 	}
 	
-	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e){
+	bool GeneralCameraController::OnMouseScrolled(MouseScrolledEvent& e){
 		m_ZoomLevel -= e.GetYOffset() * 0.1f;
 		//m_ZoomLevel = (m_ZoomLevel < m_ZoomMin) ? (m_ZoomMin) : m_ZoomLevel;
 		//m_ZoomLevel = (m_ZoomLevel > m_ZoomMax) ? (m_ZoomMax) : m_ZoomLevel;
@@ -128,7 +128,7 @@ namespace BSE {
 		return false;
 	}
 	
-	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e){
+	bool GeneralCameraController::OnWindowResized(WindowResizeEvent& e){
 		float widthNew = (float)(e.GetWidth());
 		float heightNew = (float)(e.GetHeight());
 		

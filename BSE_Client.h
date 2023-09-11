@@ -42,7 +42,7 @@
 #include <systems/Texture2DSpriteSheet.h>
 
 #include <renderer/OrthographicCamera.h>
-#include <systems/OrthographicCameraController.h>
+#include <systems/GeneralCameraController.h>
 
 #include <renderer/GeometryPrimitives.h>
 

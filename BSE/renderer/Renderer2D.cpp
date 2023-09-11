@@ -146,8 +146,9 @@ namespace BSE {
 	
 	void Renderer2D::BeginScene(OrthographicCamera* camera){
 		RendererData->TextureShader->Bind();
+		// BSE_CORE_INFO("BSE1. Is this the stop point?");
 		RendererData->TextureShader->UploadUniformMat4("u_ViewProjection", camera->GetViewProjectionMatrix());
-		
+		// BSE_CORE_INFO("BSE2. Is this the stop point?");
 		
 		int samplers[RendererData->MaxTextureSlots];
 		for (uint32_t i = 0; i < RendererData->MaxTextureSlots; i++){

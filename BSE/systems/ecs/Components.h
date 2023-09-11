@@ -4,7 +4,7 @@
 #include <Core.h>
 // #include <renderer/GeneralCamera.h>
 #include <renderer/OrthographicCamera.h>
-#include <systems/OrthographicCameraController.h>
+#include <systems/GeneralCameraController.h>
 
 namespace BSE {
 	struct BSE_API NameComponent {
@@ -70,14 +70,14 @@ namespace BSE {
 	};
 	
 	struct BSE_API CameraControllerComponent {
-		OrthographicCameraController* CameraController = nullptr;
+		GeneralCameraController* CameraController = nullptr;
 		
 		CameraControllerComponent(const CameraControllerComponent&) = default;
 		CameraControllerComponent(float aspectRatio, float zoomLevel = 1.0f, bool rotation = false, bool constantAspectRatio = false){
-			CameraController = new OrthographicCameraController(aspectRatio, zoomLevel, rotation, constantAspectRatio);
+			CameraController = new GeneralCameraController(aspectRatio, zoomLevel, rotation, constantAspectRatio);
 			// BSE_INFO("Component initialized with CameraController at {}", fmt::ptr(CameraController));
 		};
-		CameraControllerComponent(OrthographicCameraController* cameraController){
+		CameraControllerComponent(GeneralCameraController* cameraController){
 			CameraController = cameraController;
 			// BSE_INFO("Component initialized with CameraController at {}", fmt::ptr(CameraController));
 			// BSE_INFO("The passed argument points at: {}", fmt::ptr(cameraController));

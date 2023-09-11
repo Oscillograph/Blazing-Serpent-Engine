@@ -29,7 +29,7 @@
 #include <renderer/Renderer.h>
 #include <renderer/Renderer2D.h>
 #include <renderer/OrthographicCamera.h>
-#include <systems/OrthographicCameraController.h>
+#include <systems/GeneralCameraController.h>
 
 #include <systems/scene/Scene.h>
 #include <systems/scene/SceneSerializer.h>

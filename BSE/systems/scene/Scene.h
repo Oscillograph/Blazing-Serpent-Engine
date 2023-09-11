@@ -5,7 +5,7 @@
 #include <vendor/entt/entt.hpp>
 #include <renderer/GeneralCamera.h>
 #include <renderer/OrthographicCamera.h>
-#include <systems/OrthographicCameraController.h>
+#include <systems/GeneralCameraController.h>
 // #include <systems/ecs/Entity.h>
 // #include <systems/ecs/Components.h>
 
@@ -23,15 +23,15 @@ namespace BSE {
 		inline entt::registry& Registry() { return m_Registry; };
 		inline void SetCamera(OrthographicCamera* camera) { m_Camera = camera; }
 		inline OrthographicCamera* GetCamera() { return m_Camera; }
-		inline void SetCameraController(OrthographicCameraController* cameraController) { m_CameraController = cameraController; }
-		inline OrthographicCameraController* GetCameraController() { return m_CameraController; }
+		inline void SetCameraController(GeneralCameraController* cameraController) { m_CameraController = cameraController; }
+		inline GeneralCameraController* GetCameraController() { return m_CameraController; }
 	protected:
 		
 	private:
 		entt::registry m_Registry;
 		
 		OrthographicCamera* m_Camera = nullptr;
-		OrthographicCameraController* m_CameraController = nullptr;
+		GeneralCameraController* m_CameraController = nullptr;
 	};
 }
 

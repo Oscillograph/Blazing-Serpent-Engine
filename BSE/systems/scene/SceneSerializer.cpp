@@ -241,7 +241,7 @@ namespace BSE {
 						component.PlayerControlled = playerControlled;
 						component.Works = works;
 						
-						OrthographicCameraController* controller = component.CameraController;
+						GeneralCameraController* controller = component.CameraController;
 						m_SceneContext->SetCameraController(controller);
 						controller->SetProjectionType((CameraProjectionType)cameraControllerNode["ProjectionType"].as<int>());
 						if (controller->GetProjectionType() == CameraProjectionType::Perspective){
