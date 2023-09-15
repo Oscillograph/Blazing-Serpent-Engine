@@ -2,7 +2,7 @@
 
 namespace BSE {
 	GeneralCameraController::GeneralCameraController(float aspectRatio, float zoomlevel, bool rotation, bool constantAspectRatio){
-		BSE_CORE_TRACE("Calling Camera Controller constructor");
+		BSE_CORE_TRACE("Calling General Camera Controller constructor");
 		m_AspectRatio = aspectRatio;
 		m_AspectRatioPrev = m_AspectRatio;
 		m_ZoomLevel = zoomlevel;
@@ -65,7 +65,9 @@ namespace BSE {
 			m_CameraBounds.ZNear, 
 			m_CameraBounds.ZFar);
 		
+		BSE_CORE_TRACE("General Camera Controller constructor: Perspective Camera created");
 		m_CameraPosition = m_Camera->GetPosition();
+		BSE_CORE_TRACE("General Camera Controller constructor: Perspective Camera position taken");
 	}
 	
 	GeneralCameraController::~GeneralCameraController(){
@@ -112,12 +114,12 @@ namespace BSE {
 			
 			if (Input::IsKeyPressed(BSE_KEY_PAGE_UP)){
 				m_ZoomLevel -= 0.1f;
-				SetProjectionDefault();
 			}
 			if (Input::IsKeyPressed(BSE_KEY_PAGE_DOWN)){
 				m_ZoomLevel += 0.1f;
-				SetProjectionDefault();
 			}
+			
+			SetProjectionDefault();
 		}
 	}
 	

@@ -12,18 +12,28 @@ namespace BSE {
 	{
 		m_AspectRatio = m_ViewportWidth / m_ViewportHeight;
 		m_ProjectionMatrix = glm::perspective(m_FOV, m_AspectRatio, m_NearClip, m_FarClip);
-		RecalculateViewMatrix();
+		RecalculateViewProjectionMatrix();
 	}
 	
 	void EditorCamera::UpdateView()
 	{
 		// m_Yaw = m_Pitch = 0.0f; // Lock the camera rotation
-		m_Position = CalculatePosition();
-		glm::quat orientation = GetOrientation();
-		m_Rotation = glm::eulerAngles(orientation);
-		m_ViewMatrix = glm::translate(OneMat4, m_Position) * glm::toMat4(orientation);
-		m_ViewMatrix = glm::inverse(m_ViewMatrix);
-		RecalculateViewMatrix();
+		// m_Position = CalculatePosition();
+		// glm::quat orientation = GetOrientation();
+		// m_Rotation = glm::eulerAngles(orientation);
+		// m_ViewMatrix = glm::translate(OneMat4, m_Position) * glm::toMat4(m_Rotation);
+		glm::mat4 transform = 
+			glm::translate(OneMat4, m_Position) * 
+			glm::rotate(OneMat4, m_Pitch, glm::vec3(1.0f, 0.0f, 0.0f)) *
+			glm::rotate(OneMat4, m_Yaw,   glm::vec3(0.0f, 1.0f, 0.0f)) *
+			glm::rotate(OneMat4, m_Roll,  glm::vec3(0.0f, 0.0f, 1.0f));
+		m_ViewMatrix = glm::inverse(transform);
+		// m_ViewMatrix = glm::inverse(m_ViewMatrix);
+		RecalculateViewProjectionMatrix();
+	}
+	
+	void EditorCamera::RecalculateViewProjectionMatrix(){
+		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 	
 	std::pair<float, float> EditorCamera::PanSpeed()
@@ -55,7 +65,7 @@ namespace BSE {
 	{
 		if (Input::IsKeyPressed(KeyCode::LeftControl))
 		{
-			BSE_CORE_INFO("LeftControl pressed");
+			// BSE_CORE_INFO("LeftControl pressed");
 			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
 			glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
 			m_InitialMousePosition = mouse;
@@ -104,16 +114,23 @@ namespace BSE {
 	{
 		BSE_CORE_INFO("Mouse Pan");
 		auto [xSpeed, ySpeed] = PanSpeed();
-		m_FocalPoint += GetRightDirection() * delta.x * xSpeed * m_Distance;
-		m_FocalPoint += GetUpDirection() * delta.y * ySpeed * m_Distance;
+		// m_FocalPoint += GetRightDirection() * delta.x * xSpeed * m_Distance;
+		// m_FocalPoint += GetUpDirection() * delta.y * ySpeed * m_Distance;
+		//SetPosition({
+		//	m_Position.x + GetRightDirection() * delta.x * xSpeed * m_Distance,
+		//	m_Position.y + GetUpDirection() * delta.y * ySpeed * m_Distance,
+		//	m_Position.z
+		//});
 	}
 	
 	void EditorCamera::MouseRotate(const glm::vec2 delta)
 	{
 		BSE_CORE_INFO("Mouse Rotate");
 		float yawSign = GetUpDirection().y < 0 ? -1.0f : 1.0f;
-		m_Yaw += yawSign * delta.x * RotationSpeed();
-		m_Pitch += delta.y * RotationSpeed();
+		// m_Yaw += yawSign * delta.x * RotationSpeed();
+		SetYaw(m_Yaw + yawSign * delta.x * RotationSpeed());
+		// m_Pitch += delta.y * RotationSpeed();
+		SetPitch(m_Pitch + delta.y * RotationSpeed());
 	}
 	
 	void EditorCamera::MouseZoom(float delta)
@@ -124,7 +141,8 @@ namespace BSE {
 		// limit the zoom distance
 		if (m_Distance < 1.0f)
 		{
-			m_FocalPoint += GetForwardDirection();
+			// m_FocalPoint += GetForwardDirection();
+			m_Position += GetForwardDirection();
 			m_Distance = 1.0f;
 		}
 	}
@@ -147,14 +165,16 @@ namespace BSE {
 	
 	glm::quat EditorCamera::GetOrientation()
 	{
-		return glm::quat(glm::vec3(-m_Pitch, -m_Yaw, 0.0f));
+		return glm::quat(m_Rotation);
+		// return glm::quat(glm::vec3(-m_Pitch, -m_Yaw, 0.0f));
 	}
 	
 	glm::vec3 EditorCamera::CalculatePosition()
 	{
-		m_FocalPoint = GetForwardDirection() * m_Distance;
-		m_Position = m_FocalPoint;
-		return m_FocalPoint;
+		// m_FocalPoint = GetForwardDirection() * m_Distance;
+		// m_Position = m_FocalPoint;
+		// return m_FocalPoint;
+		return m_Position;
 	}
 	
 }

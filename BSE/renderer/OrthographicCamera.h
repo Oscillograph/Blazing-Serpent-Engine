@@ -26,7 +26,11 @@ namespace BSE {
 		virtual inline glm::vec3 GetRotation() const { return m_Rotation; }
 		
 		virtual inline const glm::mat4& GetProjectionMatrix() { return m_ProjectionMatrix; }
+		virtual inline void SetProjectionMatrix(const glm::mat4& projection) { m_ProjectionMatrix = projection; RecalculateViewMatrix(); }
+		
 		virtual inline const glm::mat4& GetViewMatrix() { return m_ViewMatrix; }
+		virtual inline void SetViewMatrix(const glm::mat4& view) { m_ViewMatrix = view; RecalculateViewMatrix(); }
+		
 		virtual inline const glm::mat4& GetViewProjectionMatrix() { return m_ViewProjectionMatrix; }
 		
 	private:
@@ -40,9 +44,9 @@ namespace BSE {
 		glm::vec3 m_Position = glm::vec3(0.0f, 0.0f, 0.0f);
 		glm::vec3 m_Rotation = {0.0f, 0.0f, 0.0f};
 		
-		float m_RotationX = 0.0f; // on X axis
-		float m_RotationY = 0.0f; // on Y axis
-		float m_RotationZ = 0.0f; // on Z axis
+		float m_RotationX = 0.0f; // on X axis, Pitch
+		float m_RotationY = 0.0f; // on Y axis, Yaw
+		float m_RotationZ = 0.0f; // on Z axis, Roll
 	};
 }
 

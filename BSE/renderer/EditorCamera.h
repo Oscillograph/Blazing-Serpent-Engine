@@ -22,20 +22,23 @@ namespace BSE {
 		void OnUpdate(float t);
 		void OnEvent(Event& e);
 		
+		inline void SetDistance(float distance){ m_Distance = distance; UpdateView(); }
 		inline float GetDistance() { return m_Distance; }
-		inline void SetDistance(float distance){ m_Distance = distance; }
 		
+		inline void SetNearClip(float nearclip) { m_NearClip = nearclip; UpdateProjection(); }
 		inline float GetNearClip() { return m_NearClip; }
-		inline void SetNearClip(float nearclip) { m_NearClip = nearclip; }
 		
+		inline void SetFarClip(float farclip) { m_FarClip = farclip; UpdateProjection(); }
 		inline float GetFarClip() { return m_FarClip; }
-		inline void SetFarClip(float farclip) { m_FarClip = farclip; }
 		
+		inline void SetFOV(float fov) { m_FOV = glm::radians(fov); UpdateProjection(); }
 		inline float GetFOV() { return m_FOV; }
-		inline void SetFOV(float fov) { m_FOV = glm::radians(fov); }
 		
+		inline void SetAspectRatio(float aspectRatio) { m_AspectRatio = aspectRatio; UpdateProjection(); }
 		inline float GetAspectRatio() { return m_AspectRatio; }
-		inline void SetAspectRatio(float aspectRatio) { m_AspectRatio = aspectRatio; }
+		
+		inline glm::vec3 GetTarget() { return m_Target; }
+		inline void SetTarget(const glm::vec3& target) { m_Target = target; UpdateView(); }
 		
 		inline void SetViewportSize(float width, float height){
 			m_ViewportWidth = width;
@@ -43,15 +46,11 @@ namespace BSE {
 			UpdateProjection();
 		}
 		
-		inline void SetProjection(glm::mat4 projection) { m_ProjectionMatrix = projection; }
-		inline void SetView(glm::mat4 view) { m_ViewMatrix = view; }
-		inline void RecalculateViewMatrix() {
-			m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
-			m_RotationX = m_Rotation.x;
-			m_RotationY = m_Rotation.y;
-			m_RotationZ = m_Rotation.z;
-		}
-		virtual inline const glm::mat4& GetViewProjectionMatrix() override { return m_ViewProjectionMatrix; }
+		virtual inline void SetRotation(const glm::vec3 rotation) override { m_Rotation = rotation; UpdateView(); }
+		
+		inline void SetProjection(glm::mat4 projection) { m_ProjectionMatrix = projection; RecalculateViewProjectionMatrix(); }
+		inline void SetView(glm::mat4 view) { m_ViewMatrix = view; RecalculateViewProjectionMatrix(); }
+		// virtual inline const glm::mat4& GetViewProjectionMatrix() override { return m_ViewProjectionMatrix; }
 		
 		// these two provided by OrthographicCamera class
 		// const glm::mat4& GetViewMatrix() const { return m_ViewMatrix; }
@@ -65,16 +64,21 @@ namespace BSE {
 		glm::quat GetOrientation();
 		
 		inline float GetPitch(){ return m_Pitch; }
-		inline void SetPitch(float pitch) { m_Pitch = pitch; }
+		inline void SetPitch(float pitch) { m_Pitch = pitch; m_Rotation.x = m_Pitch; m_RotationX = m_Rotation.x; UpdateView(); }
 		
 		inline float GetYaw(){ return m_Yaw; }
-		inline void SetYaw(float yaw) { m_Yaw = yaw; }
+		inline void SetYaw(float yaw) { m_Yaw = yaw; m_Rotation.y = m_Yaw; m_RotationY = m_Rotation.y; UpdateView(); }
+		
+		inline float GetRoll(){ return m_Roll; }
+		inline void SetRoll(float roll) { m_Roll = roll; m_Rotation.z = m_Roll; m_RotationZ = m_Rotation.z; UpdateView(); }
 		
 		inline std::pair<float, float> GetViewPort() { return {m_ViewportWidth, m_ViewportHeight}; }
-		inline void SetViewPort(float width, float height) { m_ViewportWidth = width; m_ViewportHeight = height; }
+		inline void SetViewPort(float width, float height) { m_ViewportWidth = width; m_ViewportHeight = height; UpdateProjection(); }
 		
 		void UpdateProjection();
 		void UpdateView();
+		void RecalculateViewProjectionMatrix();
+		
 	private:
 		bool OnMouseScroll(MouseScrolledEvent& e);
 		
@@ -101,6 +105,7 @@ namespace BSE {
 		glm::mat4 m_ViewProjectionMatrix = OneMat4;
 		
 		glm::vec3 m_Position = {0.0f, 0.0f, -10.0f};
+		glm::vec3 m_Target = {0.0f, 0.0f, -10.0f};
 		glm::vec3 m_FocalPoint = {0.0f, 0.0f, 0.0f};
 		
 		glm::vec3 m_Rotation = {0.0f, 0.0f, 0.0f};
@@ -110,8 +115,9 @@ namespace BSE {
 		
 		glm::vec2 m_InitialMousePosition;
 		
-		float m_Pitch = 0.0f;
-		float m_Yaw = 0.0f;
+		float m_Pitch = 0.0f; // rotation on X axis
+		float m_Yaw = 0.0f; // rotation on Y axis
+		float m_Roll = 0.0f; // rotation on Z axis
 		float m_ViewportWidth = 1280.0f;
 		float m_ViewportHeight = 768.0f;
 	};
