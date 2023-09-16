@@ -29,7 +29,7 @@ namespace BSE {
 	
 	class BSE_API CameraController {
 	public:
-		CameraController() = default;
+		// CameraController() = default;
 		// orthographic camera controller
 		CameraController(float aspectRatio, float zoomlevel = 1.0f, bool rotation = true, bool constantAspectRatio = false);
 		// perspective camera controller
@@ -72,6 +72,9 @@ namespace BSE {
 		
 		virtual inline void SetCameraPosition(const glm::vec3& position) { m_CameraPosition = position; }
 		virtual inline glm::vec3 GetCameraPosition() { return m_CameraPosition; }
+		
+		virtual inline void MoveCameraPosition(const glm::vec3& translation) { m_Camera->Move(translation); }
+		
 		virtual inline void SetCameraTarget(const glm::vec3& target) { m_CameraTarget = target; }
 		virtual inline glm::vec3 GetCameraTarget() { return m_CameraTarget; }
 		
@@ -82,11 +85,11 @@ namespace BSE {
 		virtual inline void SetPerspectiveFOV(float value){ m_PerspectiveFOV = value; UpdateProjection(); }
 		virtual inline float GetPerspectiveFOV(){ return m_PerspectiveFOV; }
 		
-		virtual inline void SetPerspectiveNear(float value){ m_PerspectiveNear = value; UpdateProjection(); }
-		virtual inline float GetPerspectiveNear(){ return m_PerspectiveNear; }
+		virtual inline void SetPerspectiveNear(float value){ m_PerspectiveNearClip = value; UpdateProjection(); }
+		virtual inline float GetPerspectiveNear(){ return m_PerspectiveNearClip; }
 		
-		virtual inline void SetPerspectiveFar(float value){ m_PerspectiveFar = value; UpdateProjection(); }
-		virtual inline float GetPerspectiveFar(){ return m_PerspectiveFar; }
+		virtual inline void SetPerspectiveFar(float value){ m_PerspectiveFarClip = value; UpdateProjection(); }
+		virtual inline float GetPerspectiveFar(){ return m_PerspectiveFarClip; }
 		
 		// Orthographic stuff
 		virtual inline void SetOrthographicZNear(float zNear){ m_OrthographicCameraBounds.ZNear = zNear; UpdateProjection(); }
@@ -106,13 +109,13 @@ namespace BSE {
 		// general interface calls
 		virtual inline glm::mat4 GetViewProjectionMatrix() { return m_Camera->GetViewProjectionMatrix(); }
 		virtual inline glm::vec3 GetTargetToCameraDirection() { return m_TargetToCameraDirection; } 
-		virtual inline OrthographicCameraBounds& GetBounds() { return m_CameraBounds; }
+		virtual inline OrthographicCameraBounds& GetBounds() { return m_OrthographicCameraBounds; }
 		
 		virtual void OnUpdate(float time);
 		virtual void OnResize(float width, float height);
 		virtual void OnEvent(Event& e);
 		
-		virtual inline void SetCamera(GeneralCamera* camera, bool destroyPrevCamera = false);
+		virtual void SetCamera(GeneralCamera* camera, bool destroyPrevCamera = false);
 		virtual inline GeneralCamera* GetCamera() { return m_Camera; }
 		
 		// general controller settings
@@ -138,7 +141,7 @@ namespace BSE {
 		float m_ViewportWidth = 0.0f;
 		float m_ViewportHeight = 0.0f;
 		float m_AspectRatio = 0.0f;
-		float m_ZoomLevel = 0.0f; // is equivalent to size of orthographic projection
+		float m_ZoomLevel = 0.0f; // is equivalent to size of orthographic projection, is the measure of distance between camera and the target
 		
 		float m_ViewportWidthPrev = m_ViewportWidth;
 		float m_ViewportHeightPrev = m_ViewportHeight;

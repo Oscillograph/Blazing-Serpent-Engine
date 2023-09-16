@@ -17,7 +17,7 @@ namespace BSE {
 		m_ViewportWidth = m_OrthographicCameraBounds.GetWidth();
 		m_ViewportHeight = m_OrthographicCameraBounds.GetHeight();
 		
-		m_Camera = new OrthographicCamera(
+		m_Camera = new GeneralCamera(
 			m_OrthographicCameraBounds.Left, 
 			m_OrthographicCameraBounds.Right, 
 			m_OrthographicCameraBounds.Top, 
@@ -48,10 +48,10 @@ namespace BSE {
 		editorCamera = false;
 		
 		m_Camera = new GeneralCamera(
-			m_PerspectiveVerticalFOV, 
+			m_PerspectiveFOV, 
 			m_AspectRatio, 
-			m_CameraBounds.ZNear, 
-			m_CameraBounds.ZFar);
+			m_OrthographicCameraBounds.ZNear, 
+			m_OrthographicCameraBounds.ZFar);
 		
 		BSE_CORE_TRACE("General Camera Controller constructor: Perspective Camera created");
 		m_CameraPosition = m_Camera->GetPosition();
@@ -60,13 +60,28 @@ namespace BSE {
 		BSE_CORE_TRACE("General Camera Controller constructor: Perspective Camera parameters taken");
 	}
 	
+	CameraController::~CameraController(){
+		// default virtual destructor
+	}
+	
 	void CameraController::UpdatePerspectiveProjection(){
 		m_Camera->SetProjection({
-			glm::perspective(glm::radians(m_PerspectiveFOV), 
-			m_AspectRatio, 
-			m_PerspectiveNearClip,
-			m_PerspectiveFarClip
+			glm::perspective(
+				glm::radians(m_PerspectiveFOV), 
+				m_AspectRatio, 
+				m_PerspectiveNearClip,
+				m_PerspectiveFarClip
+				)
 			});
+	}
+	
+	void CameraController::SetPerspectiveProjectionDefault(){
+		m_PerspectiveFOV = 45.0f;
+		m_AspectRatio = 1.778f;
+		m_PerspectiveNearClip = 0.1f;
+		m_PerspectiveFarClip = 1000.f;
+		
+		UpdatePerspectiveProjection();
 	}
 	
 	void CameraController::UpdateOrthographicProjection(){
@@ -124,8 +139,8 @@ namespace BSE {
 		
 		// perspective data
 		m_Camera->fov = m_PerspectiveFOV;
-		m_Camera->nearClip = m_PerspectiveNear;
-		m_Camera->farClip = m_PerspectiveFar;
+		m_Camera->nearClip = m_PerspectiveNearClip;
+		m_Camera->farClip = m_PerspectiveFarClip;
 		
 		// misc
 		m_Camera->aspectRatio = m_AspectRatio;
@@ -134,23 +149,59 @@ namespace BSE {
 			m_Camera->perspective = true;
 		if (m_ProjectionType == CameraProjectionType::Orthographic)
 			m_Camera->perspective = false;
+		
+		m_Camera->cameraControllerData.allowRotation = allowRotation;
+		m_Camera->cameraControllerData.allowTranslation = allowTranslation;
+		m_Camera->cameraControllerData.allowZoom = allowZoom;
+		m_Camera->cameraControllerData.constantAspectRatio = constantAspectRatio;
+		m_Camera->cameraControllerData.editorCamera = editorCamera;
+		m_Camera->cameraControllerData.m_CameraMovementSpeed = m_CameraMovementSpeed;
+		m_Camera->cameraControllerData.m_CameraRotationSpeed = m_CameraRotationSpeed;
+		m_Camera->cameraControllerData.m_ViewportHeight = m_ViewportHeight;
+		m_Camera->cameraControllerData.m_ViewportWidth = m_ViewportWidth;
+		m_Camera->cameraControllerData.m_ZoomLevel = m_ZoomLevel;
 	}
 	
-	void SetCamera(GeneralCamera* camera, bool destroyPrevCamera) {
-		if (destroyPrevCamera && (m_Camera != nullptr))
+	void CameraController::SetCamera(GeneralCamera* camera, bool destroyPrevCamera) {
+		if (destroyPrevCamera && (m_Camera != nullptr)){
 			delete m_Camera;
+		} else {
+			UpdateCameraParameters();
+		}
 		m_Camera = camera; 
+		
+		m_CameraPosition = m_Camera->GetPosition();
+		m_CameraTarget = m_Camera->GetTarget();
+		m_CameraRotation = m_Camera->GetRotation();
+		m_TargetToCameraDirection = m_CameraTarget - m_CameraPosition;
+		
+		m_PerspectiveFOV = m_Camera->fov;
+		m_PerspectiveNearClip = m_Camera->nearClip;
+		m_PerspectiveFarClip = m_Camera->farClip;
+		
+		m_ViewportWidth = m_Camera->cameraControllerData.m_ViewportWidth;
+		m_ViewportHeight = m_Camera->cameraControllerData.m_ViewportHeight;
+		m_AspectRatio = m_Camera->aspectRatio;
+		m_ZoomLevel = m_Camera->cameraControllerData.m_ZoomLevel;
+		
+		m_CameraMovementSpeed = m_Camera->cameraControllerData.m_CameraMovementSpeed;
+		m_CameraRotationSpeed = m_Camera->cameraControllerData.m_CameraRotationSpeed;
+		
+		editorCamera = m_Camera->cameraControllerData.editorCamera;
+		allowRotation = m_Camera->cameraControllerData.allowRotation;
+		allowTranslation = m_Camera->cameraControllerData.allowTranslation;
+		allowZoom = m_Camera->cameraControllerData.allowZoom;
 	}
 	
 	void CameraController::OnUpdate(float time){
 		if (Input::IsKeyPressed(BSE_KEY_W)){
-			m_CameraPosition.y += m_CameraMoveSpeed * time;
+			m_CameraPosition.y += m_CameraMovementSpeed * time;
 		}
 		if (Input::IsKeyPressed(BSE_KEY_A)){
-			m_CameraPosition.x -= m_CameraMoveSpeed * time;
+			m_CameraPosition.x -= m_CameraMovementSpeed * time;
 		}
 		if (Input::IsKeyPressed(BSE_KEY_S)){
-			m_CameraPosition.y -= m_CameraMoveSpeed * time;
+			m_CameraPosition.y -= m_CameraMovementSpeed * time;
 		}
 		if (Input::IsKeyPressed(BSE_KEY_D)){
 			m_CameraPosition.x += m_CameraMovementSpeed * time;
@@ -158,8 +209,8 @@ namespace BSE {
 		
 		m_Camera->SetPosition(m_CameraPosition);
 		
-		if (m_Rotate){
-			glm::vec3 rotation = m_Camera->GetRotation();
+		if (allowRotation){
+			// glm::vec3 rotation = m_Camera->GetRotation();
 			if (Input::IsKeyPressed(BSE_KEY_UP)){
 				m_CameraRotation.z -= m_CameraRotationSpeed * time;
 			}
@@ -187,8 +238,8 @@ namespace BSE {
 	
 	void CameraController::OnResize(float width, float height) {
 		if ((width > 0.0f) && height > 0.0f){
-			m_Width = width;
-			m_Height = height;
+			m_ViewportWidth = width;
+			m_ViewportHeight = height;
 			
 			if (constantAspectRatio){
 				m_AspectRatio = m_AspectRatioPrev;
@@ -221,7 +272,7 @@ namespace BSE {
 		//m_ZoomLevel = (m_ZoomLevel < m_ZoomMin) ? (m_ZoomMin) : m_ZoomLevel;
 		//m_ZoomLevel = (m_ZoomLevel > m_ZoomMax) ? (m_ZoomMax) : m_ZoomLevel;
 		
-		UpdateView()
+		UpdateView();
 		
 		return false;
 	}
