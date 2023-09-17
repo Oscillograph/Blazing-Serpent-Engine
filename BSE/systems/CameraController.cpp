@@ -117,11 +117,6 @@ namespace BSE {
 		
 		// rotation
 		if (allowRotation) {
-			if (m_CameraRotation.y > 89.0f)
-				m_CameraRotation.y = 89.0f;
-			if (m_CameraRotation.y < -89.0f)
-				m_CameraRotation.y = -89.0f;
-			
 			m_Camera->SetRotation(m_CameraRotation);
 			// TODO: Understand and rewrite to make camera rotate cleanly
 			// m_TargetToCameraDirection.x = cosf(glm::radians(m_CameraRotation.y)) * cosf(glm::radians(m_CameraRotation.x));
@@ -209,6 +204,14 @@ namespace BSE {
 		if (Input::IsKeyPressed(BSE_KEY_D)){
 			// m_CameraPosition.x += m_CameraMovementSpeed * time;
 			m_Camera->Move({m_CameraMovementSpeed * time, 0.0f, 0.0f});
+		}
+		if (Input::IsKeyPressed(BSE_KEY_Q)){
+			//m_CameraPosition.y -= m_CameraMovementSpeed * time;
+			m_Camera->Move({0.0f, -m_CameraMovementSpeed * time, 0.0f});
+		}
+		if (Input::IsKeyPressed(BSE_KEY_E)){
+			// m_CameraPosition.x += m_CameraMovementSpeed * time;
+			m_Camera->Move({0.0f, m_CameraMovementSpeed * time, 0.0f});
 		}
 		m_CameraPosition = m_Camera->GetPosition();
 		// m_Camera->SetPosition(m_CameraPosition);
