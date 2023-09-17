@@ -10,6 +10,7 @@ namespace BSE {
 	float GameData::FPS_deltaTime = BSE_FPS60;
 	glm::vec4 GameData::RendererClearColor = {0.2f, 0.2f, 0.4f, 1.0f};
 	glm::vec4 GameData::CustomColor = {0.2f, 0.7f, 0.3f, 1.0f};
-	GeneralCameraController* GameData::m_CameraController = nullptr;
+	GeneralCameraController* GameData::m_GeneralCameraController = nullptr;
+	CameraController* GameData::m_CameraController = nullptr;
 	bool GameData::EditorCameraOn = false;
 }

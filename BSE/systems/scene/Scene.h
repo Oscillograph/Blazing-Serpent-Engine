@@ -6,6 +6,8 @@
 #include <renderer/GeneralCamera.h>
 #include <renderer/OrthographicCamera.h>
 #include <systems/GeneralCameraController.h>
+#include <renderer/GeneralCamera.h>
+#include <systems/CameraController.h>
 // #include <systems/ecs/Entity.h>
 // #include <systems/ecs/Components.h>
 
@@ -21,17 +23,17 @@ namespace BSE {
 		Entity* CreateEntity(const std::string& name = "");
 		void DestroyEntity(Entity& entity);
 		inline entt::registry& Registry() { return m_Registry; };
-		inline void SetCamera(OrthographicCamera* camera) { m_Camera = camera; }
-		inline OrthographicCamera* GetCamera() { return m_Camera; }
-		inline void SetCameraController(GeneralCameraController* cameraController) { m_CameraController = cameraController; }
-		inline GeneralCameraController* GetCameraController() { return m_CameraController; }
+		inline void SetCamera(GeneralCamera* camera) { m_Camera = camera; }
+		inline GeneralCamera* GetCamera() { return m_Camera; }
+		inline void SetCameraController(CameraController* cameraController) { m_CameraController = cameraController; }
+		inline CameraController* GetCameraController() { return m_CameraController; }
 	protected:
 		
 	private:
 		entt::registry m_Registry;
 		
-		OrthographicCamera* m_Camera = nullptr;
-		GeneralCameraController* m_CameraController = nullptr;
+		GeneralCamera* m_Camera = nullptr;
+		CameraController* m_CameraController = nullptr;
 	};
 }
 

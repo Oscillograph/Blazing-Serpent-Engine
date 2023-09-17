@@ -43,6 +43,8 @@
 
 #include <renderer/OrthographicCamera.h>
 #include <systems/GeneralCameraController.h>
+#include <renderer/GeneralCamera.h>
+#include <systems/CameraController.h>
 
 #include <renderer/GeometryPrimitives.h>
 

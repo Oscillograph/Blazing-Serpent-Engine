@@ -37,6 +37,8 @@
 // #include <renderer/Renderer2D.h>
 #include <renderer/OrthographicCamera.h>
 #include <systems/GeneralCameraController.h>
+#include <renderer/GeneralCamera.h>
+#include <systems/CameraController.h>
 
 namespace BSE {
 	class BSE_API GameData {
@@ -50,7 +52,8 @@ namespace BSE {
 		static float FPS_deltaTime;
 		static glm::vec4 RendererClearColor;
 		static glm::vec4 CustomColor;
-		static GeneralCameraController* m_CameraController;
+		static GeneralCameraController* m_GeneralCameraController;
+		static CameraController* m_CameraController;
 		static bool EditorCameraOn;
 	};
 }

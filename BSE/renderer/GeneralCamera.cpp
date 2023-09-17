@@ -42,15 +42,19 @@ namespace BSE {
 	
 	void GeneralCamera::RecalculateViewMatrix(){
 		if (perspective){
-			m_ViewMatrix = glm::lookAt(m_Position, m_Target - m_Position, m_Up);
-		} else {
-			m_ViewMatrix = glm::inverse(
+			// m_ViewMatrix = glm::lookAt(m_Position, m_Target - m_Position, m_Up);
+			m_ViewMatrix = 
 				glm::translate(OneMat4, m_Position) * 
 				glm::rotate(OneMat4, glm::radians(m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f)) *
 				glm::rotate(OneMat4, glm::radians(m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f)) *
-				glm::rotate(OneMat4, glm::radians(m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f))
-				);
+				glm::rotate(OneMat4, glm::radians(m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+		} else {
+			m_ViewMatrix = 
+				glm::translate(OneMat4, m_Position) * 
+				glm::rotate(OneMat4, glm::radians(m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f)) *
+				glm::rotate(OneMat4, glm::radians(m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f)) *
+				glm::rotate(OneMat4, glm::radians(m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 		}
-		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+		m_ViewProjectionMatrix = m_ProjectionMatrix * glm::inverse(m_ViewMatrix);
 	} 
 }

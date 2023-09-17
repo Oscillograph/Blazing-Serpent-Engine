@@ -30,6 +30,8 @@
 #include <renderer/Renderer2D.h>
 #include <renderer/OrthographicCamera.h>
 #include <systems/GeneralCameraController.h>
+#include <renderer/GeneralCamera.h>
+#include <systems/CameraController.h>
 
 #include <systems/scene/Scene.h>
 #include <systems/scene/SceneSerializer.h>

@@ -12,6 +12,7 @@
 #include <systems/events/MouseEvent.h>
 
 namespace BSE {
+#ifndef BSE_GENERALCAMERACONTROLLER_H
 	struct BSE_API OrthographicCameraBounds {
 		float Left, Right;
 		float Top, Bottom;
@@ -26,6 +27,7 @@ namespace BSE {
 		Perspective 	= 0,
 		Orthographic 	= 1
 	};
+#endif
 	
 	class BSE_API CameraController {
 	public:
@@ -66,8 +68,8 @@ namespace BSE {
 			m_Camera->Update(); 
 		}
 		
-		virtual inline void Rotate(const glm::vec3& rotation) { m_Camera->SetRotation(rotation); }
-		virtual inline void Rotate(float rotation) { m_Camera->SetRoll(rotation); }
+		virtual inline void Rotate(const glm::vec3& rotation) { m_CameraRotation = rotation; }
+		virtual inline void Rotate(float rotation) { m_CameraRotation.x = rotation; }
 		virtual inline glm::vec3 GetRotation() { return m_Camera->GetRotation(); }
 		
 		virtual inline void SetCameraPosition(const glm::vec3& position) { m_CameraPosition = position; }

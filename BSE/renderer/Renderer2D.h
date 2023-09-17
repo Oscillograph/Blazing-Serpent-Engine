@@ -10,6 +10,7 @@
 #include <renderer/Shader.h>
 #include <renderer/FrameBuffer.h>
 #include <renderer/OrthographicCamera.h>
+#include <renderer/GeneralCamera.h>
 #include <renderer/GeometryPrimitives.h>
 
 namespace BSE {
@@ -25,7 +26,7 @@ namespace BSE {
 		
 		static void OnWindowResize(uint32_t width, uint32_t height);
 		
-		static void BeginScene(OrthographicCamera* camera); // TODO: take in parameters like camera, lights, environment, etc.
+		static void BeginScene(GeneralCamera* camera); // TODO: take in parameters like camera, lights, environment, etc.
 		static void EndScene(); // 
 		
 		static void Submit(Shader* shader, VertexArray* vertexArray, const glm::mat4& transform = glm::mat4(1.0f));

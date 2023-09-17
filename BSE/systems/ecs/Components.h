@@ -5,6 +5,8 @@
 // #include <renderer/GeneralCamera.h>
 #include <renderer/OrthographicCamera.h>
 #include <systems/GeneralCameraController.h>
+#include <renderer/GeneralCamera.h>
+#include <systems/CameraController.h>
 
 namespace BSE {
 	struct BSE_API NameComponent {
@@ -47,21 +49,21 @@ namespace BSE {
 	};
 	
 	struct BSE_API CameraComponent {
-		OrthographicCamera Camera;
+		GeneralCamera Camera;
 		bool Works = true;
 		
 		CameraComponent(){
-			Camera = OrthographicCamera();
+			Camera = GeneralCamera();
 		};
 		CameraComponent(const CameraComponent&) = default;
-		CameraComponent(OrthographicCamera* camera)
+		CameraComponent(GeneralCamera* camera)
 		: Camera(*camera) {};
 		
 		void TurnOn(){ Works = true; }
 		void Toggle() { Works = true ? false : true; }
 		void TurnOff() { Works = false; }
 		
-		void SetCamera(OrthographicCamera* camera, bool deletePrevious = false) {
+		void SetCamera(GeneralCamera* camera, bool deletePrevious = false) {
 			// if (deletePrevious)
 			//	delete camera;
 			Camera = *camera;
@@ -70,15 +72,15 @@ namespace BSE {
 	};
 	
 	struct BSE_API CameraControllerComponent {
-		GeneralCameraController* CameraController = nullptr;
+		CameraController* cameraController = nullptr;
 		
 		CameraControllerComponent(const CameraControllerComponent&) = default;
 		CameraControllerComponent(float aspectRatio, float zoomLevel = 1.0f, bool rotation = false, bool constantAspectRatio = false){
-			CameraController = new GeneralCameraController(aspectRatio, zoomLevel, rotation, constantAspectRatio);
+			cameraController = new CameraController(aspectRatio, zoomLevel, rotation, constantAspectRatio);
 			// BSE_INFO("Component initialized with CameraController at {}", fmt::ptr(CameraController));
 		};
-		CameraControllerComponent(GeneralCameraController* cameraController){
-			CameraController = cameraController;
+		CameraControllerComponent(CameraController* controller){
+			cameraController = controller;
 			// BSE_INFO("Component initialized with CameraController at {}", fmt::ptr(CameraController));
 			// BSE_INFO("The passed argument points at: {}", fmt::ptr(cameraController));
 		};

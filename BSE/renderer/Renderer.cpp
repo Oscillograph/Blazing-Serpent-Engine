@@ -2,7 +2,7 @@
 #include <renderer/Renderer.h>
 
 namespace BSE {
-	OrthographicCamera* Renderer::m_Camera = nullptr;
+	GeneralCamera* Renderer::m_Camera = nullptr;
 	ShaderLibrary* Renderer::m_ShaderLibrary = nullptr;
 	
 	ShaderLibrary* Renderer::GetShaderLibrary() {
@@ -31,7 +31,7 @@ namespace BSE {
 		RenderCommand::SetViewPort(0, 0, width, height);
 	}
 	
-	void Renderer::BeginScene(OrthographicCamera* camera){
+	void Renderer::BeginScene(GeneralCamera* camera){
 		Renderer::m_Camera = camera;
 	}
 	

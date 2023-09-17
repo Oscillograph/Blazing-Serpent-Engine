@@ -241,19 +241,19 @@ namespace BSE {
 						component.PlayerControlled = playerControlled;
 						component.Works = works;
 						
-						GeneralCameraController* controller = component.CameraController;
+						CameraController* controller = component.cameraController;
 						m_SceneContext->SetCameraController(controller);
 						controller->SetProjectionType((CameraProjectionType)cameraControllerNode["ProjectionType"].as<int>());
 						if (controller->GetProjectionType() == CameraProjectionType::Perspective){
-							controller->SetPerspectiveHorizontalFOV(cameraControllerNode["PerspectiveHorizontalFOV"].as<float>());
-							controller->SetPerspectiveVerticalFOV(cameraControllerNode["PerspectiveVerticalFOV"].as<float>());
+							controller->SetPerspectiveFOV(cameraControllerNode["PerspectiveFOV"].as<float>());
+							// controller->SetPerspectiveVerticalFOV(cameraControllerNode["PerspectiveVerticalFOV"].as<float>());
 							controller->SetPerspectiveNear(cameraControllerNode["PerspectiveNear"].as<float>());
 							controller->SetPerspectiveFar(cameraControllerNode["PerspectiveFar"].as<float>());
 						}
 						
 						auto cameraNode = cameraControllerNode["Camera"];
 						if (cameraNode){
-							OrthographicCamera* camera = controller->GetCamera();
+							GeneralCamera* camera = controller->GetCamera();
 							camera->SetProjection(cameraNode["ProjectionMatrix"].as<glm::mat4>());
 							camera->SetPosition(cameraNode["Position"].as<glm::vec3>());
 							camera->SetRotation(cameraNode["Rotation"].as<glm::vec3>());
@@ -310,15 +310,15 @@ namespace BSE {
 					out << YAML::Key << "Player Controlled" << YAML::Value << component.PlayerControlled;
 					out << YAML::Key << "Works" << YAML::Value << component.Works;
 					
-					auto& cameraController = component.CameraController;
+					auto& cameraController = component.cameraController;
 					out << YAML::Key << "CameraController" << YAML::Value;
 					out << YAML::BeginMap;
-						out << YAML::Key << "Rotatable" << YAML::Value << cameraController->RotationStatus();
-						out << YAML::Key << "ConstantAspectRatio" << YAML::Value << cameraController->GetConstantAspectRatio();
+						out << YAML::Key << "Rotatable" << YAML::Value << cameraController->allowRotation;
+						out << YAML::Key << "ConstantAspectRatio" << YAML::Value << cameraController->constantAspectRatio;
 						out << YAML::Key << "ProjectionType" << YAML::Value << (int)cameraController->GetProjectionType();
 						if (cameraController->GetProjectionType() == CameraProjectionType::Perspective){
-							out << YAML::Key << "PerspectiveHorizontalFOV" << YAML::Value << cameraController->GetPerspectiveHorizontalFOV();
-							out << YAML::Key << "PerspectiveVerticalFOV" << YAML::Value << cameraController->GetPerspectiveVerticalFOV();
+							// out << YAML::Key << "PerspectiveHorizontalFOV" << YAML::Value << cameraController->GetPerspectiveHorizontalFOV();
+							out << YAML::Key << "PerspectiveFOV" << YAML::Value << cameraController->GetPerspectiveFOV();
 							out << YAML::Key << "PerspectiveNear" << YAML::Value << cameraController->GetPerspectiveNear();
 							out << YAML::Key << "PerspectiveFar" << YAML::Value << cameraController->GetPerspectiveFar();
 						}
@@ -335,9 +335,9 @@ namespace BSE {
 							out << YAML::Key << "ViewProjectionMatrix" << YAML::Value << camera->GetViewProjectionMatrix();
 							out << YAML::Key << "Position" << YAML::Value << camera->GetPosition();
 							out << YAML::Key << "Rotation" << YAML::Value << camera->GetRotation();
-							out << YAML::Key << "RotationX" << YAML::Value << camera->GetRotationX();
-							out << YAML::Key << "RotationY" << YAML::Value << camera->GetRotationY();
-							out << YAML::Key << "RotationZ" << YAML::Value << camera->GetRotationZ();
+							out << YAML::Key << "RotationX" << YAML::Value << camera->GetPitch();
+							out << YAML::Key << "RotationY" << YAML::Value << camera->GetYaw();
+							out << YAML::Key << "RotationZ" << YAML::Value << camera->GetRoll();
 						out << YAML::EndMap;
 					out << YAML::EndMap;
 				out << YAML::EndMap;

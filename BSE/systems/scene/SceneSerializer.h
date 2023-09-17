@@ -6,7 +6,8 @@
 #include <systems/ecs/Entity.h>
 
 #include <systems/ecs/Components.h>
-#include <systems/GeneralCameraController.h>
+// #include <systems/GeneralCameraController.h>
+#include <systems/CameraController.h>
 
 namespace BSE {
 	class BSE_API SceneSerializer {

@@ -124,9 +124,9 @@ namespace BSE {
 			
 			m_Camera->SetRotation(m_CameraRotation);
 			// TODO: Understand and rewrite to make camera rotate cleanly
-			m_TargetToCameraDirection.x = cosf(glm::radians(m_CameraRotation.y)) * cosf(glm::radians(m_CameraRotation.x));
-			m_TargetToCameraDirection.y = sinf(glm::radians(m_CameraRotation.x));
-			m_TargetToCameraDirection.z = sinf(glm::radians(m_CameraRotation.y)) * cosf(glm::radians(m_CameraRotation.x));
+			// m_TargetToCameraDirection.x = cosf(glm::radians(m_CameraRotation.y)) * cosf(glm::radians(m_CameraRotation.x));
+			// m_TargetToCameraDirection.y = sinf(glm::radians(m_CameraRotation.x));
+			// m_TargetToCameraDirection.z = sinf(glm::radians(m_CameraRotation.y)) * cosf(glm::radians(m_CameraRotation.x));
 		}
 		m_TargetToCameraDirection = glm::normalize(m_CameraPosition - m_CameraTarget);
 		
@@ -195,19 +195,23 @@ namespace BSE {
 	
 	void CameraController::OnUpdate(float time){
 		if (Input::IsKeyPressed(BSE_KEY_W)){
-			m_CameraPosition.y += m_CameraMovementSpeed * time;
+			// m_CameraPosition.y += m_CameraMovementSpeed * time;
+			m_Camera->Move({0.0f, 0.0f, -m_CameraMovementSpeed * time});
 		}
 		if (Input::IsKeyPressed(BSE_KEY_A)){
-			m_CameraPosition.x -= m_CameraMovementSpeed * time;
+			// m_CameraPosition.x -= m_CameraMovementSpeed * time;
+			m_Camera->Move({-m_CameraMovementSpeed * time, 0.0f, 0.0f});
 		}
 		if (Input::IsKeyPressed(BSE_KEY_S)){
-			m_CameraPosition.y -= m_CameraMovementSpeed * time;
+			//m_CameraPosition.y -= m_CameraMovementSpeed * time;
+			m_Camera->Move({0.0f, 0.0f, m_CameraMovementSpeed * time});
 		}
 		if (Input::IsKeyPressed(BSE_KEY_D)){
-			m_CameraPosition.x += m_CameraMovementSpeed * time;
+			// m_CameraPosition.x += m_CameraMovementSpeed * time;
+			m_Camera->Move({m_CameraMovementSpeed * time, 0.0f, 0.0f});
 		}
-		
-		m_Camera->SetPosition(m_CameraPosition);
+		m_CameraPosition = m_Camera->GetPosition();
+		// m_Camera->SetPosition(m_CameraPosition);
 		
 		if (allowRotation){
 			// glm::vec3 rotation = m_Camera->GetRotation();

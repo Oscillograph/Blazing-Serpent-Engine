@@ -8,6 +8,7 @@
 #include <renderer/Texture.h>
 #include <renderer/Shader.h>
 #include <renderer/OrthographicCamera.h>
+#include <renderer/GeneralCamera.h>
 
 // sub-modules
 #include <renderer/Renderer2D.h>
@@ -25,7 +26,7 @@ namespace BSE {
 		
 		static void OnWindowResize(uint32_t width, uint32_t height);
 		
-		static void BeginScene(OrthographicCamera* camera); // TODO: take in parameters like camera, lights, environment, etc.
+		static void BeginScene(GeneralCamera* camera); // TODO: take in parameters like camera, lights, environment, etc.
 		static void EndScene(); // 
 		
 		//<template typename T>
@@ -35,7 +36,7 @@ namespace BSE {
 		// static void Flush();
 	
 	private:
-		static OrthographicCamera* m_Camera;
+		static GeneralCamera* m_Camera;
 		static ShaderLibrary* m_ShaderLibrary;
 	};
 	

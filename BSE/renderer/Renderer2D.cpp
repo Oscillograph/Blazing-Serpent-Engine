@@ -144,7 +144,7 @@ namespace BSE {
 		delete RendererData;
 	}
 	
-	void Renderer2D::BeginScene(OrthographicCamera* camera){
+	void Renderer2D::BeginScene(GeneralCamera* camera){
 		RendererData->TextureShader->Bind();
 		// BSE_CORE_INFO("BSE1. Is this the stop point?");
 		RendererData->TextureShader->UploadUniformMat4("u_ViewProjection", camera->GetViewProjectionMatrix());
