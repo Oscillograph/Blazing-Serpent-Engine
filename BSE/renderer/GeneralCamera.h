@@ -55,31 +55,10 @@ namespace BSE {
 		// set view matrix relative data
 		virtual inline void SetPosition(const glm::vec3& position) { m_Position = position; }
 		virtual inline void Move(const glm::vec3& translation) {
-			if (m_Rotated){
-				if ((m_Rotation.x == 90) || (m_Rotation.x == -90)) {
-					m_PositionFactor.x = 0;
-				} else {
-					m_PositionFactor.x = 1/cosf(glm::radians(m_Rotation.x));
-				}
-				
-				if ((m_Rotation.y == 90) || (m_Rotation.y == -90)) {
-					m_PositionFactor.y = 0;
-				} else {
-					m_PositionFactor.y = 1/cosf(glm::radians(m_Rotation.y));
-				}
-				
-				if ((m_Rotation.z == 90) || (m_Rotation.z == -90)) {
-					m_PositionFactor.z = 0;
-				} else {
-					m_PositionFactor.z = 1/cosf(glm::radians(m_Rotation.z));
-				}
-				
-				m_Rotated = false;
-			}
-			
-			m_Position.x += translation.x * cosf(glm::radians(m_Rotation.y)) * sinf(glm::radians(m_Rotation.z));
-			m_Position.y += translation.y * cosf(glm::radians(m_Rotation.z)) * sinf(glm::radians(m_Rotation.x));
-			m_Position.z += translation.z * cosf(glm::radians(m_Rotation.x)) * sinf(glm::radians(m_Rotation.y));
+			glm::vec3 trans = glm::rotateX(translation, glm::radians(m_Rotation.x));
+			trans = glm::rotateY(trans, glm::radians(m_Rotation.y));
+			trans = glm::rotateZ(trans, glm::radians(m_Rotation.z));
+			m_Position += trans;
 		}
 		virtual inline const glm::vec3 GetPosition() const { return m_Position; }
 		

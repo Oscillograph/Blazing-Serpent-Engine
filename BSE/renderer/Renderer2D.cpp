@@ -109,7 +109,7 @@ namespace BSE {
 		
 		// White color texture
 		RendererData->WhiteTexture = Texture2D::Create(1, 1);
-		uint32_t whiteTextureData = 0xff99ffff;
+		uint32_t whiteTextureData = 0xffffffff;
 		RendererData->WhiteTexture->SetData(&whiteTextureData, sizeof(whiteTextureData));
 		
 		// Texture Shader
