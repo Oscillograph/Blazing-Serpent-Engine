@@ -134,6 +134,10 @@ namespace BSE {
 		OrthographicCameraBounds m_OrthographicCameraBounds;
 		GeneralCamera* m_Camera = nullptr;
 		
+		// operative settings
+		bool m_ControlPressed = false;
+		glm::vec2 m_InitialMousePosition = {0.0f, 0.0f};
+		
 		// general controller settings
 		CameraProjectionType m_ProjectionType = CameraProjectionType::Perspective;
 		float m_CameraRotationSpeed = 10.0f;

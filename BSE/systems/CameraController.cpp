@@ -118,10 +118,6 @@ namespace BSE {
 		// rotation
 		if (allowRotation) {
 			m_Camera->SetRotation(m_CameraRotation);
-			// TODO: Understand and rewrite to make camera rotate cleanly
-			// m_TargetToCameraDirection.x = cosf(glm::radians(m_CameraRotation.y)) * cosf(glm::radians(m_CameraRotation.x));
-			// m_TargetToCameraDirection.y = sinf(glm::radians(m_CameraRotation.x));
-			// m_TargetToCameraDirection.z = sinf(glm::radians(m_CameraRotation.y)) * cosf(glm::radians(m_CameraRotation.x));
 		}
 		m_TargetToCameraDirection = glm::normalize(m_CameraPosition - m_CameraTarget);
 		
@@ -189,35 +185,29 @@ namespace BSE {
 	}
 	
 	void CameraController::OnUpdate(float time){
-		if (Input::IsKeyPressed(BSE_KEY_W)){
-			// m_CameraPosition.y += m_CameraMovementSpeed * time;
-			m_Camera->Move({0.0f, 0.0f, -m_CameraMovementSpeed * time});
+		if (allowTranslation){
+			if (Input::IsKeyPressed(BSE_KEY_W)){
+				m_Camera->Move({0.0f, 0.0f, -m_CameraMovementSpeed * time});
+			}
+			if (Input::IsKeyPressed(BSE_KEY_A)){
+				m_Camera->Move({-m_CameraMovementSpeed * time, 0.0f, 0.0f});
+			}
+			if (Input::IsKeyPressed(BSE_KEY_S)){
+				m_Camera->Move({0.0f, 0.0f, m_CameraMovementSpeed * time});
+			}
+			if (Input::IsKeyPressed(BSE_KEY_D)){
+				m_Camera->Move({m_CameraMovementSpeed * time, 0.0f, 0.0f});
+			}
+			if (Input::IsKeyPressed(BSE_KEY_Q)){
+				m_Camera->Move({0.0f, -m_CameraMovementSpeed * time, 0.0f});
+			}
+			if (Input::IsKeyPressed(BSE_KEY_E)){
+				m_Camera->Move({0.0f, m_CameraMovementSpeed * time, 0.0f});
+			}
+			m_CameraPosition = m_Camera->GetPosition();
 		}
-		if (Input::IsKeyPressed(BSE_KEY_A)){
-			// m_CameraPosition.x -= m_CameraMovementSpeed * time;
-			m_Camera->Move({-m_CameraMovementSpeed * time, 0.0f, 0.0f});
-		}
-		if (Input::IsKeyPressed(BSE_KEY_S)){
-			//m_CameraPosition.y -= m_CameraMovementSpeed * time;
-			m_Camera->Move({0.0f, 0.0f, m_CameraMovementSpeed * time});
-		}
-		if (Input::IsKeyPressed(BSE_KEY_D)){
-			// m_CameraPosition.x += m_CameraMovementSpeed * time;
-			m_Camera->Move({m_CameraMovementSpeed * time, 0.0f, 0.0f});
-		}
-		if (Input::IsKeyPressed(BSE_KEY_Q)){
-			//m_CameraPosition.y -= m_CameraMovementSpeed * time;
-			m_Camera->Move({0.0f, -m_CameraMovementSpeed * time, 0.0f});
-		}
-		if (Input::IsKeyPressed(BSE_KEY_E)){
-			// m_CameraPosition.x += m_CameraMovementSpeed * time;
-			m_Camera->Move({0.0f, m_CameraMovementSpeed * time, 0.0f});
-		}
-		m_CameraPosition = m_Camera->GetPosition();
-		// m_Camera->SetPosition(m_CameraPosition);
 		
 		if (allowRotation){
-			// glm::vec3 rotation = m_Camera->GetRotation();
 			if (Input::IsKeyPressed(BSE_KEY_UP)){
 				m_CameraRotation.z -= m_CameraRotationSpeed * time;
 			}
@@ -230,14 +220,29 @@ namespace BSE {
 			if (Input::IsKeyPressed(BSE_KEY_RIGHT)){
 				m_CameraRotation.x += m_CameraRotationSpeed * time;
 			}
+			
+			// Mouse rotation, turns on and off by Left Control press
+			if (m_ControlPressed){
+				// BSE_CORE_INFO("LeftControl pressed");
+				const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
+				glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.3f;
+				m_InitialMousePosition = mouse;
+				
+				// float yawSign = sinf(glm::radians(m_CameraRotation.y)) < 0 ? -1.0f : 1.0f;
+				Rotate({m_CameraRotation.x, (m_CameraRotation.y - delta.x * 1.0f), m_CameraRotation.z});
+				Rotate({m_CameraRotation.x - delta.y * 1.0f, m_CameraRotation.y, m_CameraRotation.z});
+			}
+			
 			m_Camera->SetRotation(m_CameraRotation);
 		}
 		
-		if (Input::IsKeyPressed(BSE_KEY_PAGE_UP)){
-			m_ZoomLevel -= 0.1f;
-		}
-		if (Input::IsKeyPressed(BSE_KEY_PAGE_DOWN)){
-			m_ZoomLevel += 0.1f;
+		if (allowZoom){
+			if (Input::IsKeyPressed(BSE_KEY_PAGE_UP)){
+				m_ZoomLevel -= 0.1f;
+			}
+			if (Input::IsKeyPressed(BSE_KEY_PAGE_DOWN)){
+				m_ZoomLevel += 0.1f;
+			}
 		}
 		
 		UpdateView();
@@ -272,12 +277,20 @@ namespace BSE {
 		dispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent& event){
 			return OnWindowResized(event);
 		});
+		
+		dispatcher.Dispatch<KeyPressedEvent>([this](KeyPressedEvent& event){
+			if (Input::IsKeyPressed(KeyCode::LeftControl)){
+				const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
+				m_InitialMousePosition = mouse;
+				
+				m_ControlPressed = !m_ControlPressed;
+			}
+			return false;
+		});
 	}
 	
 	bool CameraController::OnMouseScrolled(MouseScrolledEvent& e){
 		m_ZoomLevel -= e.GetYOffset() * 0.1f;
-		//m_ZoomLevel = (m_ZoomLevel < m_ZoomMin) ? (m_ZoomMin) : m_ZoomLevel;
-		//m_ZoomLevel = (m_ZoomLevel > m_ZoomMax) ? (m_ZoomMax) : m_ZoomLevel;
 		
 		UpdateView();
 		
