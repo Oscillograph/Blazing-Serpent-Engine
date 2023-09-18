@@ -9,10 +9,12 @@ namespace BSE {
 		m_ProjectionType = CameraProjectionType::Orthographic;
 		
 		allowRotation = rotation;
+		allowTranslation = true;
+		allowZoom = true;
 		constantAspectRatio = constantAspectRatio;
 		editorCamera = false;
 		
-		SetOrthographicProjectionDefault();
+		SetOrthographicCameraBoundsDefault();
 
 		m_ViewportWidth = m_OrthographicCameraBounds.GetWidth();
 		m_ViewportHeight = m_OrthographicCameraBounds.GetHeight();
@@ -27,6 +29,8 @@ namespace BSE {
 		
 		BSE_CORE_TRACE("Camera Controller constructor: Orthographic Camera created");
 		m_CameraPosition = m_Camera->GetPosition();
+		m_CameraTarget = m_Camera->GetTarget();
+		m_CameraRotation = m_Camera->GetRotation();
 		BSE_CORE_TRACE("Camera Controller constructor: Orthographic Camera position taken");
 	}
 	
