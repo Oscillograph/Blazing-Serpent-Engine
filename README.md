@@ -55,12 +55,12 @@ libBlazing_Serpent_Engine.a_@@_libspdlog.a_@@_libDear_ImGui.a_@@_libglfw3dll.a_@
 And Libraries directories should contain the folder where libBlazingSerpentEngine.a and libBlazingSerpentEngine.dll are.
 
 ## Tech Stack ##
-**C++17** (almost everything)
-**spdlog** (logging library)
-**GLM** (math library)
-**OpenGL 3.3-4.1 (GLFW, GLAD)** (windowing and rendering)
-**GLSL** (shaders in text files)
-**Dear ImGui** (OpenGL GUI library)
-**stb_image** (image loading)
-**EnTT** (ECS support)
-**YaML** (objects serialization and deserialization)
++ **C++17** (almost everything)
++ **spdlog** (logging library)
++ **GLM** (math library)
++ **OpenGL 3.3-4.1 (GLFW, GLAD)** (windowing and rendering)
++ **GLSL** (shaders in text files)
++ **Dear ImGui** (OpenGL GUI library)
++ **stb_image** (image loading)
++ **EnTT** (ECS support)
++ **YaML** (objects serialization and deserialization)
