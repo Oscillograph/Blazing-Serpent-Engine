@@ -233,11 +233,11 @@ namespace BSE {
 					if (cameraControllerNode){
 						float aspectRatio = cameraControllerNode["AspectRatio"].as<float>();
 						float zoomLevel = cameraControllerNode["ZoomLevel"].as<float>();
-						bool rotation = cameraControllerNode["Rotatable"].as<bool>();
+						bool allowRotation = cameraControllerNode["Rotatable"].as<bool>();
 						bool constantAspectRatio = cameraControllerNode["ConstantAspectRatio"].as<bool>();
 						
 						
-						auto& component = deserializedEntity.AddComponent<CameraControllerComponent>(aspectRatio, zoomLevel, rotation, constantAspectRatio);
+						auto& component = deserializedEntity.AddComponent<CameraControllerComponent>(aspectRatio, zoomLevel, allowRotation, constantAspectRatio);
 						component.PlayerControlled = playerControlled;
 						component.Works = works;
 						
@@ -255,6 +255,7 @@ namespace BSE {
 						if (cameraNode){
 							GeneralCamera* camera = controller->GetCamera();
 							camera->SetProjection(cameraNode["ProjectionMatrix"].as<glm::mat4>());
+							// camera->SetProjection(cameraNode["ViewMatrix"].as<glm::mat4>());
 							camera->SetPosition(cameraNode["Position"].as<glm::vec3>());
 							camera->SetRotation(cameraNode["Rotation"].as<glm::vec3>());
 							// camera = nullptr;
