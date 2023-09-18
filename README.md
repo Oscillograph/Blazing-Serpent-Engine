@@ -23,7 +23,7 @@ if (m_Context != nullptr){
 The DLL is built using TDM-GCC via Red Panda C++ IDE.
 C++ Custom Compiler options:
 ```
--D BSE_PLATFORM_WINDOWS -D BSE_DLL -D BSE_BUILD_DLL -D SPDLOG_COMPILED_LIB -D YAML_CPP_STATIC_DEFINE
+-D BSE_PLATFORM_WINDOWS -D BSE_DLL -D BSE_BUILD_DLL -D SPDLOG_COMPILED_LIB -D YAML_CPP_STATIC_DEFINE -D USE_IMGUI_API
 ```
 Linker options:
 ```
@@ -38,6 +38,7 @@ Includes directories should contain:
 - Blazing Serpent Engine/BSE/vendor/imgui
 - Blazing Serpent Engine/BSE/vendor/imgui/backends
 - Blazing Serpent Engine/BSE/vendor/yaml_cpp/include
+- Blazing Serpent Engine/BSE/vendor/Cherno/ImGuizmo
 
 A precompiled header can dramatically reduce compile time:
 Blazing Serpent Engine/BSE/common.h
@@ -52,3 +53,14 @@ Linker options:
 libBlazing_Serpent_Engine.a_@@_libspdlog.a_@@_libDear_ImGui.a_@@_libglfw3dll.a_@@_libGlad.a_@@_libYaml_cpp.a
 ```
 And Libraries directories should contain the folder where libBlazingSerpentEngine.a and libBlazingSerpentEngine.dll are.
+
+## Tech Stack ##
+**C++17** (almost everything)
+**spdlog** (logging library)
+**GLM** (math library)
+**OpenGL 3.3-4.1 (GLFW, GLAD)** (windowing and rendering)
+**GLSL** (shaders in text files)
+**Dear ImGui** (OpenGL GUI library)
+**stb_image** (image loading)
+**EnTT** (ECS support)
+**YaML** (objects serialization and deserialization)
