@@ -46,7 +46,7 @@ Blazing Serpent Engine/BSE/common.h
 ### Client app ###
 The client app is built almost the same way as the DLL except that Compiler options are:
 ```
--D BSE_PLATFORM_WINDOWS -D BSE_DLL -D BSE_ENABLE_ASSERTS -D SPDLOG_COMPILED_LIB -D YAML_CPP_STATIC_DEFINE
+-D BSE_PLATFORM_WINDOWS -D BSE_DLL -D BSE_ENABLE_ASSERTS -D SPDLOG_COMPILED_LIB -D YAML_CPP_STATIC_DEFINE -D USE_IMGUI_API
 ```
 Linker options:
 ```
