@@ -40,7 +40,7 @@ namespace BSE {
 		m_AspectRatio = aspectRatio;
 		m_PerspectiveNearClip = nearClip;
 		m_PerspectiveFarClip = farClip;
-		m_ZoomLevel = 10.0f;
+		m_ZoomLevel = 3.0f;
 		
 		m_AspectRatioPrev = m_AspectRatio;
 		
@@ -89,6 +89,7 @@ namespace BSE {
 	}
 	
 	void CameraController::UpdateOrthographicProjection(){
+		SetOrthographicCameraBoundsDefault();
 		m_Camera->SetProjection(
 			m_OrthographicCameraBounds.Left, m_OrthographicCameraBounds.Right, 
 			m_OrthographicCameraBounds.Top, m_OrthographicCameraBounds.Bottom, 
@@ -237,7 +238,7 @@ namespace BSE {
 				Rotate({m_CameraRotation.x - delta.y * 1.0f, m_CameraRotation.y, m_CameraRotation.z});
 			}
 			
-			m_Camera->SetRotation(m_CameraRotation);
+			// m_Camera->SetRotation(m_CameraRotation);
 		}
 		
 		if (allowZoom){
@@ -264,8 +265,8 @@ namespace BSE {
 			}
 			
 			m_AspectRatioPrev = m_AspectRatio;
-			m_ViewportHeightPrev = width;
-			m_ViewportWidthPrev = height;
+			m_ViewportHeightPrev = height;
+			m_ViewportWidthPrev = width;
 			
 			UpdateProjection();
 		}

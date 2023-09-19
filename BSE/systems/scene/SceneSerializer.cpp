@@ -231,9 +231,12 @@ namespace BSE {
 					
 					auto cameraControllerNode = cameraControllerComponentNode["CameraController"];
 					if (cameraControllerNode){
+						bool editorCamera = cameraControllerNode["EditorCamera"].as<bool>();
 						float aspectRatio = cameraControllerNode["AspectRatio"].as<float>();
 						float zoomLevel = cameraControllerNode["ZoomLevel"].as<float>();
 						bool allowRotation = cameraControllerNode["Rotatable"].as<bool>();
+						bool allowTranslation = cameraControllerNode["Translatable"].as<bool>();
+						bool allowZoom = cameraControllerNode["Zoomable"].as<bool>();
 						bool constantAspectRatio = cameraControllerNode["ConstantAspectRatio"].as<bool>();
 						
 						
@@ -250,14 +253,23 @@ namespace BSE {
 							controller->SetPerspectiveNear(cameraControllerNode["PerspectiveNear"].as<float>());
 							controller->SetPerspectiveFar(cameraControllerNode["PerspectiveFar"].as<float>());
 						}
+						controller->editorCamera = editorCamera;
+						controller->allowTranslation = allowTranslation;
+						controller->allowRotation = allowRotation;
+						controller->allowZoom = allowZoom;
+						controller->constantAspectRatio = constantAspectRatio;
+						
+						if (editorCamera)
+							m_SceneContext->SetCameraController(controller);
 						
 						auto cameraNode = cameraControllerNode["Camera"];
 						if (cameraNode){
 							GeneralCamera* camera = controller->GetCamera();
 							camera->SetProjection(cameraNode["ProjectionMatrix"].as<glm::mat4>());
 							// camera->SetProjection(cameraNode["ViewMatrix"].as<glm::mat4>());
-							camera->SetPosition(cameraNode["Position"].as<glm::vec3>());
-							camera->SetRotation(cameraNode["Rotation"].as<glm::vec3>());
+							controller->SetCameraPosition(cameraNode["Position"].as<glm::vec3>());
+							controller->Rotate(cameraNode["Rotation"].as<glm::vec3>());
+							controller->UpdateView();
 							// camera = nullptr;
 						}
 						controller = nullptr;
@@ -271,7 +283,8 @@ namespace BSE {
 				}
 			}
 		}
-		BSE_CORE_INFO("Deserialization complete");
+		m_SceneContext->GetCameraController()->OnUpdate(0.0f);
+		BSE_CORE_INFO("Deserialization complete, camera controller updated");
 
 		return true;
 	}
@@ -314,7 +327,10 @@ namespace BSE {
 					auto& cameraController = component.cameraController;
 					out << YAML::Key << "CameraController" << YAML::Value;
 					out << YAML::BeginMap;
+						out << YAML::Key << "EditorCamera" << YAML::Value << cameraController->editorCamera;
 						out << YAML::Key << "Rotatable" << YAML::Value << cameraController->allowRotation;
+						out << YAML::Key << "Translatable" << YAML::Value << cameraController->allowTranslation;
+						out << YAML::Key << "Zoomable" << YAML::Value << cameraController->allowZoom;
 						out << YAML::Key << "ConstantAspectRatio" << YAML::Value << cameraController->constantAspectRatio;
 						out << YAML::Key << "ProjectionType" << YAML::Value << (int)cameraController->GetProjectionType();
 						if (cameraController->GetProjectionType() == CameraProjectionType::Perspective){
