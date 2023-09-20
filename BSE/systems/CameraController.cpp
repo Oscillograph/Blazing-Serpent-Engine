@@ -238,7 +238,76 @@ namespace BSE {
 				Rotate({m_CameraRotation.x - delta.y * 1.0f, m_CameraRotation.y, m_CameraRotation.z});
 			}
 			
-			// m_Camera->SetRotation(m_CameraRotation);
+			// Mouse rotation around the target - turns on and off by right mouse button hold
+			if (Input::IsMouseButtonPressed((int)KeyCode::MouseButtonRight)) {
+				// get new mouse coordinates and find the difference from previous
+				const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
+				glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.3f;
+				m_InitialMousePosition = mouse;
+				
+				if (!m_MouseButtonRightPressed){
+					delta = {0.0f, 0.0f};
+					m_MouseButtonRightPressed = true;
+				}
+				
+				// calculate previous and new angles
+				float Yaw1 = m_CameraRotation.y;
+				float Pitch1 = m_CameraRotation.x;
+				
+				float Yaw2 = m_CameraRotation.y - delta.x * 1.0f;
+				float Pitch2 = m_CameraRotation.x - delta.y * 1.0f;
+				
+				// rotate camera
+				Rotate({m_CameraRotation.x, Yaw2, m_CameraRotation.z});
+				Rotate({Pitch2, m_CameraRotation.y, m_CameraRotation.z});
+				
+				// move camera
+				Yaw1 = glm::radians(Yaw1);
+				Yaw2 = glm::radians(180 + Yaw2);
+				Pitch1 = glm::radians(Pitch1);
+				Pitch2 = glm::radians(180 + Pitch2);
+				
+				float x2 = 0.0f;
+				float y2 = 0.0f;
+				float z2 = 0.0f;
+				
+				if (sinf(Yaw1) == 0.0f){
+					x2 = (m_CameraPosition.x - m_CameraTarget.x)*cosf(Yaw2)/cosf(Yaw1) + m_CameraTarget.x;
+					z2 = m_CameraTarget.z;
+				} else {
+					if (cosf(Yaw1) == 0.0f){
+						x2 = m_CameraTarget.x;
+						z2 = (m_CameraPosition.z - m_CameraTarget.z)*sinf(Yaw2)/sinf(Yaw1) + m_CameraTarget.z;
+					} else {
+						x2 = (m_CameraPosition.x - m_CameraTarget.x)*cosf(Yaw2)/cosf(Yaw1) + m_CameraTarget.x;
+						z2 = (m_CameraPosition.z - m_CameraTarget.z)*sinf(Yaw2)/sinf(Yaw1) + m_CameraTarget.z;
+					}
+				}
+				
+				// x2 = (m_CameraPosition.x - m_CameraTarget.x)*cosf(Yaw2) + m_CameraTarget.x;
+				// z2 = (m_CameraPosition.z - m_CameraTarget.z)*sinf(Yaw2) + m_CameraTarget.z;
+				SetCameraPosition({x2, m_CameraPosition.y, z2});
+				
+				
+				if (sinf(Pitch1) == 0.0f){
+					y2 = (m_CameraPosition.y - m_CameraTarget.y)*cosf(Pitch2)/cosf(Pitch1) + m_CameraTarget.y;
+					z2 = m_CameraTarget.z;
+				} else {
+					if (cosf(Pitch1) == 0.0f){
+						y2 = m_CameraTarget.y;
+						z2 = (m_CameraPosition.z - m_CameraTarget.z)*sinf(Pitch2)/sinf(Pitch1) + m_CameraTarget.z;
+					} else {
+						y2 = (m_CameraPosition.y - m_CameraTarget.y)*cosf(Pitch2)/cosf(Pitch1) + m_CameraTarget.y;
+						z2 = (m_CameraPosition.z - m_CameraTarget.z)*sinf(Pitch2)/sinf(Pitch1) + m_CameraTarget.z;
+					}
+				}
+				
+				// y2 = (m_CameraPosition.y - m_CameraTarget.y)*cosf(Pitch2) + m_CameraTarget.y;
+				// z2 = (m_CameraPosition.z - m_CameraTarget.z)*sinf(Pitch2) + m_CameraTarget.z;
+				SetCameraPosition({m_CameraPosition.x, y2, z2});
+			} else {
+				m_MouseButtonRightPressed = false;
+			}
 		}
 		
 		if (allowZoom){

@@ -136,6 +136,7 @@ namespace BSE {
 		
 		// operative settings
 		bool m_ControlPressed = false;
+		bool m_MouseButtonRightPressed = false;
 		glm::vec2 m_InitialMousePosition = {0.0f, 0.0f};
 		
 		// general controller settings
