@@ -13,6 +13,11 @@ namespace BSE {
 		void Invalidate();
 		void DeleteEverything();
 		virtual void Resize(const glm::vec2& size) override;
+		
+		virtual uint32_t GetWidth() override { return m_Specification.Width; };
+		virtual uint32_t GetHeight() override { return m_Specification.Height; };
+		
+		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) override;
 
 		virtual uint32_t GetColorAttachmentID(uint32_t index = 0) override { return m_ColorAttachments[index]; };
 		virtual const FrameBufferSpecification& GetSpecification() const override { return m_Specification; };

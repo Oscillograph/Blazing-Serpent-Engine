@@ -9,6 +9,7 @@ namespace BSE {
 		
 		// Color
 		RGBA8,
+		RED_INTEGER,
 		
 		// Depth / stencil
 		DEPTH24STENCIL8,
@@ -56,6 +57,10 @@ namespace BSE {
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
 		virtual void Resize(const glm::vec2& size) = 0;
+		virtual uint32_t GetWidth() = 0;
+		virtual uint32_t GetHeight() = 0;
+		
+		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
 		
 		static FrameBuffer* Create(const FrameBufferSpecification& spec);
 		
