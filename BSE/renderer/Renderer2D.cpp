@@ -11,6 +11,7 @@ namespace BSE {
 		glm::vec2 TextureCoordinates;
 		float TextureIndex;
 		float TilingFactor;
+		int EntityID;
 		// TODO: maskId
 	};
 	
@@ -84,6 +85,7 @@ namespace BSE {
 			{ShaderDataType::Float2, "a_TextureCoordinates"},
 			{ShaderDataType::Float,  "a_TextureIndex"},
 			{ShaderDataType::Float,  "a_TilingFactor"},
+			{ShaderDataType::Int,	 "a_EntityID"}
 		});
 		RendererData->QuadVertexArray->AddVertexBuffer(RendererData->QuadVertexBuffer);
 		BSE_TRACE("Square Vertex buffer layout construction successful");
@@ -245,7 +247,7 @@ namespace BSE {
 	void Renderer2D::DrawSprite(const glm::vec2& position, const glm::vec2& size, float rotation, Texture2DSprite* sprite, float tilingFactor, const glm::vec4& tintColor){
 		DrawQuadGeneral({position.x, position.y, 0.0f}, size, rotation, sprite->GetSpriteSheet(), tilingFactor, tintColor, sprite->GetCoordinates());
 	}
-	void Renderer2D::DrawQuadGeneral(const glm::vec3& position, const glm::vec2& size, float rotation, Texture2D* texture, float tilingFactor, const glm::vec4& tintColor, glm::vec2* spriteCoordinates){
+	void Renderer2D::DrawQuadGeneral(const glm::vec3& position, const glm::vec2& size, float rotation, Texture2D* texture, float tilingFactor, const glm::vec4& tintColor, glm::vec2* spriteCoordinates, int entityID){
 		// default is the 0-th texture which basically a single color background
 		float textureIndex = 0.0;
 		glm::vec2 textureCoordinates[4];
@@ -307,13 +309,14 @@ namespace BSE {
 			RendererData->QuadVertexBufferPointer->TextureCoordinates = textureCoordinates[i];
 			RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
 			RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
+			RendererData->QuadVertexBufferPointer->EntityID = entityID;
 			RendererData->QuadVertexBufferPointer++;
 		}
 		
 		RendererData->QuadIndexCount += 6;
 	}
 	
-	void Renderer2D::DrawQuadGeneral(const glm::mat4& transform, Texture2D* texture, float tilingFactor, const glm::vec4& tintColor, glm::vec2* spriteCoordinates){
+	void Renderer2D::DrawQuadGeneral(const glm::mat4& transform, Texture2D* texture, float tilingFactor, const glm::vec4& tintColor, glm::vec2* spriteCoordinates, int entityID){
 		// default is the 0-th texture which basically a single color background
 		float textureIndex = 0.0;
 		glm::vec2 textureCoordinates[4];
@@ -356,6 +359,7 @@ namespace BSE {
 			RendererData->QuadVertexBufferPointer->TextureCoordinates = textureCoordinates[i];
 			RendererData->QuadVertexBufferPointer->TextureIndex = textureIndex;
 			RendererData->QuadVertexBufferPointer->TilingFactor = tilingFactor;
+			RendererData->QuadVertexBufferPointer->EntityID = entityID;
 			RendererData->QuadVertexBufferPointer++;
 		}
 		

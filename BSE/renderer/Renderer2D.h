@@ -44,8 +44,8 @@ namespace BSE {
 		static void DrawTextureRectRotated(const glm::vec2& position, const glm::vec2& size, float rotation, Texture2D* texture, float tilingFactor = 1.0f, const glm::vec4& tintColor = OneVec4);
 		static void DrawSprite(const glm::vec2& position, const glm::vec2& size, float rotation, Texture2DSprite* sprite, float tilingFactor = 1.0f, const glm::vec4& tintColor = OneVec4);
 		
-		static void DrawQuadGeneral(const glm::vec3& position, const glm::vec2& size, float rotation = 0.0f, Texture2D* texture = nullptr, float tilingFactor = 1.0f, const glm::vec4& tintColor = OneVec4, glm::vec2* spriteCoordinates = nullptr);
-		static void DrawQuadGeneral(const glm::mat4& transform, Texture2D* texture = nullptr, float tilingFactor = 1.0f, const glm::vec4& tintColor = OneVec4, glm::vec2* spriteCoordinates = nullptr);
+		static void DrawQuadGeneral(const glm::vec3& position, const glm::vec2& size, float rotation = 0.0f, Texture2D* texture = nullptr, float tilingFactor = 1.0f, const glm::vec4& tintColor = OneVec4, glm::vec2* spriteCoordinates = nullptr, int entityID = -1);
+		static void DrawQuadGeneral(const glm::mat4& transform, Texture2D* texture = nullptr, float tilingFactor = 1.0f, const glm::vec4& tintColor = OneVec4, glm::vec2* spriteCoordinates = nullptr, int entityID = -1);
 		
 		static void DrawRect(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
 	};
