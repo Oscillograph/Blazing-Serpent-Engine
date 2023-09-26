@@ -23,6 +23,7 @@ namespace BSE {
 		virtual const FrameBufferSpecification& GetSpecification() const override { return m_Specification; };
 		
 		virtual void Bind() override;
+		virtual void ClearAttachment(uint32_t attachmentIndex, int value) override;
 		virtual void Unbind() override;
 		
 	private:

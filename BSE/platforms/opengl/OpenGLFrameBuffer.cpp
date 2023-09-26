@@ -25,10 +25,19 @@ namespace BSE {
 			if (multisampled){
 				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, internalFormat, width, height, GL_FALSE);
 			} else {
-				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
-				
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				if (internalFormat == GL_R32I){
+					// BSE_CORE_WARN("GL_R32I");
+					// glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_INT, nullptr);
+					glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_INT, nullptr);
+					
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				} else {
+					glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
+					
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				}
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -62,6 +71,23 @@ namespace BSE {
 				case FrameBufferTextureFormat::DEPTH24STENCIL8: return true; break;
 			}
 			return false;
+		}
+		
+		static GLenum FBTextureFormatToGL(FrameBufferTextureFormat format){
+			switch (format){
+				case FrameBufferTextureFormat::RGBA8: 		return GL_RGBA8; break;
+				case FrameBufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER; break;
+			}
+			return 0;
+		}
+		
+		// TODO: decide the data type of RGBA8
+		static GLenum GLDataType(FrameBufferTextureFormat format){
+			switch (format){
+				case FrameBufferTextureFormat::RGBA8: 		return GL_UNSIGNED_BYTE; break;
+				case FrameBufferTextureFormat::RED_INTEGER: return GL_INT; break;
+			}
+			return 0;
 		}
 	}
 	
@@ -113,6 +139,7 @@ namespace BSE {
 			
 			for (size_t i = 0; i < m_ColorAttachments.size(); i++){
 				Utils::BindTexture(multiSample, m_ColorAttachments[i]);
+				// BSE_CORE_WARN("atatchment #{0}", i);
 				switch (m_ColorAttachmentSpecifications[i].TextureFormat) {
 					case FrameBufferTextureFormat::RGBA8:
 						Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA8, GL_RGBA, m_Specification.Width, m_Specification.Height, i);
@@ -183,7 +210,40 @@ namespace BSE {
 	void OpenGLFrameBuffer::Bind() {
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 		glViewport(0.0f, 0.0f, m_Specification.Width, m_Specification.Height);
+		// ClearAttachment(1, (void*)(-1));
 	}
+	
+	void OpenGLFrameBuffer::ClearAttachment(uint32_t attachmentIndex, int value){
+		BSE_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size(), "Attachment index exceeds color attachments size!");
+		
+		GLint* pData = new GLint[m_Specification.Width * m_Specification.Height * 4];
+		memset(pData, value, m_Specification.Width * m_Specification.Height * 4 * sizeof(GLint));
+		glBindTexture(GL_TEXTURE_2D, m_ColorAttachments[attachmentIndex]);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Specification.Width, m_Specification.Height, GL_RED_INTEGER, GL_INT, pData);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		delete pData;
+		
+		// auto& spec = m_ColorAttachmentSpecifications[attachmentIndex];
+		// spec.TextureFormat;
+		// GLint values[] = {-1, 0, 0, 0};
+		
+		// glClearBufferiv(GL_COLOR, attachmentIndex, &value);
+		
+		/*Utils::AttachColorTexture(
+			m_ColorAttachments[attachmentIndex], 
+			m_Specification.Samples, 
+			GL_R32I, 
+			GL_RED_INTEGER, 
+			m_Specification.Width, 
+			m_Specification.Height, 
+			attachmentIndex
+			);
+		*/
+		// glClearBufferiv(GL_COLOR, 0, values);
+		// BSE_CORE_WARN("{0}", value);
+		// glClearTexImage(m_ColorAttachments[1], 0, GL_RED_INTEGER, GL_INT, &value);
+	} 
+	
 	void OpenGLFrameBuffer::Unbind() {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
@@ -195,9 +255,21 @@ namespace BSE {
 	}
 	
 	int OpenGLFrameBuffer::ReadPixel(uint32_t attachmentIndex, int x, int y) {
+		// TODO: Find out why pixelData contains huge value
+		// glReadBuffer(1);
+		Bind();
+		// glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		// glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_TRUE);
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
-		int pixelData;
+		// glDisable(GL_DEPTH_TEST);
+		// glDisable(GL_SCISSOR_TEST);
+		GLint pixelData;
 		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
-		return pixelData;
+		// glEnable(GL_DEPTH_TEST);
+		// glEnable(GL_SCISSOR_TEST);
+		Unbind();
+		// glReadBuffer(GL_BACK);
+		return (int)pixelData;
+		// return (pixelData[0] | (pixelData[0] << 8) | (pixelData[0] << 16));
 	}
 }

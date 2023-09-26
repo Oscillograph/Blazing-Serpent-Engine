@@ -55,6 +55,7 @@ namespace BSE {
 		virtual uint32_t GetColorAttachmentID(uint32_t index = 0) = 0;
 		
 		virtual void Bind() = 0;
+		virtual void ClearAttachment(uint32_t attachmentIndex, int value) = 0;
 		virtual void Unbind() = 0;
 		virtual void Resize(const glm::vec2& size) = 0;
 		virtual uint32_t GetWidth() = 0;
