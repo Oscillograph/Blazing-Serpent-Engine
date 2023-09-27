@@ -22,7 +22,10 @@ namespace BSE {
 		void OnUpdate(float sceneTime);
 		Entity* CreateEntity(const std::string& name = "");
 		void DestroyEntity(Entity& entity);
+		
 		inline entt::registry& Registry() { return m_Registry; };
+		inline bool HasEntity(int entityID) { return m_Registry.valid((entt::entity)entityID); }
+		
 		inline void SetCamera(GeneralCamera* camera) { m_Camera = camera; }
 		inline GeneralCamera* GetCamera() { return m_Camera; }
 		inline void SetCameraController(CameraController* cameraController) { m_CameraController = cameraController; }
