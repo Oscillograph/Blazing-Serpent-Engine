@@ -3,6 +3,7 @@
 
 #include <Core.h>
 // #include <renderer/GeneralCamera.h>
+#include <renderer/Texture.h>
 #include <renderer/OrthographicCamera.h>
 #include <systems/GeneralCameraController.h>
 #include <renderer/GeneralCamera.h>
@@ -41,6 +42,8 @@ namespace BSE {
 	
 	struct BSE_API SpriteComponent {
 		glm::vec4 Color = {1.0f, 1.0f, 1.0f, 1.0f};
+		Texture2D* Texture = nullptr;
+		float TilingFactor = 1.0f;
 		
 		SpriteComponent() = default;
 		SpriteComponent(const SpriteComponent&) = default;
