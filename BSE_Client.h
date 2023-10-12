@@ -15,6 +15,11 @@
 #include <systems/events/KeyEvent.h>
 #include <systems/events/MouseEvent.h>
 
+// feature systems
+// - physics
+#include <vendor/box2d/box2d.h>
+// ------------------------------------
+
 // - layers
 // #include "Layer.h" // already in LayerStack.h included in Application.h
 

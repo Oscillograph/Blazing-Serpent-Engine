@@ -33,6 +33,11 @@
 #include <renderer/GeneralCamera.h>
 #include <systems/CameraController.h>
 
+// feature systems
+// - physics
+#include <vendor/box2d/box2d.h>
+// -------------------------------------
+
 #include <systems/scene/Scene.h>
 #include <systems/scene/SceneSerializer.h>
 #include <systems/ecs/Entity.h>
