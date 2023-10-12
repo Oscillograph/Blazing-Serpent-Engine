@@ -3,6 +3,7 @@
 
 #include <Core.h>
 #include <systems/scene/Scene.h>
+#include <systems/scene/UUID.h>
 #include <vendor/entt/entt.hpp>
 
 namespace BSE {
@@ -13,7 +14,9 @@ namespace BSE {
 		Entity(entt::entity entityID, Scene* scene);
 		~Entity();
 		
-		inline entt::entity GetID(){ return m_EntityID; } 
+		inline entt::entity GetID(){ return m_EntityID; }
+		inline uint64_t GetUUID(){ return m_UUID; }
+		inline void SetUUID(uint64_t uuid){ m_UUID = uuid; }
 		inline Scene* GetScene(){ return m_Scene; };
 		
 		template <typename T, typename... Args>
@@ -54,6 +57,7 @@ namespace BSE {
 		}; 
 	private:
 		entt::entity m_EntityID;
+		uint64_t m_UUID;
 		Scene* m_Scene;
 	};
 	

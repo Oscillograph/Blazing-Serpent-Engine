@@ -4,7 +4,8 @@ namespace BSE {
 	
 	Entity::Entity(entt::entity entityID, Scene* scene)
 		: m_EntityID(entityID), m_Scene(scene) 
-	{}
+	{
+	}
 	
 	Entity::~Entity(){
 		// m_Scene->Registry().destroy(m_EntityID);
