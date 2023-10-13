@@ -23,6 +23,16 @@ namespace BSE {
 		return entity; 
 	};
 	
+	Entity* Scene::CreateEntityWithUUID(const std::string& name, uint64_t uuid) {
+		Entity* entity = CreateEntity(name);
+		if (uuid == 0) // assume that 0 is not a valid uuid
+			uuid = UUID::Generate();
+		auto& uuidComponent = entity->AddComponent<UUIDComponent>(uuid);
+		
+		BSE_INFO("UUID Component set");
+		return entity; 
+	};
+	
 	void Scene::DestroyEntity(Entity& entity){
 		m_Registry.destroy(entity.GetID());
 		// delete entity;

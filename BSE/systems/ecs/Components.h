@@ -9,6 +9,8 @@
 #include <renderer/GeneralCamera.h>
 #include <systems/CameraController.h>
 
+#include <systems/scene/UUID.h>
+
 namespace BSE {
 	struct BSE_API NameComponent {
 		std::string Name = "";
@@ -17,6 +19,21 @@ namespace BSE {
 		NameComponent(const NameComponent&) = default;
 		NameComponent(const std::string& name)
 			: Name(name) {};
+	};
+	
+	struct BSE_API UUIDComponent {
+		uint64_t ID = 0;
+		
+		UUIDComponent() 
+			: ID(UUID::Generate()) 
+		{};
+		
+		UUIDComponent(const UUIDComponent&) = default;
+		
+		UUIDComponent(const uint64_t& uuid)
+			: ID(uuid) 
+		{};
+		
 	};
 	
 	struct BSE_API TransformComponent {

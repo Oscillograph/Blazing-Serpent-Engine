@@ -21,6 +21,7 @@ namespace BSE {
 		
 		void OnUpdate(float sceneTime);
 		Entity* CreateEntity(const std::string& name = "");
+		Entity* CreateEntityWithUUID(const std::string& name = "", uint64_t uuid = 0);
 		void DestroyEntity(Entity& entity);
 		
 		inline entt::registry& Registry() { return m_Registry; };
