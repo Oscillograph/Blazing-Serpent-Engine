@@ -227,7 +227,7 @@ namespace BSE {
 				auto idNode = entity["UUIDComponent"];
 				if (idNode){
 					uint64_t uuid;
-					uuid = nameNode["UUID"].as<uint64_t>();
+					uuid = idNode["UUID"].as<uint64_t>();
 					auto& idComponent = deserializedEntity.AddComponent<UUIDComponent>(uuid);
 				}
 
