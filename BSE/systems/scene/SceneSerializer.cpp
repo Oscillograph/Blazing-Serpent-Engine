@@ -205,14 +205,14 @@ namespace BSE {
 		auto entities = data["Entities"];
 		if (entities) {
 			for (auto entity : entities) {
-				uint32_t uuid = entity["Entity"].as<uint32_t>(); // TODO: implement entity id restoration
+				uint32_t entityId = entity["Entity"].as<uint32_t>(); // TODO: implement entity id restoration
 				
 				std::string name;
 				auto nameNode = entity["NameComponent"];
 				if (nameNode)
 					name = nameNode["Name"].as<std::string>();
 				
-				BSE_CORE_INFO("Deserializing entity with id = {0}, name = {1}", uuid, name);
+				BSE_CORE_INFO("Deserializing entity with id = {0}, name = {1}", entityId, name);
 				
 				Entity deserializedEntity = *(m_SceneContext->CreateEntity(name));
 				
@@ -222,6 +222,13 @@ namespace BSE {
 					transform.Translation = transformNode["Translation"].as<glm::vec3>();
 					transform.Rotation = transformNode["Rotation"].as<glm::vec3>();
 					transform.Scale = transformNode["Scale"].as<glm::vec3>();
+				}
+				
+				auto idNode = entity["UUIDComponent"];
+				if (idNode){
+					uint64_t uuid;
+					uuid = nameNode["UUID"].as<uint64_t>();
+					auto& idComponent = deserializedEntity.AddComponent<UUIDComponent>(uuid);
 				}
 
 				auto cameraControllerComponentNode = entity["CameraControllerComponent"];
@@ -317,6 +324,14 @@ namespace BSE {
 				out << YAML::EndMap;
 			}
 			
+			if (entity.HasComponent<UUIDComponent>()){
+				out << YAML::Key << "UUIDComponent";
+				out << YAML::BeginMap;
+					auto& idComponent = entity.GetComponent<UUIDComponent>();
+					out << YAML::Key << "UUID" << YAML::Value << idComponent.ID;
+				out << YAML::EndMap;
+			}
+		
 			if (entity.HasComponent<CameraControllerComponent>()){
 				auto& component = entity.GetComponent<CameraControllerComponent>();
 				out << YAML::Key << "CameraControllerComponent";

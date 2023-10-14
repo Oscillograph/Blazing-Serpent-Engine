@@ -28,6 +28,15 @@ namespace BSE {
 	static glm::mat3 ZeroMat3 = glm::mat3(0.0f);
 	static glm::vec4 ZeroVec4 = glm::vec4(0.0f);
 	static glm::vec3 ZeroVec3 = glm::vec3(0.0f);
+	
+	
+	namespace UUID {
+		static std::random_device g_RandomDevice;
+		static std::mt19937_64 g_RandomEngine(g_RandomDevice());
+		static std::uniform_int_distribution<uint64_t> g_UniformDistribution;
+		
+		BSE_API uint64_t Generate();
+	}
 }
 
 #endif

@@ -9,8 +9,6 @@
 #include <renderer/GeneralCamera.h>
 #include <systems/CameraController.h>
 
-#include <systems/scene/UUID.h>
-
 namespace BSE {
 	struct BSE_API NameComponent {
 		std::string Name = "";

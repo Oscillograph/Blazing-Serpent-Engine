@@ -6,6 +6,12 @@ namespace BSE {
 		printf("Welcome to Blazing Serpent Engine world!\n");
 	}
 	
+	namespace UUID {
+		uint64_t Generate() {
+			return g_UniformDistribution(g_RandomEngine);
+		}
+	}
+	
 	// static glm::mat4 OneMat4 = glm::mat4(1.0f);
 	// static glm::mat3 OneMat3 = glm::mat3(1.0f);
 	// static glm::vec4 OneVec4 = glm::vec4(1.0f);

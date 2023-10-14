@@ -14,6 +14,7 @@
 #include <initializer_list> // to convert initializer lists to vectors to avoid problems with pointers to vectors
 #include <chrono> // time management
 #include <math.h> // simple math for graphics, sound and other tasks
+#include <random> // for random stuff
 
 // types
 #include <string> // text operations, obviously
