@@ -1,6 +1,7 @@
 # ! WORK IN PROGRESS ! #
 The goal is to make the 2D game engine while "Game Engine Series" by The Cherno is being watched.
 As the first third of the series passed I realized that my vision of what I would like to get is quite different from what the author did choose, but the way Cherno explains things and demonstrates really intrigues me and motivates to replicate and rethink the experience shared by the author of Hazel.
+After the 100th episode of the series I chose to reimplement only chosen things shown by the author of Hazel, as I am more interested in developing my own creations based on SDL. 
 # BLAZING SERPENT ENGINE #
 A C++ game engine based on "Game Engine Series" by The Cherno.
 
@@ -27,9 +28,9 @@ C++ Custom Compiler options:
 ```
 Linker options:
 ```
--lopengl32_@@_libglfw3dll.a_@@_libGlad.a_@@_libDear_ImGui.a_@@_libspdlog.a_@@_libYaml_cpp.a
+-lopengl32_@@_libglfw3dll.a_@@_libGlad.a_@@_libDear_ImGui.a_@@_libspdlog.a_@@_libYaml_cpp.a_@@_libBox2D.a
 ```
-(Obviously, there should be compiled static libraries for glfw3, Glad, Dear ImGui, spdlog)
+(Obviously, there should be compiled static libraries for glfw3, Glad, Dear ImGui, spdlog, Yaml, Box2D)
 
 Includes directories should contain:
 - Blazing Serpent Engine
@@ -39,6 +40,7 @@ Includes directories should contain:
 - Blazing Serpent Engine/BSE/vendor/imgui/backends
 - Blazing Serpent Engine/BSE/vendor/yaml_cpp/include
 - Blazing Serpent Engine/BSE/vendor/Cherno/ImGuizmo
+- Blazing Serpent Engine/BSE/vendor/box2d
 
 A precompiled header can dramatically reduce compile time:
 Blazing Serpent Engine/BSE/common.h
@@ -50,7 +52,7 @@ The client app is built almost the same way as the DLL except that Compiler opti
 ```
 Linker options:
 ```
-libBlazing_Serpent_Engine.a_@@_libspdlog.a_@@_libDear_ImGui.a_@@_libglfw3dll.a_@@_libGlad.a_@@_libYaml_cpp.a
+libBlazing_Serpent_Engine.a_@@_libspdlog.a_@@_libDear_ImGui.a_@@_libglfw3dll.a_@@_libGlad.a_@@_libYaml_cpp.a_@@_libBox2D.a
 ```
 And Libraries directories should contain the folder where libBlazingSerpentEngine.a and libBlazingSerpentEngine.dll are.
 
@@ -64,3 +66,4 @@ And Libraries directories should contain the folder where libBlazingSerpentEngin
 + **stb_image** (image loading)
 + **EnTT** (ECS support)
 + **YaML** (objects serialization and deserialization)
++ **Box2D** (currently unused but intended for simple 2D-physics implementation)
