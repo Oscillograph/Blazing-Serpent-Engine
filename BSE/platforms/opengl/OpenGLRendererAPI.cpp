@@ -38,6 +38,7 @@ namespace BSE {
 	}
 	
 	void OpenGLRendererAPI::DrawIndexed(const VertexArray* vertexArray, uint32_t indexCount){
+		vertexArray->Bind();
 		uint32_t count = (indexCount == 0) ? vertexArray->GetIndexBuffer()->GetSize() : indexCount;
 		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
 		// glBindTexture(GL_TEXTURE_2D, 0);
