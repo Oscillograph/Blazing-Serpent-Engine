@@ -4,6 +4,8 @@ namespace BSE {
 	// -------------------------------------------
 	// TODO: Design and implement Particles System
 	// -------------------------------------------
+	// TODO: Implement shader for circles, lines
+	// -------------------------------------------
 	
 	struct QuadVertex {
 		glm::vec3 Position;
@@ -11,6 +13,24 @@ namespace BSE {
 		glm::vec2 TextureCoordinates;
 		float TextureIndex;
 		float TilingFactor;
+		int EntityID;
+		// TODO: maskId
+	};
+	
+	struct CircleVertex {
+		glm::vec3 Position;
+		glm::vec4 Color;
+		float Radius;
+		float Thickness;
+		float Fade;
+		int EntityID;
+		// TODO: maskId
+	};
+	
+	struct LineVertex {
+		glm::vec3 Position;
+		glm::vec4 Color;
+		
 		int EntityID;
 		// TODO: maskId
 	};

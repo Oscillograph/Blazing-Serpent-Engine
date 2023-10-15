@@ -32,6 +32,14 @@ namespace BSE {
 			m_RendererAPI->DrawIndexed(vertexArray, indexCount);
 		}
 		
+		inline static void DrawLines(VertexArray* vertexArray, uint32_t vertexCount){
+			m_RendererAPI->DrawLines(vertexArray, vertexCount);
+		}
+		
+		inline static void SetLineThickness(float thickness){
+			m_RendererAPI->SetLineThickness(thickness);
+		}
+		
 		inline static void SetAPI(RendererAPI::API api){
 			if (m_RendererAPI != nullptr) {
 				delete m_RendererAPI;

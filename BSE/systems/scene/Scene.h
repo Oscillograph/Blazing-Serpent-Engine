@@ -10,6 +10,7 @@
 #include <systems/CameraController.h>
 // #include <systems/ecs/Entity.h>
 // #include <systems/ecs/Components.h>
+#include <vendor/box2d/box2d.h>
 
 namespace BSE {
 	class Entity;
@@ -31,7 +32,12 @@ namespace BSE {
 		inline GeneralCamera* GetCamera() { return m_Camera; }
 		inline void SetCameraController(CameraController* cameraController) { m_CameraController = cameraController; }
 		inline CameraController* GetCameraController() { return m_CameraController; }
-	protected:
+		
+		// Physics block
+		b2World* world; // the world in the scene
+		b2AABB worldBoundPoints; // bounds of a world in the scene
+		float timeStep; // in milliseconds
+		glm::vec2 gravityVector;
 		
 	private:
 		entt::registry m_Registry;

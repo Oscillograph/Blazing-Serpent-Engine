@@ -41,6 +41,14 @@ namespace BSE {
 		vertexArray->Bind();
 		uint32_t count = (indexCount == 0) ? vertexArray->GetIndexBuffer()->GetSize() : indexCount;
 		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
-		// glBindTexture(GL_TEXTURE_2D, 0);
+	}
+	
+	void OpenGLRendererAPI::DrawLines(const VertexArray* vertexArray, uint32_t vertexCount){
+		vertexArray->Bind();
+		glDrawArrays(GL_LINES, 0, vertexCount);
+	}
+	
+	void OpenGLRendererAPI::SetLineThickness(float thickness){
+		glLineWidth(thickness);
 	}
 }

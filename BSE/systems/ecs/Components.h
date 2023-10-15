@@ -8,8 +8,29 @@
 #include <systems/GeneralCameraController.h>
 #include <renderer/GeneralCamera.h>
 #include <systems/CameraController.h>
+#include <vendor/box2d/box2d.h>
 
 namespace BSE {
+	enum class BSE_BodyType {
+		Static = b2_staticBody,
+		Dynamic = b2_dynamicBody,
+		Kinematic = b2_kinematicBody
+	};
+	
+	static std::string BodyTypeToString(const BSE_BodyType& bodyType){
+		if (bodyType == BSE_BodyType::Static) 		return "Static";
+		if (bodyType == BSE_BodyType::Dynamic) 		return "Dynamic";
+		if (bodyType == BSE_BodyType::Kinematic)	return "Kinematic";
+		return "Unknown type > Default Static";
+	}
+	
+	static BSE_BodyType StringToBodyType(const std::string& type){
+		if (strcmp(type.c_str(), "Static")) 		return BSE_BodyType::Static;
+		if (strcmp(type.c_str(), "Dynamic")) 		return BSE_BodyType::Dynamic;
+		if (strcmp(type.c_str(), "Kinematic")) 		return BSE_BodyType::Kinematic;
+		return BSE_BodyType::Static;
+	}
+	
 	struct BSE_API NameComponent {
 		std::string Name = "";
 		
@@ -64,6 +85,17 @@ namespace BSE {
 		SpriteComponent(const SpriteComponent&) = default;
 		SpriteComponent(const glm::vec4& color)
 			: Color(color) {};
+	};
+	
+	struct BSE_API PhysicsBodyComponent {
+		BSE_BodyType BodyType = BSE_BodyType::Static;
+		b2BodyDef* BodyDefinition;
+		b2Body* Body;
+		
+		PhysicsBodyComponent() = default;
+		PhysicsBodyComponent(const PhysicsBodyComponent&) = default;
+		PhysicsBodyComponent(b2BodyDef* def)
+			: BodyDefinition(def) {};
 	};
 	
 	struct BSE_API CameraComponent {

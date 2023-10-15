@@ -27,6 +27,8 @@ namespace BSE {
 		virtual void SetClearColor(const glm::vec4 color) = 0;
 		virtual void Clear() = 0;
 		virtual void DrawIndexed(const VertexArray* vertexArray, uint32_t indexCount = 0) = 0;
+		virtual void DrawLines(const VertexArray* vertexArray, uint32_t vertexCount) = 0;
+		virtual void SetLineThickness(float thickness) = 0;
 		
 		inline static API GetAPI() { return s_API; }
 		//inline static void SetAPI(API api) { s_API = api; }
